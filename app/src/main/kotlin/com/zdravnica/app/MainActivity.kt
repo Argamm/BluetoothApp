@@ -1,0 +1,87 @@
+package com.zdravnica.app
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Surface
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.core.os.LocaleListCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.rememberNavController
+import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
+import com.zdravnica.app.navigation.app.root.RootNavigationGraph
+import com.zdravnica.app.utils.LocalBackPressedDispatcher
+import com.zdravnica.resources.ui.theme.models.LocalLanguageEnum
+import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
+import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.Locale
+
+class MainActivity : ComponentActivity() {
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        installSplashScreen().apply {
+            setOnExitAnimationListener { splashScreen ->
+                lifecycleScope.launch {
+                    delay(1200)
+                    splashScreen.remove()
+                }
+            }
+        }
+
+        setContent {
+            val currentLanguage by remember { mutableStateOf(LocalLanguageEnum.RUSSIAN) }
+            val isDarkModeValue = isSystemInDarkTheme()
+            val isDarkMode by remember { mutableStateOf(isDarkModeValue) }
+            val rootNavController = rememberNavController()
+
+            setLocaleConfiguration(currentLanguage)
+
+            CompositionLocalProvider(
+                LocalBackPressedDispatcher provides this@MainActivity.onBackPressedDispatcher
+            ) {
+
+                ZdravnicaAppExerciseTheme(
+                    darkThem = isDarkMode
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(ZdravnicaAppTheme.colors.primaryBackgroundColor),
+                        color = ZdravnicaAppTheme.colors.primaryBackgroundColor
+                    ) {
+                        RootNavigationGraph(
+                            navHostController = rootNavController,
+                            startDestination = AppNavGraph.Connection.route
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun setLocaleConfiguration(currentLanguage: LocalLanguageEnum) {
+        AppCompatDelegate.setApplicationLocales(
+            LocaleListCompat.forLanguageTags(
+                currentLanguage.languageISO
+            )
+        )
+
+        Locale.setDefault(Locale(currentLanguage.languageISO))
+    }
+}
+

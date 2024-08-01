@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Zdravnica" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/darker_gray
+
+        </item>
+    </style>
+
+    <style name="Theme.Zdravnica.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@android:color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo_splash_screen</item>
+        <item name="postSplashScreenTheme">@style/Theme.Zdravnica</item>
+    </style>
+</resources>

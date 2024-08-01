@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Арома А-23</string>
+    <!--    Connecting Page-->
+    <string name="connecting_with_bt_button_text">Подключить по Bluetooth</string>
+</resources>
