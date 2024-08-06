@@ -23,8 +23,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/bluetooth" />
             <option value="$PROJECT_DIR$/buildSrc" />
-            <option value="$PROJECT_DIR$/uiKit" />
-            <option value="$PROJECT_DIR$/uiKit/resources" />
+            <option value="$PROJECT_DIR$/uikit" />
+            <option value="$PROJECT_DIR$/uikit/resources" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

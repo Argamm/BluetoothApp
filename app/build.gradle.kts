@@ -55,8 +55,8 @@ android {
 
 dependencies {
 
-    implementation(project(":uiKit"))
-    implementation(project(":uiKit:resources"))
+    implementation(project(":uikit"))
+    implementation(project(":uikit:resources"))
     implementation(project(":bluetooth"))
 
     implementation(Dependencies.Android.APP_COMPACT)

@@ -12,12 +12,13 @@ class ZdravnicaApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
         val conf = resources.configuration
         conf.setLocale(Locale(LocalLanguageEnum.RUSSIAN.languageISO))
 
         startKoin {
             androidLogger()
-            androidContext(createConfigurationContext(conf))
+            androidContext(this@ZdravnicaApp)
             modules(appKoinModules)
         }
     }

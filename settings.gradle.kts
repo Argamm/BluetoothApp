@@ -1,14 +1,8 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
-        mavenCentral()
         gradlePluginPortal()
+        mavenCentral()
+        google()
     }
 }
 dependencyResolutionManagement {
@@ -21,6 +15,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Арома А-23"
 include(":app")
-include(":uiKit")
-include(":uiKit:resources")
+include(":uikit")
+include(":uikit:resources")
 include(":bluetooth")
