@@ -30,15 +30,11 @@ fun ConnectingPageScreen(
 
     val viewState by viewModel.container.stateFlow.collectAsStateWithLifecycle()
 
-
-
-
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is ConnectingPageSideEffect.OnShowAllDevicesDialog -> onShowAllDevicesDialog?.invoke()
         }
     }
-
 
     Box(modifier = modifier) {
 
@@ -67,4 +63,3 @@ fun ConnectingPageScreen(
         }
     }
 }
-

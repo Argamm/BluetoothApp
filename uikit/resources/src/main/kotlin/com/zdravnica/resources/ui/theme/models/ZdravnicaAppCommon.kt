@@ -12,6 +12,7 @@ import com.zdravnica.resources.ui.theme.models.featureColors.BigChipsStateColor
 import com.zdravnica.resources.ui.theme.models.featureColors.IconButtonStateColor
 import com.zdravnica.resources.ui.theme.models.featureColors.PrimaryIconButtonStateColor
 import com.zdravnica.resources.ui.theme.models.featureColors.SnackBarStateColor
+import com.zdravnica.resources.ui.theme.models.featureColors.SwitchStateColor
 import com.zdravnica.resources.ui.theme.models.featureColors.TagsVariantColors
 import com.zdravnica.resources.ui.theme.models.featureColors.TextButtonStateColor
 
@@ -93,7 +94,9 @@ data class ZdravnicaAppColor(
     val warning700: Color,
     val warning800: Color,
     val warning900: Color,
-    val warning1000: Color
+    val warning1000: Color,
+    val borderBigCard: Color,
+
 )
 
 @Immutable
@@ -106,7 +109,9 @@ data class CurrentColor(
     val textButtonStateColor: TextButtonStateColor,
     val tagsVariantColors: TagsVariantColors,
     val bigChipsStateColor: BigChipsStateColor,
-    val snackBarStateColor: SnackBarStateColor
+    val snackBarStateColor: SnackBarStateColor,
+    val timeAndTemperatureColor: List<Color>,
+    val switchStateColor: SwitchStateColor,
 )
 
 @Immutable
@@ -154,31 +159,39 @@ data class ZdravnicaAppRoundedCornerShape(
     val shapeR12: RoundedCornerShape,
     val shapeR14: RoundedCornerShape,
     val shapeR16: RoundedCornerShape,
+    val shapeR20: RoundedCornerShape,
     val shapeR24: RoundedCornerShape
 )
 
 @Immutable
 data class ZdravnicaAppDimens(
     val size1: Dp,
+    val size2: Dp,
     val size3: Dp,
     val size4: Dp,
     val size8: Dp,
     val size12: Dp,
     val size14: Dp,
+    val size15: Dp,
     val size16: Dp,
     val size18: Dp,
     val size20: Dp,
     val size24: Dp,
+    val size27: Dp,
+    val size30: Dp,
+    val size35: Dp,
     val size36: Dp,
     val size44: Dp,
     val size48: Dp,
     val size56: Dp,
+    val size60: Dp,
     val size82: Dp,
     val size120: Dp,
     val size140: Dp,
     val size198: Dp,
     val size204: Dp,
-    val size250: Dp
+    val size250: Dp,
+    val size1500: Dp,
 )
 
 object ZdravnicaAppTheme {

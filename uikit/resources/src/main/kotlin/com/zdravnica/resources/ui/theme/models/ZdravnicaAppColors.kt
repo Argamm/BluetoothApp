@@ -8,6 +8,7 @@ import com.zdravnica.resources.ui.theme.models.featureColors.PrimaryButtonState
 import com.zdravnica.resources.ui.theme.models.featureColors.PrimaryIconButtonStateColor
 import com.zdravnica.resources.ui.theme.models.featureColors.SecondaryButtonState
 import com.zdravnica.resources.ui.theme.models.featureColors.SnackBarStateColor
+import com.zdravnica.resources.ui.theme.models.featureColors.SwitchStateColor
 import com.zdravnica.resources.ui.theme.models.featureColors.TagsVariantColors
 import com.zdravnica.resources.ui.theme.models.featureColors.TertiaryButtonState
 import com.zdravnica.resources.ui.theme.models.featureColors.TextButtonStateColor
@@ -90,7 +91,9 @@ val appColorFigma = ZdravnicaAppColor(
     warning700 = Color(0xFFFDCBA7),
     warning800 = Color(0xFFFDE0CA),
     warning900 = Color(0xFFFEEADC),
-    warning1000 = Color(0xFFFEF5ED)
+    warning1000 = Color(0xFFFEF5ED),
+    borderBigCard = Color(0xFFE9E9E9),
+
 )
 
 val BaseDarkPalette = CurrentColor(
@@ -211,7 +214,21 @@ val BaseDarkPalette = CurrentColor(
         warningContentColor = appColorFigma.white,
         errorBackgroundColor = appColorFigma.error500,
         errorContentColor = appColorFigma.white
-    )
+    ),
+    timeAndTemperatureColor = listOf(
+        Color(0xFF666666),
+        Color(0xFF000000),
+    ),
+    switchStateColor = SwitchStateColor(
+        switchBorderColor = listOf(
+            Color(0xFFE9E9E9),
+            Color(0xFFFFFFFF),
+        ),
+        switchTrackColor = listOf(
+            Color(0xFFD1986F),
+            Color(0xFF855E42),
+        )
+    ),
 )
 
 val BaseLightPalette = CurrentColor(
@@ -332,5 +349,19 @@ val BaseLightPalette = CurrentColor(
         warningContentColor = appColorFigma.white,
         errorBackgroundColor = appColorFigma.error500,
         errorContentColor = appColorFigma.white
-    )
+    ),
+    timeAndTemperatureColor = listOf(
+        Color(0xFF666666),
+        Color(0xFF000000),
+    ),
+    switchStateColor = SwitchStateColor(
+        switchBorderColor = listOf(
+            Color(0xFFE9E9E9),
+            Color(0xFFFFFFFF),
+        ),
+        switchTrackColor = listOf(
+            Color(0xFFD1986F),
+            Color(0xFF855E42),
+        )
+    ),
 )

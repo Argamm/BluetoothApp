@@ -8,5 +8,6 @@ val shapes = ZdravnicaAppRoundedCornerShape(
     shapeR12 = RoundedCornerShape(12.dp),
     shapeR14 = RoundedCornerShape(14.dp),
     shapeR16 = RoundedCornerShape(16.dp),
-    shapeR24 = RoundedCornerShape(24.dp)
+    shapeR20 = RoundedCornerShape(20.dp),
+    shapeR24 = RoundedCornerShape(24.dp),
 )

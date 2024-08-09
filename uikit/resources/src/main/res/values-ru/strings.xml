@@ -3,4 +3,36 @@
     <string name="app_name">Арома А-23</string>
     <!--    Connecting Page-->
     <string name="connecting_with_bt_button_text">Подключить по Bluetooth</string>
+
+    <!--    SelectProduct Page start-->
+    <string name="select_product_infrared_radiation">Инфракрасное излучение</string>
+    <string name="select_product_warming_up">Глубокий прогрев спины</string>
+    <string name="select_product_temperature">Температура</string>
+    <string name="select_product_duration">Продолжительность</string>
+    <string name="select_product_procedure">Процедура</string>
+    <string name="select_product_skin">Кожа</string>
+    <string name="select_product_skin_description">Воспаленная и раздраженная кожаВоспаленная и раздраженная кожаВоспаленная и раздраженная кожаВоспаленная и раздраженная кожаВоспаленная и раздраженная кожаВоспаленная и раздраженная кожа, псориаз, нейродермит.</string>
+    <string name="select_product_lungs">Органы дыхания</string>
+    <string name="select_product_lungs_description">Хронические фарингиты, ларингиты, бронхиты.</string>
+    <string name="select_product_heart">Сердечно-сосудистая система</string>
+    <string name="select_product_heart_description">Нормальзация артериального давления.</string>
+    <string name="select_product_pancreas">Эндокринная система</string>
+    <string name="select_product_pancreas_description">Ожирение, целлюлит</string>
+    <string name="select_product_intestine">Пищеварительная система</string>
+    <string name="select_product_intestine_description">При нарушении моторной и секреторной функции,</string>
+    <string name="select_product_uterus">Мочеполовая система</string>
+    <string name="select_product_uterus_description">Цистит, простатит, повышение потенции</string>
+    <string name="select_product_brain">Нервная системаc</string>
+    <string name="select_product_brain_description">Стресс, нарушение сна, переутомления.</string>
+    <string name="select_product_stomach">Обмен веществ</string>
+    <string name="select_product_stomach_description">Коррекция веса</string>
+    <string name="select_product_knee_joint">Мышцы, связки, суставы</string>
+    <string name="select_product_knee_joint_description">Постравматические артрозы и невропатии, контрактуры, остеохондроз, радикулит.</string>
+    <string name="select_product_nose">Имунные процессы</string>
+    <string name="select_product_nose_description">Повышение иммунитета организма</string>
+    <string name="select_product_custom_mix">Индивидуальная смесь</string>
+    <string name="select_product_custom_mix_description">Соответствующий текст</string>
+    <string name="select_product_without_balm">Без бальзама</string>
+    <string name="select_product_without_balm_description">Соответствующий текст</string>
+    <!--    SelectProduct Page end-->
 </resources>

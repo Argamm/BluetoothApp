@@ -67,6 +67,7 @@ fun YTBaseDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
+                        .padding(top = ZdravnicaAppTheme.dimens.size30)
                 ) {
                     title?.let {
                         Box(

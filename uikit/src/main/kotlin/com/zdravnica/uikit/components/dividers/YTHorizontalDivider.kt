@@ -1,6 +1,7 @@
 package com.zdravnica.uikit.components.dividers
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ fun YTHorizontalDivider(
     HorizontalDivider(
         modifier = modifier
             .fillMaxWidth()
+            .padding(start = ZdravnicaAppTheme.dimens.size12, end = ZdravnicaAppTheme.dimens.size12)
             .requiredHeight(height),
         color = dividerColor
     )

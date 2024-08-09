@@ -8,5 +8,5 @@ data class BigChipsStateModel(
     val isEnabled: Boolean,
     val title: String,
     val description: String,
-    @DrawableRes val iconRes: Int
+    @DrawableRes val iconRes: Int? = null
 )

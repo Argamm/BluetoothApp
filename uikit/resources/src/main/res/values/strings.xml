@@ -3,4 +3,37 @@
 
     <!--    Connecting Page-->
     <string name="connecting_with_bt_button_text">Connect via Bluetooth</string>
+
+    <!--    SelectProduct Page start-->
+    <string name="select_product_infrared_radiation">Infrared radiation</string>
+    <string name="select_product_warming_up">Deep warming of the back</string>
+    <string name="select_product_temperature">Temperature</string>
+    <string name="select_product_duration">Duration</string>
+    <string name="select_product_procedure">Procedure</string>
+    <string name="select_product_skin">Skin</string>
+    <string name="select_product_skin_description">Inflamed and irritated skin, psoriasis, neurodermatitis.</string>
+    <string name="select_product_lungs">Respiratory system</string>
+    <string name="select_product_lungs_description">Chronic pharyngitis, laryngitis, bronchitis.</string>
+    <string name="select_product_heart">Cardiovascular system</string>
+    <string name="select_product_heart_description">Normalization of blood pressure.</string>
+    <string name="select_product_pancreas">Endocrine system</string>
+    <string name="select_product_pancreas_description">Obesity, cellulite.</string>
+    <string name="select_product_intestine">Digestive system</string>
+    <string name="select_product_intestine_description">For disorders of motor and secretory function.</string>
+    <string name="select_product_uterus">Genitourinary system</string>
+    <string name="select_product_uterus_description">Cystitis, prostatitis, increased potency.</string>
+    <string name="select_product_brain">Nervous system</string>
+    <string name="select_product_brain_description">Stress, sleep disturbances, fatigue.</string>
+    <string name="select_product_stomach">Metabolism</string>
+    <string name="select_product_stomach_description">Weight correction.</string>
+    <string name="select_product_knee_joint">Muscles, ligaments, joints</string>
+    <string name="select_product_knee_joint_description">Post-traumatic arthrosis and neuropathies, contractures, osteochondrosis, radiculitis.</string>
+    <string name="select_product_nose">Immune processes</string>
+    <string name="select_product_nose_description">Increased immunity.</string>
+    <string name="select_product_custom_mix">Custom mix</string>
+    <string name="select_product_custom_mix_description">Corresponding text.</string>
+    <string name="select_product_without_balm">Without balm</string>
+    <string name="select_product_without_balm_description">Corresponding text.</string>
+    <!--    SelectProduct Page end-->
+
 </resources>
