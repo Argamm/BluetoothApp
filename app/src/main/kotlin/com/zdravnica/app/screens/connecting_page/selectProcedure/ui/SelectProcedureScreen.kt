@@ -152,7 +152,7 @@ fun SelectProcedureScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize(),
-                state = listState // Attach the state to the LazyColumn
+                state = listState
             ) {
                 item {
                     TextWithSwitches(

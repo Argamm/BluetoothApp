@@ -177,10 +177,13 @@ data class ZdravnicaAppDimens(
     val size18: Dp,
     val size20: Dp,
     val size24: Dp,
+    val size26: Dp,
     val size27: Dp,
     val size30: Dp,
+    val size32: Dp,
     val size35: Dp,
     val size36: Dp,
+    val size40: Dp,
     val size44: Dp,
     val size48: Dp,
     val size56: Dp,
@@ -191,6 +194,7 @@ data class ZdravnicaAppDimens(
     val size198: Dp,
     val size204: Dp,
     val size250: Dp,
+    val size1000: Dp,
     val size1500: Dp,
 )
 

@@ -45,7 +45,7 @@ fun ValueAdjuster(
     }
 
     val (minValue, maxValue) = if (isMinutes) {
-        60 to 1800 // 1 minute to 30 minutes
+        0 to 1800 // 0 minute to 30 minutes
     } else {
         0 to 80 // 0° to 80°
     }
