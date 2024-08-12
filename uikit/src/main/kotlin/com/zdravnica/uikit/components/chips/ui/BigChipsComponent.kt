@@ -24,21 +24,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.resources.ui.theme.models.featureColors.BigChipsStateColor
+import com.zdravnica.uikit.BIG_CHIPS_ICON_DESCRIPTION
+import com.zdravnica.uikit.MAX_LINES_COUNT_THREE
 import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
 import com.zdravnica.uikit.components.chips.preview_params.BigChipsPreviewParams
 import com.zdravnica.uikit.extensions.compose.clickableSingle
 
 @Composable
 fun BigChipsComponent(
-    bigChipsStateModel: BigChipsStateModel,
     modifier: Modifier = Modifier,
+    bigChipsStateModel: BigChipsStateModel,
     bigChipsStateColor: BigChipsStateColor = ZdravnicaAppTheme.colors.bigChipsStateColor,
     onBigChipsSelected: (() -> Unit)? = null
 ) {
@@ -47,32 +51,33 @@ fun BigChipsComponent(
             .wrapContentSize()
             .border(
                 BorderStroke(
-                    width = 2.dp, // Define the width of the new blue border
-                    color = ZdravnicaAppTheme.colors.baseAppColor.borderBigCard // Define the color of the new blue border
+                    width = ZdravnicaAppTheme.dimens.size2,
+                    color = ZdravnicaAppTheme.colors.baseAppColor.borderBigCard
                 ),
                 shape = ZdravnicaAppTheme.roundedCornerShape.shapeR24
             )
-            .padding(1.dp) // Add padding equal to the border width to prevent overlap
+            .padding(ZdravnicaAppTheme.dimens.size1)
     ) {
         Card(
             modifier = Modifier
                 .wrapContentSize()
-                .clickable { onBigChipsSelected?.invoke() },
+                .clickable { onBigChipsSelected?.invoke() }
+                .semantics { role = androidx.compose.ui.semantics.Role.Button },
             shape = ZdravnicaAppTheme.roundedCornerShape.shapeR24,
             border = BorderStroke(
                 width = ZdravnicaAppTheme.dimens.size3,
                 brush = Brush.linearGradient(
                     bigChipsStateColor.borderStrokeGradientColors,
-                    start = androidx.compose.ui.geometry.Offset(0f, 0f), // Top
-                    end = androidx.compose.ui.geometry.Offset(0f, Float.POSITIVE_INFINITY) // Bottom
+                    start = androidx.compose.ui.geometry.Offset(0f, 0f),
+                    end = androidx.compose.ui.geometry.Offset(0f, Float.POSITIVE_INFINITY)
                 )
             ),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .height(144.dp)
-                    .width(164.dp)
+                    .height(ZdravnicaAppTheme.dimens.size144)
+                    .width(ZdravnicaAppTheme.dimens.size164)
                     .clip(ZdravnicaAppTheme.roundedCornerShape.shapeR14)
                     .background(
                         brush = Brush.linearGradient(
@@ -87,7 +92,7 @@ fun BigChipsComponent(
                 if (bigChipsStateModel.iconRes != null) {
                     Image(
                         painter = painterResource(id = bigChipsStateModel.iconRes),
-                        contentDescription = "Big chips icon",
+                        contentDescription = BIG_CHIPS_ICON_DESCRIPTION,
                         modifier = Modifier.requiredSize(ZdravnicaAppTheme.dimens.size36),
                     )
                 }
@@ -95,7 +100,7 @@ fun BigChipsComponent(
                 Spacer(modifier = Modifier.requiredHeight(ZdravnicaAppTheme.dimens.size4))
 
                 Text(
-                    text = bigChipsStateModel.title,
+                    text = stringResource(bigChipsStateModel.title),
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
@@ -104,14 +109,14 @@ fun BigChipsComponent(
                             bigChipsStateColor.enabledTitleColor
                         } else bigChipsStateColor.disabledContentColor
                     ),
-                    maxLines = 3,
+                    maxLines = MAX_LINES_COUNT_THREE,
                     overflow = TextOverflow.Ellipsis
                 )
 
                 Spacer(modifier = Modifier.requiredHeight(ZdravnicaAppTheme.dimens.size4))
 
                 Text(
-                    text = bigChipsStateModel.description,
+                    text = stringResource(bigChipsStateModel.description),
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
@@ -120,15 +125,13 @@ fun BigChipsComponent(
                             bigChipsStateColor.enabledDescriptionColor
                         } else bigChipsStateColor.disabledContentColor
                     ),
-                    maxLines = 3,
+                    maxLines = MAX_LINES_COUNT_THREE,
                     overflow = TextOverflow.Ellipsis
                 )
             }
         }
     }
 }
-
-
 
 @Preview
 @Composable

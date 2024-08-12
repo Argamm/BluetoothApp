@@ -20,18 +20,17 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.resources.ui.theme.models.featureColors.TextButtonStateColor
+import com.zdravnica.uikit.MAX_LINES_COUNT_THREE
 import com.zdravnica.uikit.components.buttons.models.TextButtonModel
 import com.zdravnica.uikit.components.buttons.models.TextButtonType
 import com.zdravnica.uikit.components.buttons.preview_params.TextButtonPreviewParams
 
 @Composable
 fun TextButton(
-    textButtonModel: TextButtonModel,
     modifier: Modifier = Modifier,
+    textButtonModel: TextButtonModel,
     textButtonStateColors: TextButtonStateColor = ZdravnicaAppTheme.colors.textButtonStateColor
 ) {
-
-
     val isEnabled by rememberSaveable(textButtonModel.isEnabled) {
         mutableStateOf(
             textButtonModel.isEnabled
@@ -112,7 +111,7 @@ fun TextButton(
             text = textButtonModel.buttonText,
             style = textButtonModel.textStyle
                 ?: ZdravnicaAppTheme.typography.bodyMediumSemi,
-            maxLines = 1,
+            maxLines = MAX_LINES_COUNT_THREE,
             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
         )
     }

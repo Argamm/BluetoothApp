@@ -28,18 +28,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.ANIMATION_DURATION_100
 import com.zdravnica.uikit.resources.R
 
 @Composable
 fun TextWithSwitches(
+    modifier: Modifier = Modifier,
     switchState: Boolean,
     onSwitchChange: (Boolean) -> Unit
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(ZdravnicaAppTheme.dimens.size16),
         verticalAlignment = Alignment.CenterVertically,
@@ -81,7 +82,7 @@ fun CustomSwitch(
             ZdravnicaAppTheme.dimens.size27
         else
             ZdravnicaAppTheme.dimens.size3,
-        animationSpec = tween(durationMillis = 100),
+        animationSpec = tween(durationMillis = ANIMATION_DURATION_100),
         label = ""
     )
     val interactionSource = remember { MutableInteractionSource() }
@@ -96,11 +97,9 @@ fun CustomSwitch(
             .padding(ZdravnicaAppTheme.dimens.size4)
 
     ) {
-        // Track
         Box(
             modifier = Modifier
                 .fillMaxSize()
-
                 .background(
                     brush = Brush.linearGradient(
                         colors = if (switchState)
@@ -121,18 +120,17 @@ fun CustomSwitch(
                             Float.POSITIVE_INFINITY
                         )
                     ),
-                    width = 3.dp,
-                    shape = RoundedCornerShape(15.dp)
+                    width = ZdravnicaAppTheme.dimens.size3,
+                    shape = RoundedCornerShape(ZdravnicaAppTheme.dimens.size15)
                 )
 
         )
 
-        // Thumb
         Box(
             modifier = Modifier
                 .offset(x = thumbOffset)
-                .padding(top = 2.dp)
-                .size(22.dp)
+                .padding(top = ZdravnicaAppTheme.dimens.size2)
+                .size(ZdravnicaAppTheme.dimens.size22)
                 .background(
                     brush = Brush.linearGradient(
                         colors = ZdravnicaAppTheme.colors.switchStateColor.switchBorderColor,
@@ -147,7 +145,7 @@ fun CustomSwitch(
                         end = androidx.compose.ui.geometry.Offset(0f, 0f),
                         start = androidx.compose.ui.geometry.Offset(0f, Float.POSITIVE_INFINITY)
                     ),
-                    width = 2.dp,
+                    width = ZdravnicaAppTheme.dimens.size2,
                     shape = CircleShape
                 )
         )
@@ -161,4 +159,3 @@ fun PreviewTextWithSwitches() {
         TextWithSwitches(switchState = true) {}
     }
 }
-

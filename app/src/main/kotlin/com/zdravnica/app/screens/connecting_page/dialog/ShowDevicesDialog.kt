@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.connecting_page.models.DeviceUIModel
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.BLUETOOTH_ICON_DESCRIPTION
 import com.zdravnica.uikit.components.dialogs.YTBaseDialog
 import com.zdravnica.uikit.components.dividers.YTHorizontalDivider
 import com.zdravnica.uikit.resources.R
@@ -61,7 +62,7 @@ fun ShowDevicesDialog(
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_bluetooth),
-                        contentDescription = "Icon bluetooth",
+                        contentDescription = BLUETOOTH_ICON_DESCRIPTION,
                         modifier = Modifier.requiredSizeIn(
                             minHeight = ZdravnicaAppTheme.dimens.size120,
                             minWidth = ZdravnicaAppTheme.dimens.size120,

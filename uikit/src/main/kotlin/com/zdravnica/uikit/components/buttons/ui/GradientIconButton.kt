@@ -24,18 +24,20 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.GRADIENT_ICON_BUTTON_INCREASE_DESCRIPTION
 
 @Composable
 fun GradientIconButton(
-    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isDisabled: Boolean,
     icon: ImageVector,
     contentDescription: String,
-    isDisabled: Boolean,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -55,7 +57,8 @@ fun GradientIconButton(
                 indication = rememberRipple(bounded = true),
                 interactionSource = remember { MutableInteractionSource() }
             )
-            .padding(ZdravnicaAppTheme.dimens.size4),
+            .padding(ZdravnicaAppTheme.dimens.size4)
+            .semantics { role = androidx.compose.ui.semantics.Role.Button },
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -85,7 +88,7 @@ fun GradientIconButton(
                         colors = ZdravnicaAppTheme.colors.bigChipsStateColor.borderStrokeGradientColors,
                     )
                 )
-                .padding(4.dp),
+                .padding(ZdravnicaAppTheme.dimens.size4),
             contentAlignment = Alignment.Center
         ) {
             Box(
@@ -116,12 +119,12 @@ fun GradientIconButton(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewValueAdjuster() {
+fun PreviewTemperatureOrDurationAdjuster() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         GradientIconButton(
             onClick = { },
             icon = Icons.Default.Add,
-            contentDescription = "Increase",
+            contentDescription = GRADIENT_ICON_BUTTON_INCREASE_DESCRIPTION,
             isDisabled = false,
             modifier = Modifier.padding(ZdravnicaAppTheme.dimens.size44)
         )

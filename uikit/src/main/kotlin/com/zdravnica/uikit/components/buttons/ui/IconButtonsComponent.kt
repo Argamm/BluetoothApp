@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.resources.ui.theme.models.featureColors.IconButtonStateColor
@@ -37,8 +36,8 @@ import com.zdravnica.uikit.components.buttons.models.IconButtonType
 
 @Composable
 fun IconButtonsComponent(
-    iconButtonModel: IconButtonModel,
     modifier: Modifier = Modifier,
+    iconButtonModel: IconButtonModel,
     stateColor: IconButtonStateColor = ZdravnicaAppTheme.colors.iconButtonStateColor
 ) {
 
@@ -103,10 +102,10 @@ fun IconButtonsComponent(
 
     Box(
         modifier = modifier
-            .requiredSize(48.dp)
+            .requiredSize(ZdravnicaAppTheme.dimens.size48)
             .shadow(
                 shape = CircleShape,
-                elevation = 1.dp,
+                elevation = ZdravnicaAppTheme.dimens.size1,
                 clip = true,
                 ambientColor = Color(0x0F323247),
                 spotColor = Color(0x14323247)

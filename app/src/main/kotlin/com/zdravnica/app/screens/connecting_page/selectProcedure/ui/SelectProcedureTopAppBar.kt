@@ -11,21 +11,26 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.zdravnica.uikit.base_type.FourIconState
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.TOP_APP_BAR_MENU_ICON_DESCRIPTION
+import com.zdravnica.uikit.TOP_APP_BAR_TEMPERATURE_DESCRIPTION
+import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.fourItemIndicator.IndicatorFourIcons
 
 @Composable
-fun SelectProductTopAppBar(
+fun SelectProcedureTopAppBar(
+    modifier: Modifier = Modifier,
     temperature: Int,
     fourSwitchState: Boolean,
     onRightIconClick: () -> Unit
@@ -35,24 +40,33 @@ fun SelectProductTopAppBar(
     TopAppBar(
         title = {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_temp),
-                    contentDescription = "Left Icon",
+                    contentDescription = TOP_APP_BAR_TEMPERATURE_DESCRIPTION,
                     tint = Color.Black
                 )
-                Text(text = "$temperature°", color = Color.Black)
+                Text(
+                    text = stringResource(
+                        com.zdravnica.uikit.resources.R.string.select_product_temperature_value,
+                        temperature
+                    ), color = Color.Black
+                )
                 Spacer(modifier = Modifier.weight(1f))
 
-                IndicatorFourIcons(
-                    listOf(
-                        FourIconState.ENABLED,
-                        FourIconState.ENABLED,
-                        FourIconState.ENABLED,
-                        if (fourSwitchState) FourIconState.ENABLED else FourIconState.DISABLED
+                val iconStates = remember(fourSwitchState) {//this data must get from bluetooth
+                    mutableStateListOf(
+                        IconState.ENABLED,
+                        IconState.ENABLED,
+                        IconState.ENABLED,
+                        if (fourSwitchState) IconState.ENABLED else IconState.DISABLED
                     )
+                }
+
+                IndicatorFourIcons(
+                    iconStates
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -66,7 +80,7 @@ fun SelectProductTopAppBar(
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_menu),
-                        contentDescription = "Right Icon",
+                        contentDescription = TOP_APP_BAR_MENU_ICON_DESCRIPTION,
                         tint = Color.Black,
                     )
                 }
@@ -81,9 +95,9 @@ fun SelectProductTopAppBar(
 @Composable
 fun PreviewCustomTopAppBar() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        SelectProductTopAppBar(
-            54,
-            true
+        SelectProcedureTopAppBar(
+            temperature = 54,
+            fourSwitchState = true
         ) {}
     }
 }

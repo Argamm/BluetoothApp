@@ -29,13 +29,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.resources.ui.theme.models.featureColors.PrimaryIconButtonStateColor
+import com.zdravnica.uikit.MAX_LINES_COUNT_ONE
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
 import com.zdravnica.uikit.preview.AppPreview
 
 @Composable
 fun PrimaryIconByTextButton(
-    model: BigButtonModel,
     modifier: Modifier = Modifier,
+    model: BigButtonModel,
     stateColor: PrimaryIconButtonStateColor = ZdravnicaAppTheme.colors.primaryIconButtonStateColor,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -101,7 +102,7 @@ fun PrimaryIconByTextButton(
                         else -> stateColor.defaultContentColor
                     }
                 ),
-                maxLines = 1,
+                maxLines = MAX_LINES_COUNT_ONE,
                 overflow = TextOverflow.Ellipsis
             )
         }

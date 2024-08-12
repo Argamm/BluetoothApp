@@ -17,7 +17,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.app.screens.connecting_page.selectProcedure.models.SelectProcedureViewState
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
@@ -25,15 +24,14 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.components.buttons.models.IconButtonModel
 import com.zdravnica.uikit.components.buttons.models.IconButtonType
 import com.zdravnica.uikit.components.buttons.ui.IconButtonsComponent
-import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
+import com.zdravnica.uikit.components.chips.models.getChipDataList
 import com.zdravnica.uikit.components.dividers.YTHorizontalDivider
-import com.zdravnica.uikit.resources.R
 import kotlinx.coroutines.launch
 
 @Composable
 fun SelectProcedureScreen(
-    viewState: SelectProcedureViewState,
     modifier: Modifier = Modifier,
+    viewState: SelectProcedureViewState,
 ) {
     var fourSwitchState by remember { mutableStateOf(false) }
     var isButtonVisible by remember { mutableStateOf(true) }
@@ -41,80 +39,8 @@ fun SelectProcedureScreen(
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    val sampleChips = listOf(
-        BigChipsStateModel(
-            isEnabled = true,
-            title = stringResource(R.string.select_product_skin),
-            description = stringResource(R.string.select_product_skin_description),
-            iconRes = R.mipmap.ic_skin
-        ),
-        BigChipsStateModel(
-            isEnabled = true,
-            title = stringResource(R.string.select_product_lungs),
-            description = stringResource(R.string.select_product_lungs_description),
-            iconRes = R.mipmap.ic_lungs
-        ),
-        BigChipsStateModel(
-            isEnabled = true,
-            title = stringResource(R.string.select_product_heart),
-            description = stringResource(R.string.select_product_heart_description),
-            iconRes = R.mipmap.ic_heart
-        ),
-        BigChipsStateModel(
-            isEnabled = true,
-            title = stringResource(R.string.select_product_pancreas),
-            description = stringResource(R.string.select_product_pancreas_description),
-            iconRes = R.mipmap.ic_pancreas
-        ),
-        BigChipsStateModel(
-            isEnabled = true,
-            title = stringResource(R.string.select_product_intestine),
-            description = stringResource(R.string.select_product_intestine_description),
-            iconRes = R.mipmap.ic_intestine
-        ),
-        BigChipsStateModel(
-            isEnabled = true,
-            title = stringResource(R.string.select_product_uterus),
-            description = stringResource(R.string.select_product_uterus_description),
-            iconRes = R.mipmap.ic_uterus
-        ),
-        BigChipsStateModel(
-            isEnabled = true,
-            title = stringResource(R.string.select_product_brain),
-            description = stringResource(R.string.select_product_brain_description),
-            iconRes = R.mipmap.ic_brain
-        ),
-        BigChipsStateModel(
-            isEnabled = true,
-            title = stringResource(R.string.select_product_stomach),
-            description = stringResource(R.string.select_product_stomach_description),
-            iconRes = R.mipmap.ic_stomach
-        ),
-        BigChipsStateModel(
-            isEnabled = true,
-            title = stringResource(R.string.select_product_knee_joint),
-            description = stringResource(R.string.select_product_knee_joint_description),
-            iconRes = R.mipmap.ic_knee_joint
-        ),
-        BigChipsStateModel(
-            isEnabled = false,
-            title = stringResource(R.string.select_product_nose),
-            description = stringResource(R.string.select_product_nose_description),
-            iconRes = R.mipmap.ic_nose
-        ),
-        BigChipsStateModel(
-            isEnabled = true,
-            title = stringResource(R.string.select_product_custom_mix),
-            description = stringResource(R.string.select_product_custom_mix_description),
-            iconRes = null
-        ),
-        BigChipsStateModel(
-            isEnabled = true,
-            title = stringResource(R.string.select_product_without_balm),
-            description = stringResource(R.string.select_product_without_balm_description),
-            iconRes = null
-        )
-    )
+    val bigChipTypes = getChipDataList()
+    val sampleChips = bigChipTypes.map { it.chipData }
 
     LaunchedEffect(scrollToEnd) {
         if (scrollToEnd) {
@@ -135,9 +61,9 @@ fun SelectProcedureScreen(
 
     Scaffold(
         topBar = {
-            SelectProductTopAppBar(
+            SelectProcedureTopAppBar(
                 temperature = viewState.temperature,
-                fourSwitchState,
+                fourSwitchState = fourSwitchState,
                 onRightIconClick = {
                     //The right item click
                 })
@@ -162,9 +88,9 @@ fun SelectProcedureScreen(
                         }
                     )
                     YTHorizontalDivider()
-                    ValueAdjuster(isMinutes = false)
+                    TemperatureOrDurationAdjuster(isMinutes = false)
                     YTHorizontalDivider()
-                    ValueAdjuster(isMinutes = true)
+                    TemperatureOrDurationAdjuster(isMinutes = true)
                     YTHorizontalDivider()
                     ChooseProcedureGridLayout(
                         bigChipsList = sampleChips,
@@ -201,6 +127,6 @@ fun SelectProcedureScreen(
 @Composable
 fun PreviewSelectProcedureScreen() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        SelectProcedureScreen(SelectProcedureViewState(false, 50))
+        SelectProcedureScreen(modifier = Modifier.fillMaxSize(), viewState = SelectProcedureViewState(false, 50))
     }
 }

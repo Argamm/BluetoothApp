@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,10 +18,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.base_type.FourIconState
+import com.zdravnica.uikit.base_type.IconState
 
 @Composable
-fun IndicatorFourIcons(iconStates: List<FourIconState>) {
+fun IndicatorFourIcons(iconStates: SnapshotStateList<IconState>) {
     Row(
         modifier = Modifier
             .background(
@@ -54,12 +55,12 @@ fun IconInCenter(
     iconResId: Int,
     startPadding: Dp = 0.dp,
     endPadding: Dp = 0.dp,
-    iconState: FourIconState,
+    iconState: IconState,
 ) {
 
     val tintColor = when (iconState) {
-        FourIconState.ENABLED -> Color.White
-        FourIconState.DISABLED -> ZdravnicaAppTheme.colors.baseAppColor.primary400
+        IconState.ENABLED -> Color.White
+        IconState.DISABLED -> ZdravnicaAppTheme.colors.baseAppColor.primary400
     }
 
     Box(

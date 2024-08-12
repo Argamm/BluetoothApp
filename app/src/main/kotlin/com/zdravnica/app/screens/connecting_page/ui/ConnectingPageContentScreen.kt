@@ -25,6 +25,7 @@ import androidx.compose.ui.res.vectorResource
 import com.zdravnica.app.screens.connecting_page.models.ConnectingPageViewState
 import com.zdravnica.app.utils.getDimensionBasedOnDeviceType
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.APP_LOGO_DESCRIPTION
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
 import com.zdravnica.uikit.components.buttons.ui.BigButton
 import com.zdravnica.uikit.resources.R
@@ -53,7 +54,7 @@ fun ConnectingPageContentScreen(
     ) {
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_logo_splash_screen),
-            contentDescription = "App logo",
+            contentDescription = APP_LOGO_DESCRIPTION,
             modifier = Modifier
                 .requiredSize(
                     getDimensionBasedOnDeviceType(

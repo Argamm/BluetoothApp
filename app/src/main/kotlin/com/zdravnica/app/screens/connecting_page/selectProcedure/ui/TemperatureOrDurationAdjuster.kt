@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -17,46 +14,36 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.GRADIENT_ICON_BUTTON_DECREASE_DESCRIPTION
+import com.zdravnica.uikit.GRADIENT_ICON_BUTTON_INCREASE_DESCRIPTION
 import com.zdravnica.uikit.components.buttons.ui.GradientIconButton
+import com.zdravnica.uikit.extensions.compose.formatAsValue
+import com.zdravnica.uikit.extensions.compose.getValueRange
 import com.zdravnica.uikit.resources.R
 
 @Composable
-fun ValueAdjuster(
+fun TemperatureOrDurationAdjuster(
+    modifier: Modifier = Modifier,
     isMinutes: Boolean = false
 ) {
     var value by remember { mutableIntStateOf(0) }
-
-    fun formatValue(value: Int): String {
-        return if (isMinutes) {
-            val minutes = (value / 60).toString().padStart(2, '0')
-            val seconds = (value % 60).toString().padStart(2, '0')
-            "$minutes:$seconds"
-        } else {
-            "$value°"
-        }
-    }
-
-    val (minValue, maxValue) = if (isMinutes) {
-        0 to 1800 // 0 minute to 30 minutes
-    } else {
-        0 to 80 // 0° to 80°
-    }
-
+    val (minValue, maxValue) = getValueRange(isMinutes)
     val isMinusDisabled = value <= minValue
     val isPlusDisabled = value >= maxValue
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(ZdravnicaAppTheme.dimens.size16),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -76,11 +63,16 @@ fun ValueAdjuster(
             modifier = Modifier.fillMaxWidth()
         ) {
             GradientIconButton(
-                onClick = { if (!isMinusDisabled) value -= if (isMinutes) 60 else 1 },
-                icon = Icons.Default.Remove,
-                contentDescription = "Decrease",
+                modifier = Modifier.padding(start = ZdravnicaAppTheme.dimens.size44),
                 isDisabled = isMinusDisabled,
-                modifier = Modifier.padding(start = ZdravnicaAppTheme.dimens.size44)
+                icon = ImageVector.vectorResource(id = R.drawable.ic_minus),
+                contentDescription = GRADIENT_ICON_BUTTON_DECREASE_DESCRIPTION,
+                onClick = {
+                    if (!isMinusDisabled) value -= if (isMinutes)
+                        DURATION_INCREASE_DECREASE_VALUE
+                    else
+                        TEMPERATURE_INCREASE_DECREASE_VALUE
+                }
             )
 
             Text(
@@ -92,7 +84,7 @@ fun ValueAdjuster(
                             )
                         )
                     ) {
-                        append(formatValue(value))
+                        append(value.formatAsValue(isMinutes))
                     }
                 },
                 style = ZdravnicaAppTheme.typography.headH2,
@@ -100,31 +92,36 @@ fun ValueAdjuster(
             )
 
             GradientIconButton(
-                onClick = { if (!isPlusDisabled) value += if (isMinutes) 60 else 1 },
-                icon = Icons.Default.Add,
-                contentDescription = "Increase",
+                modifier = Modifier.padding(end = ZdravnicaAppTheme.dimens.size44),
                 isDisabled = isPlusDisabled,
-                modifier = Modifier.padding(end = ZdravnicaAppTheme.dimens.size44)
+                icon = ImageVector.vectorResource(id = R.drawable.ic_plus),
+                contentDescription = GRADIENT_ICON_BUTTON_INCREASE_DESCRIPTION,
+                onClick = {
+                    if (!isPlusDisabled) value += if (isMinutes)
+                        DURATION_INCREASE_DECREASE_VALUE
+                    else
+                        TEMPERATURE_INCREASE_DECREASE_VALUE
+                }
             )
         }
     }
 }
 
+const val DURATION_INCREASE_DECREASE_VALUE = 60
+const val TEMPERATURE_INCREASE_DECREASE_VALUE = 1
+
 @Preview(showBackground = true)
 @Composable
-fun PreviewValueAdjuster() {
+fun PreviewTemperatureAdjuster() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        ValueAdjuster(isMinutes = false) // Preview Celsius degrees
+        TemperatureOrDurationAdjuster(isMinutes = false)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewValueAdjusterMinutes() {
+fun PreviewDurationAdjuster() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        ValueAdjuster(isMinutes = true) // Preview minutes
+        TemperatureOrDurationAdjuster(isMinutes = true)
     }
 }
-
-
-

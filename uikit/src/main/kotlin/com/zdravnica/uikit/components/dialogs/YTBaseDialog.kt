@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
@@ -114,7 +113,7 @@ fun YTBaseDialog(
 private fun YTBaseDialogRenterPreview() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         YTBaseDialog(
-            content = { Box(modifier = Modifier.width(200.dp)) }
+            content = { Box(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size200)) }
         )
     }
 }

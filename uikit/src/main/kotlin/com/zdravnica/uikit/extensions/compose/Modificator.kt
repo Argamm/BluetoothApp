@@ -40,3 +40,27 @@ fun Modifier.clickableSingle(
         )
     )
 }
+
+fun Int.formatAsValue(isMinutes: Boolean): String {
+    return if (isMinutes) {
+        val minutes = (this / NUMBER_FOR_COUNT_60).toString().padStart(NUMBER_FOR_COUNT_2, '0')
+        val seconds = (this % NUMBER_FOR_COUNT_60).toString().padStart(NUMBER_FOR_COUNT_2, '0')
+        "$minutes:$seconds"
+    } else {
+        "$this°"
+    }
+}
+
+fun getValueRange(isMinutes: Boolean): Pair<Int, Int> {
+    return if (isMinutes) {
+        NUMBER_FOR_COUNT_0 to NUMBER_FOR_COUNT_1800
+    } else {
+        NUMBER_FOR_COUNT_0 to NUMBER_FOR_COUNT_80
+    }
+}
+
+const val NUMBER_FOR_COUNT_60 = 60
+const val NUMBER_FOR_COUNT_2 = 2
+const val NUMBER_FOR_COUNT_1800 = 1800
+const val NUMBER_FOR_COUNT_80 = 80
+const val NUMBER_FOR_COUNT_0 = 0

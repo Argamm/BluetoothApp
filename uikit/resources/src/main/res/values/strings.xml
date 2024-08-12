@@ -34,6 +34,7 @@
     <string name="select_product_custom_mix_description">Corresponding text.</string>
     <string name="select_product_without_balm">Without balm</string>
     <string name="select_product_without_balm_description">Corresponding text.</string>
+    <string name="select_product_temperature_value" translatable="false">%1$s°</string>
     <!--    SelectProduct Page end-->
 
 </resources>
