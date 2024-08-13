@@ -27,6 +27,7 @@ import com.zdravnica.app.screens.connecting_page.models.DeviceUIModel
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.BLUETOOTH_ICON_DESCRIPTION
+import com.zdravnica.uikit.MAX_LINES_COUNT_ONE
 import com.zdravnica.uikit.components.dialogs.YTBaseDialog
 import com.zdravnica.uikit.components.dividers.YTHorizontalDivider
 import com.zdravnica.uikit.resources.R
@@ -45,7 +46,6 @@ fun ShowDevicesDialog(
     LaunchedEffect(viewModel) {
         viewModel.observePairedDevices()
     }
-
 
     YTBaseDialog(
         modifier = modifier
@@ -88,7 +88,7 @@ fun ShowDevicesDialog(
                                     style = ZdravnicaAppTheme.typography.bodyNormalSemi.copy(
                                         color = ZdravnicaAppTheme.colors.baseAppColor.info500
                                     ),
-                                    maxLines = 1,
+                                    maxLines = MAX_LINES_COUNT_ONE,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }

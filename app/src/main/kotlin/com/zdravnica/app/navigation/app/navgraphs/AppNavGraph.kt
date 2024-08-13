@@ -10,4 +10,7 @@ sealed class AppNavGraph(val route: String) {
 
     data object BluetoothDevicesDialog : AppNavGraph(route = AppDestinationsRouteNames.SHOW_DEVICE_DIALOG)
     data object Main : AppNavGraph(route = AppDestinationsRouteNames.MAIN)
+
+    data object SelectProcedureScreen : AppNavGraph(route = AppDestinationsRouteNames.SELECT_PROCEDURE_SCREEN)
+    data object ManuScreen : AppNavGraph(route = AppDestinationsRouteNames.MENU_SCREEN)
 }

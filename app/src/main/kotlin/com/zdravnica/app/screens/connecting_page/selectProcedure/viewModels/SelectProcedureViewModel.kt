@@ -2,6 +2,7 @@ package com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels
 
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.screens.connecting_page.selectProcedure.models.SelectProcedureViewState
+import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
 import org.orbitmvi.orbit.viewmodel.container
 
 class SelectProcedureViewModel() : BaseViewModel<SelectProcedureViewState, SelectProcedureSideEffect>() {
@@ -10,4 +11,12 @@ class SelectProcedureViewModel() : BaseViewModel<SelectProcedureViewState, Selec
         container<SelectProcedureViewState, SelectProcedureSideEffect>(
             SelectProcedureViewState()
         )
+
+    fun navigateToMenuScreen(){
+        postSideEffect(SelectProcedureSideEffect.OnNavigateToMenuScreen)
+    }
+
+    fun onProcedureCardClick(bigChipsStateModel: BigChipsStateModel){
+        postSideEffect(SelectProcedureSideEffect.OnProcedureCardClick(bigChipsStateModel))
+    }
 }

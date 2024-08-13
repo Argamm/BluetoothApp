@@ -1,9 +1,13 @@
 package com.zdravnica.app.di
 
+import com.zdravnica.app.screens.connecting_page.menuScreen.viewModels.MenuScreenViewModel
+import com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels.SelectProcedureViewModel
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
 val zdravnicaViewModelsKoinModules = module {
     viewModelOf(::ConnectingPageViewModel)
+    viewModelOf(::SelectProcedureViewModel)
+    viewModelOf(::MenuScreenViewModel)
 }

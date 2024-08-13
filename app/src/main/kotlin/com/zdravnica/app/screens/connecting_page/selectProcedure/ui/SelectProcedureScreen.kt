@@ -18,7 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.zdravnica.app.screens.connecting_page.selectProcedure.models.SelectProcedureViewState
+import com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels.SelectProcedureSideEffect
+import com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels.SelectProcedureViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.components.buttons.models.IconButtonModel
@@ -27,20 +28,32 @@ import com.zdravnica.uikit.components.buttons.ui.IconButtonsComponent
 import com.zdravnica.uikit.components.chips.models.getChipDataList
 import com.zdravnica.uikit.components.dividers.YTHorizontalDivider
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SelectProcedureScreen(
     modifier: Modifier = Modifier,
-    viewState: SelectProcedureViewState,
+    selectProcedureViewModel: SelectProcedureViewModel = koinViewModel(),
+    navigateToMenuScreen: () -> Unit,
 ) {
     var fourSwitchState by remember { mutableStateOf(false) }
     var isButtonVisible by remember { mutableStateOf(true) }
     var scrollToEnd by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-
     val bigChipTypes = getChipDataList()
     val sampleChips = bigChipTypes.map { it.chipData }
+
+    selectProcedureViewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is SelectProcedureSideEffect.OnNavigateToMenuScreen -> navigateToMenuScreen.invoke()
+            is SelectProcedureSideEffect.OnProcedureCardClick -> {
+                //sideEffect.chipData
+                //navigate to clicked chip information page
+            }
+        }
+    }
 
     LaunchedEffect(scrollToEnd) {
         if (scrollToEnd) {
@@ -62,11 +75,10 @@ fun SelectProcedureScreen(
     Scaffold(
         topBar = {
             SelectProcedureTopAppBar(
-                temperature = viewState.temperature,
+                temperature = 52,//need to get from bluetooth
                 fourSwitchState = fourSwitchState,
-                onRightIconClick = {
-                    //The right item click
-                })
+                onRightIconClick = selectProcedureViewModel::navigateToMenuScreen
+            )
         },
         modifier = modifier.fillMaxSize()
     ) { paddingValues ->
@@ -95,7 +107,7 @@ fun SelectProcedureScreen(
                     ChooseProcedureGridLayout(
                         bigChipsList = sampleChips,
                         onCardClick = { chip ->
-                            //navigate to clicked chip information page
+                            selectProcedureViewModel.onProcedureCardClick(chip)
                         }
                     )
                 }
@@ -127,6 +139,6 @@ fun SelectProcedureScreen(
 @Composable
 fun PreviewSelectProcedureScreen() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        SelectProcedureScreen(modifier = Modifier.fillMaxSize(), viewState = SelectProcedureViewState(false, 50))
+        SelectProcedureScreen(navigateToMenuScreen = {})
     }
 }

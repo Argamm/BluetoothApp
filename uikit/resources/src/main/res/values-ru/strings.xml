@@ -35,4 +35,31 @@
     <string name="select_product_without_balm">Без бальзама</string>
     <string name="select_product_without_balm_description">Соответствующий текст</string>
     <!--    SelectProduct Page end-->
+
+    <!--    MenuScreen start-->
+    <string name="menu_screen_disconnect">Отключиться</string>
+    <string name="menu_screen_last_subtitle">© ООО “Успех”, 2024. Все права защищены</string>
+    <string name="menu_screen_top_app_bar_title">Меню</string>
+    <string name="menu_screen_temperature_title">Температура здравницы</string>
+    <string name="menu_screen_indicators_title">Индикаторы:</string>
+    <string name="menu_screen_fan">Вентилятор</string>
+    <string name="menu_screen_ten">ТЭН</string>
+    <string name="menu_screen_compressor">Компрессор</string>
+    <string name="menu_screen_ik">Инфракрасный излучатель</string>
+    <string name="menu_screen_balm_title">Бальзамы:</string>
+    <string name="menu_screen_nut">Орехово-зверобойный</string>
+    <string name="menu_screen_burdock">Репейно эвкалиптовый</string>
+    <string name="menu_screen_mint">Мятный</string>
+    <string name="menu_screen_add_some_balm">Нужно долить бальзам</string>
+    <string name="menu_screen_balm_filled">Бальзам залит</string>
+    <string name="menu_screen_order_balm">Заказать бальзам</string>
+    <string name="menu_screen_add_balm_instruction">Залейте бальзам и нажмите “Бальзам залит”, для обновления счетчика</string>
+    <string name="menu_screen_balm_count">%1$s мл.</string>
+    <string name="menu_screen_site">Сайт</string>
+    <string name="menu_screen_email">Написать</string>
+    <string name="menu_screen_call">Позвонить</string>
+    <string name="menu_screen_cancel">Отмена</string>
+    <string name="menu_screen_yes">Да</string>
+    <string name="menu_screen_cancel_title">Вы уверены что хотите отключиться?</string>
+    <!--    MenuScreen Page end-->
 </resources>

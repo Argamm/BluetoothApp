@@ -37,4 +37,30 @@
     <string name="select_product_temperature_value" translatable="false">%1$s°</string>
     <!--    SelectProduct Page end-->
 
+    <!-- MenuScreen start -->
+    <string name="menu_screen_disconnect">Disconnect</string>
+    <string name="menu_screen_last_subtitle">© LLC “Success”, 2024. All rights reserved.</string>
+    <string name="menu_screen_top_app_bar_title">Menu</string>
+    <string name="menu_screen_temperature_title">Zdravnica Temperature</string>
+    <string name="menu_screen_indicators_title">Indicators:</string>
+    <string name="menu_screen_fan">Fan</string>
+    <string name="menu_screen_ten">Heating Element</string>
+    <string name="menu_screen_compressor">Compressor</string>
+    <string name="menu_screen_ik">Infrared Emitter</string>
+    <string name="menu_screen_balm_title">Balms:</string>
+    <string name="menu_screen_nut">Nut-St. John’s Wort</string>
+    <string name="menu_screen_burdock">Burdock-Eucalyptus</string>
+    <string name="menu_screen_mint">Mint</string>
+    <string name="menu_screen_add_some_balm">Need to add balm</string>
+    <string name="menu_screen_balm_filled">Balm filled</string>
+    <string name="menu_screen_order_balm">Order balm</string>
+    <string name="menu_screen_add_balm_instruction">Pour in the balm and press “Balm filled” to update the counter</string>
+    <string name="menu_screen_balm_count">%1$s ml.</string>
+    <string name="menu_screen_site">Site</string>
+    <string name="menu_screen_email">Write</string>
+    <string name="menu_screen_call">Call</string>
+    <string name="menu_screen_cancel">Cancel</string>
+    <string name="menu_screen_yes">Yes</string>
+    <string name="menu_screen_cancel_title">Are you sure you want to disconnect?</string>
+    <!-- MenuScreen Page end -->
 </resources>
