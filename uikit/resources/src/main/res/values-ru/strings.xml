@@ -11,29 +11,25 @@
     <string name="select_product_duration">Продолжительность</string>
     <string name="select_product_procedure">Процедура</string>
     <string name="select_product_skin">Кожа</string>
-    <string name="select_product_skin_description">Воспаленная и раздраженная кожаВоспаленная и раздраженная кожаВоспаленная и раздраженная кожаВоспаленная и раздраженная кожаВоспаленная и раздраженная кожаВоспаленная и раздраженная кожа, псориаз, нейродермит.</string>
+    <string name="select_product_skin_description">Воспаленная, раздраженная кожа; псориаз, нейродермит; восстановление защитной функции кожи, дряблость кожи.</string>
     <string name="select_product_lungs">Органы дыхания</string>
-    <string name="select_product_lungs_description">Хронические фарингиты, ларингиты, бронхиты.</string>
+    <string name="select_product_lungs_description">Хронические фарингиты, ларингиты, трахеиты, бронхиты, пневмония в период выздоровления.</string>
     <string name="select_product_heart">Сердечно-сосудистая система</string>
-    <string name="select_product_heart_description">Нормальзация артериального давления.</string>
-    <string name="select_product_pancreas">Эндокринная система</string>
-    <string name="select_product_pancreas_description">Ожирение, целлюлит</string>
+    <string name="select_product_heart_description">Нормализация артериального давления. Тренировка при ишемической болезни сердца, аритмии, брадикардии.</string>
     <string name="select_product_intestine">Пищеварительная система</string>
-    <string name="select_product_intestine_description">При нарушении моторной и секреторной функции,</string>
+    <string name="select_product_intestine_description">Нарушение моторной и секреторной функции.</string>
     <string name="select_product_uterus">Мочеполовая система</string>
-    <string name="select_product_uterus_description">Цистит, простатит, повышение потенции</string>
-    <string name="select_product_brain">Нервная системаc</string>
-    <string name="select_product_brain_description">Стресс, нарушение сна, переутомления.</string>
-    <string name="select_product_stomach">Обмен веществ</string>
-    <string name="select_product_stomach_description">Коррекция веса</string>
+    <string name="select_product_uterus_description">Хронические заболевания почек и мочевыводящих путей, хронический пиелонефрит, цистит.</string>
+    <string name="select_product_brain">Нервно-психическая система</string>
+    <string name="select_product_brain_description">Стресс, нарушение сна, физическое и эмоциональное переутомление, неврозо–подобное состояние.</string>
     <string name="select_product_knee_joint">Мышцы, связки, суставы</string>
-    <string name="select_product_knee_joint_description">Постравматические артрозы и невропатии, контрактуры, остеохондроз, радикулит.</string>
-    <string name="select_product_nose">Имунные процессы</string>
-    <string name="select_product_nose_description">Повышение иммунитета организма</string>
-    <string name="select_product_custom_mix">Индивидуальная смесь</string>
-    <string name="select_product_custom_mix_description">Соответствующий текст</string>
+    <string name="select_product_knee_joint_description">Вне обострений – посттравматические артрозы, полиартриты, деформирующие остеоартрозы, контрактуры.</string>
+    <string name="select_product_nose">Иммунная система, обмен веществ</string>
+    <string name="select_product_nose_description">Избыточный вес, целлюлит, нарушение обменных процессов.</string>
+    <string name="select_product_custom_mix">Индивидуальная</string>
+    <string name="select_product_custom_mix_description">Для использования других качественных эфирных масел и авторских эфирных композиций.</string>
     <string name="select_product_without_balm">Без бальзама</string>
-    <string name="select_product_without_balm_description">Соответствующий текст</string>
+    <string name="select_product_without_balm_description"></string>
     <!--    SelectProduct Page end-->
 
     <!--    MenuScreen start-->
@@ -62,4 +58,14 @@
     <string name="menu_screen_yes">Да</string>
     <string name="menu_screen_cancel_title">Вы уверены что хотите отключиться?</string>
     <!--    MenuScreen Page end-->
+
+    <!--    ProcedureScreen Page start-->
+    <string name="procedure_screen_need_balm">Нужно долить бальзам</string>
+    <string name="procedure_screen_balm_filled">Бальзам залит</string>
+    <string name="procedure_screen_order">Заказать</string>
+    <string name="procedure_screen_order_balm">Заказать бальзам</string>
+    <string name="procedure_screen_start_procedure">Начать процедуру</string>
+    <string name="procedure_screen_tooltip_message">Недостаточно бальзама для\n выбранной программы.</string>
+    <string name="procedure_screen_title">Процедура</string>
+    <!--    ProcedureScreen Page end-->
 </resources>

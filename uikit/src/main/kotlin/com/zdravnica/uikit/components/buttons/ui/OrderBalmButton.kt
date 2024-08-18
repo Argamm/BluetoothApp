@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
@@ -36,12 +35,13 @@ fun OrderBalmButton(
     modifier: Modifier = Modifier,
     isDisabled: Boolean,
     contentDescription: String,
+    imageVector: ImageVector,
     text: String,
     onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(ZdravnicaAppTheme.dimens.size30))
+            .clip(RoundedCornerShape(ZdravnicaAppTheme.dimens.size16))
             .background(
                 brush = Brush.linearGradient(
                     colors = ZdravnicaAppTheme.colors.bigChipsStateColor.borderStrokeGradientColors,
@@ -60,20 +60,13 @@ fun OrderBalmButton(
         contentAlignment = Alignment.Center
     ) {
         Box(
-            modifier = Modifier
-                .let { baseModifier ->
-                    if (!isDisabled) {
-                        baseModifier.shadow(
-                            elevation = ZdravnicaAppTheme.dimens.size2,
-                            shape = RoundedCornerShape(ZdravnicaAppTheme.dimens.size1000),
-                            ambientColor = ZdravnicaAppTheme.colors.baseAppColor.gray100,
-                            spotColor = ZdravnicaAppTheme.colors.baseAppColor.gray100
-                        )
-                    } else {
-                        baseModifier
-                    }
-                }
-                .clip(RoundedCornerShape(ZdravnicaAppTheme.dimens.size14))
+            modifier = Modifier.shadow(
+                elevation = ZdravnicaAppTheme.dimens.size2,
+                shape = RoundedCornerShape(ZdravnicaAppTheme.dimens.size14),
+                ambientColor = ZdravnicaAppTheme.colors.baseAppColor.gray100,
+                spotColor = ZdravnicaAppTheme.colors.baseAppColor.gray100
+            )
+                .clip(RoundedCornerShape(ZdravnicaAppTheme.dimens.size12))
                 .border(
                     BorderStroke(
                         width = ZdravnicaAppTheme.dimens.size4,
@@ -83,7 +76,7 @@ fun OrderBalmButton(
                             end = Offset(0f, Float.POSITIVE_INFINITY)
                         )
                     ),
-                    shape = CircleShape
+                    shape = RoundedCornerShape(ZdravnicaAppTheme.dimens.size14)
                 )
                 .background(
                     brush = Brush.verticalGradient(
@@ -110,9 +103,12 @@ fun OrderBalmButton(
                     horizontalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4)
                 ) {
                     Icon(
-                        ImageVector.vectorResource(id = R.drawable.ic_plus),
+                        imageVector = imageVector,
                         contentDescription = contentDescription,
-                        tint = ZdravnicaAppTheme.colors.baseAppColor.gray200
+                        tint = if (isDisabled)
+                            ZdravnicaAppTheme.colors.baseAppColor.gray800
+                        else
+                            ZdravnicaAppTheme.colors.baseAppColor.gray200
                     )
 
                     Text(
@@ -121,6 +117,7 @@ fun OrderBalmButton(
                             bottom = ZdravnicaAppTheme.dimens.size15,
                             end = ZdravnicaAppTheme.dimens.size15
                         ),
+                        style = ZdravnicaAppTheme.typography.bodyNormalSemi,
                         text = text,
                         color = if (isDisabled)
                             ZdravnicaAppTheme.colors.baseAppColor.gray800
@@ -141,6 +138,7 @@ fun PreviewOrderBalmButton() {
             modifier = Modifier.padding(ZdravnicaAppTheme.dimens.size44),
             isDisabled = false,
             contentDescription = "Increase",
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_plus),
             text = "Бальзам залит",
             onClick = { }
         )

@@ -22,6 +22,7 @@ import com.zdravnica.app.screens.connecting_page.menuScreen.viewModels.MenuScree
 import com.zdravnica.app.screens.connecting_page.menuScreen.viewModels.MenuScreenViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.components.topAppBar.SimpleTopAppBar
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -53,7 +54,8 @@ fun MenuScreen(
                 } else Modifier
             ),
         topBar = {
-            MenuTopAppBar(
+            SimpleTopAppBar(
+                title = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_top_app_bar_title),
                 onNavigateUp = menuScreenViewModel::onNavigateUp
             )
         },

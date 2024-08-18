@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.GRID_CELL_COUNT
+import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
 import com.zdravnica.uikit.components.chips.ui.BigChipsComponent
 import com.zdravnica.uikit.resources.R
@@ -47,7 +47,7 @@ fun ChooseProcedureGridLayout(
         )
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(GRID_CELL_COUNT),
+            columns = GridCells.Fixed(COUNT_TWO),
             userScrollEnabled = false,
             modifier = Modifier
                 .fillMaxSize()

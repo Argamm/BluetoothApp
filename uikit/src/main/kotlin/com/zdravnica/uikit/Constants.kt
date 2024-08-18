@@ -3,12 +3,16 @@ package com.zdravnica.uikit
 internal const val NO_ICON_RESOURCE = -1
 internal const val UNDEFINED_PROGRESS = -1f
 
-const val GRID_CELL_COUNT = 2
+const val COUNT_TWO = 2
 const val MAX_LINES_COUNT_ONE = 1
-const val MAX_LINES_COUNT_THREE = 3
+const val COUNT_THREE = 3
 const val ANIMATION_DURATION_100 = 100
+const val TOOLTIP_SHOWING_DURATION_2500 = 2500L
 const val SLIDE_ANIMATION_DURATION_300 = 300
 const val MAX_TEMPERATURE = 70
+const val DURATION_TO_SCROLL_DOWN = 3000
+const val WIDTH_OF_TOOLTIP = 450
+const val HEIGHT_OF_TOOLTIP = 1230
 
 const val BIG_CHIPS_ICON_DESCRIPTION = "Big chips icon"
 const val INDICATOR_ICON_DESCRIPTION = "Indicator Icon"

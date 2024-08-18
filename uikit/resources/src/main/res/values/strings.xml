@@ -11,29 +11,25 @@
     <string name="select_product_duration">Duration</string>
     <string name="select_product_procedure">Procedure</string>
     <string name="select_product_skin">Skin</string>
-    <string name="select_product_skin_description">Inflamed and irritated skin, psoriasis, neurodermatitis.</string>
-    <string name="select_product_lungs">Respiratory system</string>
-    <string name="select_product_lungs_description">Chronic pharyngitis, laryngitis, bronchitis.</string>
-    <string name="select_product_heart">Cardiovascular system</string>
-    <string name="select_product_heart_description">Normalization of blood pressure.</string>
-    <string name="select_product_pancreas">Endocrine system</string>
-    <string name="select_product_pancreas_description">Obesity, cellulite.</string>
-    <string name="select_product_intestine">Digestive system</string>
-    <string name="select_product_intestine_description">For disorders of motor and secretory function.</string>
-    <string name="select_product_uterus">Genitourinary system</string>
-    <string name="select_product_uterus_description">Cystitis, prostatitis, increased potency.</string>
-    <string name="select_product_brain">Nervous system</string>
-    <string name="select_product_brain_description">Stress, sleep disturbances, fatigue.</string>
-    <string name="select_product_stomach">Metabolism</string>
-    <string name="select_product_stomach_description">Weight correction.</string>
-    <string name="select_product_knee_joint">Muscles, ligaments, joints</string>
-    <string name="select_product_knee_joint_description">Post-traumatic arthrosis and neuropathies, contractures, osteochondrosis, radiculitis.</string>
-    <string name="select_product_nose">Immune processes</string>
-    <string name="select_product_nose_description">Increased immunity.</string>
-    <string name="select_product_custom_mix">Custom mix</string>
-    <string name="select_product_custom_mix_description">Corresponding text.</string>
-    <string name="select_product_without_balm">Without balm</string>
-    <string name="select_product_without_balm_description">Corresponding text.</string>
+    <string name="select_product_skin_description">Inflamed, irritated skin; psoriasis, neurodermatitis; restoration of the skin\'s protective function, sagging skin.</string>
+    <string name="select_product_lungs">Respiratory System</string>
+    <string name="select_product_lungs_description">Chronic pharyngitis, laryngitis, tracheitis, bronchitis, pneumonia during recovery.</string>
+    <string name="select_product_heart">Cardiovascular System</string>
+    <string name="select_product_heart_description">Normalization of blood pressure. Training for coronary heart disease, arrhythmia, bradycardia.</string>
+    <string name="select_product_intestine">Digestive System</string>
+    <string name="select_product_intestine_description">Impairment of motor and secretory function.</string>
+    <string name="select_product_uterus">Genitourinary System</string>
+    <string name="select_product_uterus_description">Chronic kidney and urinary tract diseases, chronic pyelonephritis, cystitis.</string>
+    <string name="select_product_brain">Nervous and Psychological System</string>
+    <string name="select_product_brain_description">Stress, sleep disturbances, physical and emotional exhaustion, neurosis-like conditions.</string>
+    <string name="select_product_knee_joint">Muscles, Ligaments, Joints</string>
+    <string name="select_product_knee_joint_description">In periods without exacerbation – post-traumatic arthrosis, polyarthritis, deforming osteoarthritis, contractures.</string>
+    <string name="select_product_nose">Immune System, Metabolism</string>
+    <string name="select_product_nose_description">Overweight, cellulite, metabolic disorders.</string>
+    <string name="select_product_custom_mix">Custom Mix</string>
+    <string name="select_product_custom_mix_description">For the use of other quality essential oils and authorial essential oil compositions.</string>
+    <string name="select_product_without_balm">Without Balm</string>
+    <string name="select_product_without_balm_description"></string>
     <string name="select_product_temperature_value" translatable="false">%1$s°</string>
     <!--    SelectProduct Page end-->
 
@@ -63,4 +59,14 @@
     <string name="menu_screen_yes">Yes</string>
     <string name="menu_screen_cancel_title">Are you sure you want to disconnect?</string>
     <!-- MenuScreen Page end -->
+
+    <!-- ProcedureScreen Page start -->
+    <string name="procedure_screen_need_balm">Need to add balm</string>
+    <string name="procedure_screen_balm_filled">Balm filled</string>
+    <string name="procedure_screen_order">Order</string>
+    <string name="procedure_screen_order_balm">Order balm</string>
+    <string name="procedure_screen_start_procedure">Start procedure</string>
+    <string name="procedure_screen_tooltip_message">Not enough balm for\nthe selected program.</string>
+    <string name="procedure_screen_title">Procedure</string>
+    <!-- ProcedureScreen Page end -->
 </resources>

@@ -34,7 +34,7 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.resources.ui.theme.models.featureColors.BigChipsStateColor
 import com.zdravnica.uikit.BIG_CHIPS_ICON_DESCRIPTION
-import com.zdravnica.uikit.MAX_LINES_COUNT_THREE
+import com.zdravnica.uikit.COUNT_THREE
 import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
 import com.zdravnica.uikit.components.chips.preview_params.BigChipsPreviewParams
 import com.zdravnica.uikit.extensions.compose.clickableSingle
@@ -109,7 +109,7 @@ fun BigChipsComponent(
                             bigChipsStateColor.enabledTitleColor
                         } else bigChipsStateColor.disabledContentColor
                     ),
-                    maxLines = MAX_LINES_COUNT_THREE,
+                    maxLines = COUNT_THREE,
                     overflow = TextOverflow.Ellipsis
                 )
 
@@ -125,7 +125,7 @@ fun BigChipsComponent(
                             bigChipsStateColor.enabledDescriptionColor
                         } else bigChipsStateColor.disabledContentColor
                     ),
-                    maxLines = MAX_LINES_COUNT_THREE,
+                    maxLines = COUNT_THREE,
                     overflow = TextOverflow.Ellipsis
                 )
             }

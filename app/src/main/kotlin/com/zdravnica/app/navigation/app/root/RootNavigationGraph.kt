@@ -8,13 +8,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
+import androidx.navigation.navArgument
 import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
 import com.zdravnica.app.screens.connecting_page.ConnectingPageScreen
 import com.zdravnica.app.screens.connecting_page.dialog.ShowDevicesDialog
 import com.zdravnica.app.screens.connecting_page.menuScreen.ui.MenuScreen
+import com.zdravnica.app.screens.connecting_page.procedure.ui.ProcedureScreen
 import com.zdravnica.app.screens.connecting_page.selectProcedure.ui.SelectProcedureScreen
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
@@ -60,8 +63,10 @@ fun RootNavigationGraph(
                 SelectProcedureScreen(
                     navigateToMenuScreen = {
                         navHostController.navigate(AppNavGraph.ManuScreen.route)
+                    },
+                    navigateToProcedureScreen = { chipTitle ->
+                        navHostController.navigate("${AppNavGraph.ProcedureScreen.route}/${chipTitle}")
                     }
-
                 )
             }
 
@@ -99,6 +104,18 @@ fun RootNavigationGraph(
                     navigateGToConnectionScreen = {
                         navHostController.navigate(AppNavGraph.Connection.route)
                     }
+                )
+            }
+
+            composable(
+                route = "${AppNavGraph.ProcedureScreen.route}/{chipTitle}",
+                arguments = listOf(navArgument("chipTitle") { type = NavType.IntType })
+            ) {backStackEntry ->
+                val chipData = backStackEntry.arguments?.getInt("chipTitle")
+
+                ProcedureScreen(
+                    chipTitle = chipData,
+                    onNavigateUp = { navHostController.navigateUp() }
                 )
             }
         }

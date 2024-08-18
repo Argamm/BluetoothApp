@@ -22,10 +22,11 @@ import com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels.Sele
 import com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels.SelectProcedureViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.DURATION_TO_SCROLL_DOWN
 import com.zdravnica.uikit.components.buttons.models.IconButtonModel
 import com.zdravnica.uikit.components.buttons.models.IconButtonType
 import com.zdravnica.uikit.components.buttons.ui.IconButtonsComponent
-import com.zdravnica.uikit.components.chips.models.getChipDataList
+import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getChipDataList
 import com.zdravnica.uikit.components.dividers.YTHorizontalDivider
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -36,6 +37,7 @@ fun SelectProcedureScreen(
     modifier: Modifier = Modifier,
     selectProcedureViewModel: SelectProcedureViewModel = koinViewModel(),
     navigateToMenuScreen: () -> Unit,
+    navigateToProcedureScreen: (Int) -> Unit,
 ) {
     var fourSwitchState by remember { mutableStateOf(false) }
     var isButtonVisible by remember { mutableStateOf(true) }
@@ -49,8 +51,7 @@ fun SelectProcedureScreen(
         when (sideEffect) {
             is SelectProcedureSideEffect.OnNavigateToMenuScreen -> navigateToMenuScreen.invoke()
             is SelectProcedureSideEffect.OnProcedureCardClick -> {
-                //sideEffect.chipData
-                //navigate to clicked chip information page
+                navigateToProcedureScreen.invoke(sideEffect.chipData.title)
             }
         }
     }
@@ -64,7 +65,7 @@ fun SelectProcedureScreen(
 
                 listState.animateScrollBy(
                     value = totalHeight.toFloat(),
-                    animationSpec = tween(durationMillis = 3000)
+                    animationSpec = tween(durationMillis = DURATION_TO_SCROLL_DOWN)
                 )
                 isButtonVisible = false
                 scrollToEnd = false
@@ -139,6 +140,6 @@ fun SelectProcedureScreen(
 @Composable
 fun PreviewSelectProcedureScreen() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        SelectProcedureScreen(navigateToMenuScreen = {})
+        SelectProcedureScreen(navigateToMenuScreen = {}, navigateToProcedureScreen = {})
     }
 }

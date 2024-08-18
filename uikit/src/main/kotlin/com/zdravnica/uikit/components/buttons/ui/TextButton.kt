@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.resources.ui.theme.models.featureColors.TextButtonStateColor
-import com.zdravnica.uikit.MAX_LINES_COUNT_THREE
+import com.zdravnica.uikit.COUNT_THREE
 import com.zdravnica.uikit.components.buttons.models.TextButtonModel
 import com.zdravnica.uikit.components.buttons.models.TextButtonType
 import com.zdravnica.uikit.components.buttons.preview_params.TextButtonPreviewParams
@@ -111,7 +111,7 @@ fun TextButton(
             text = textButtonModel.buttonText,
             style = textButtonModel.textStyle
                 ?: ZdravnicaAppTheme.typography.bodyMediumSemi,
-            maxLines = MAX_LINES_COUNT_THREE,
+            maxLines = COUNT_THREE,
             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
         )
     }
