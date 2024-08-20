@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.resources.ui.theme.models.featureColors.PrimaryIconButtonStateColor
-import com.zdravnica.uikit.MAX_LINES_COUNT_ONE
+import com.zdravnica.uikit.COUNT_ONE
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
 import com.zdravnica.uikit.preview.AppPreview
 
@@ -102,7 +102,7 @@ fun PrimaryIconByTextButton(
                         else -> stateColor.defaultContentColor
                     }
                 ),
-                maxLines = MAX_LINES_COUNT_ONE,
+                maxLines = COUNT_ONE,
                 overflow = TextOverflow.Ellipsis
             )
         }

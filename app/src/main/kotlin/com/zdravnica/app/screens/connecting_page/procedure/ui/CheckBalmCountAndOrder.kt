@@ -56,14 +56,16 @@ import kotlinx.coroutines.delay
 fun CheckBalmCountAndOrder(
     modifier: Modifier = Modifier,
     balmInfo: List<ChipBalmInfoModel>,
+    startProcedure: () -> Unit,
 ) {
     val isAnyBalmCountZero = balmInfo.any { it.isBalmCountZero }
-    var selectedBalm by remember { mutableStateOf<ChipBalmInfoModel?>(null) }
-    var showInfoMessage by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
     val screenWidthPx = with(density) { configuration.screenWidthDp.dp.roundToPx() }
+    var selectedBalm by remember { mutableStateOf<ChipBalmInfoModel?>(null) }
+    var showInfoMessage by remember { mutableStateOf(false) }
     var isBigButtonClick by remember { mutableStateOf(false) }
+    var firstIconClicked by remember { mutableStateOf(false) }
     var position by remember { mutableStateOf(IntOffset.Zero) }
     var bigButtonPosition by remember { mutableStateOf(IntOffset.Zero) }
 
@@ -113,14 +115,13 @@ fun CheckBalmCountAndOrder(
             horizontalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4),
             verticalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4)
         ) {
-            balmInfo.forEach { balm ->
+            balmInfo.forEachIndexed { index, balm ->
                 BalmInfoText(
                     text = stringResource(id = balm.balmName),
                     isBalmCountZero = balm.isBalmCountZero,
                     onClick = { clickedPosition ->
-                        if (balm.isBalmCountZero) {
-                            selectedBalm = balm
-                        }
+                        if (balm.isBalmCountZero) selectedBalm = balm
+                        firstIconClicked = index == 0
                         isBigButtonClick = false
                         showInfoMessage = !showInfoMessage
                         position = clickedPosition
@@ -212,6 +213,8 @@ fun CheckBalmCountAndOrder(
                             isBigButtonClick = true
                             showInfoMessage = true
                             position = bigButtonPosition
+                        } else {
+                            startProcedure.invoke()
                         }
                     }
                 ),
@@ -220,7 +223,7 @@ fun CheckBalmCountAndOrder(
     }
 
     if (showInfoMessage) {
-        val isRightIcon = position.x > screenWidthPx / COUNT_THREE
+        val isRightIcon = position.x > screenWidthPx / COUNT_THREE || !firstIconClicked
         TooltipInfoMessage(
             message = stringResource(R.string.procedure_screen_tooltip_message),
             offset = position.copy(
@@ -238,6 +241,7 @@ fun CheckBalmCountAndOrder(
                     ZdravnicaAppTheme.dimens.size12
             ),
             isRightIcon = isRightIcon,
+            isBigButton = isBigButtonClick
         )
     }
 }
@@ -248,6 +252,6 @@ private fun CheckBalmCountAndOrderPrev() {
     getBalmInfoByTitle(R.string.select_product_skin)?.let {
         CheckBalmCountAndOrder(
             balmInfo = it,
-        )
+        ){}
     }
 }

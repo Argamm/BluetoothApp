@@ -23,6 +23,7 @@ fun TooltipInfoMessage(
     offset: IntOffset,
     modifier: Modifier = Modifier,
     isRightIcon: Boolean = true,
+    isBigButton: Boolean = false,
 ) {
     Popup(alignment = Alignment.Center, offset = offset) {
         Column(
@@ -58,7 +59,7 @@ fun TooltipInfoMessage(
                 modifier = Modifier
                     .padding(
                         PaddingValues(
-                            end = if (isRightIcon)
+                            end = if (isRightIcon || isBigButton)
                                 ZdravnicaAppTheme.dimens.size8
                             else
                                 ZdravnicaAppTheme.dimens.size120

@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.MAX_LINES_COUNT_ONE
+import com.zdravnica.uikit.COUNT_ONE
 
 @Composable
 fun MenuConnectToUs(
@@ -43,7 +43,7 @@ fun MenuConnectToUs(
         val maxTextWidth = maxWidth / CARDS_TITLE_COUNT - (ZdravnicaAppTheme.dimens.size14 + ZdravnicaAppTheme.dimens.size16)
 
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .padding(ZdravnicaAppTheme.dimens.size16)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
@@ -118,7 +118,7 @@ fun ConnectColumn(
                 style = ZdravnicaAppTheme.typography.bodyNormalMedium,
                 color = ZdravnicaAppTheme.colors.baseAppColor.gray200,
                 textAlign = TextAlign.Center,
-                maxLines = MAX_LINES_COUNT_ONE,
+                maxLines = COUNT_ONE,
                 modifier = Modifier.fillMaxWidth()
             )
         }

@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.ANIMATION_DURATION_100
+import com.zdravnica.uikit.COUNT_TO_100
 import com.zdravnica.uikit.resources.R
 
 @Composable
@@ -82,7 +82,7 @@ fun CustomSwitch(
             ZdravnicaAppTheme.dimens.size27
         else
             ZdravnicaAppTheme.dimens.size3,
-        animationSpec = tween(durationMillis = ANIMATION_DURATION_100),
+        animationSpec = tween(durationMillis = COUNT_TO_100),
         label = ""
     )
     val interactionSource = remember { MutableInteractionSource() }

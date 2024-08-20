@@ -11,13 +11,16 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.zdravnica.app.PreferencesHelper
 import com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels.SelectProcedureSideEffect
 import com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels.SelectProcedureViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
@@ -39,13 +42,16 @@ fun SelectProcedureScreen(
     navigateToMenuScreen: () -> Unit,
     navigateToProcedureScreen: (Int) -> Unit,
 ) {
-    var fourSwitchState by remember { mutableStateOf(false) }
-    var isButtonVisible by remember { mutableStateOf(true) }
-    var scrollToEnd by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val bigChipTypes = getChipDataList()
     val sampleChips = bigChipTypes.map { it.chipData }
+    var fourSwitchState by remember { mutableStateOf(false) }
+    var isButtonVisible by remember { mutableStateOf(true) }
+    var scrollToEnd by remember { mutableStateOf(false) }
+    var temperature by remember { mutableIntStateOf(PreferencesHelper.getTemperature(context)) }
+    var duration by remember { mutableIntStateOf(PreferencesHelper.getDuration(context)) }
 
     selectProcedureViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -54,6 +60,11 @@ fun SelectProcedureScreen(
                 navigateToProcedureScreen.invoke(sideEffect.chipData.title)
             }
         }
+    }
+
+    LaunchedEffect(temperature, duration) {
+        PreferencesHelper.saveTemperature(context, temperature)
+        PreferencesHelper.saveDuration(context, duration)
     }
 
     LaunchedEffect(scrollToEnd) {
@@ -76,7 +87,7 @@ fun SelectProcedureScreen(
     Scaffold(
         topBar = {
             SelectProcedureTopAppBar(
-                temperature = 52,//need to get from bluetooth
+                temperature = temperature,
                 fourSwitchState = fourSwitchState,
                 onRightIconClick = selectProcedureViewModel::navigateToMenuScreen
             )
@@ -101,9 +112,17 @@ fun SelectProcedureScreen(
                         }
                     )
                     YTHorizontalDivider()
-                    TemperatureOrDurationAdjuster(isMinutes = false)
+                    TemperatureOrDurationAdjuster(
+                        isMinutes = false,
+                        value = temperature,
+                        onValueChange = { temperature = it }
+                    )
                     YTHorizontalDivider()
-                    TemperatureOrDurationAdjuster(isMinutes = true)
+                    TemperatureOrDurationAdjuster(
+                        isMinutes = true,
+                        value = duration,
+                        onValueChange = { duration = it }
+                    )
                     YTHorizontalDivider()
                     ChooseProcedureGridLayout(
                         bigChipsList = sampleChips,

@@ -95,7 +95,6 @@ fun Chip(
             .clickable(onClick = onClick)
             .padding(
                 horizontal = ZdravnicaAppTheme.dimens.size4,
-                vertical = ZdravnicaAppTheme.dimens.size8
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {

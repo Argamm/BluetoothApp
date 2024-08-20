@@ -29,6 +29,7 @@ fun ProcedureScreen(
     procedureScreenViewModel: ProcedureScreenViewModel = koinViewModel(),
     chipTitle: Int? = null,
     onNavigateUp: (() -> Unit)? = null,
+    startProcedure: (Int) -> Unit,
 ) {
     val allChipTitles = getAllChipTitles()
     var selectedOption: Int? by remember { mutableStateOf(chipTitle) }
@@ -76,7 +77,7 @@ fun ProcedureScreen(
                     ChooseProcedureChipGroup(
                         options = allChipTitles,
                         selectedOption = selectedOption,
-                        onOptionSelected = {selectedOption ->
+                        onOptionSelected = { selectedOption ->
                             procedureScreenViewModel.onOptionSelected(selectedOption)
                         }
                     )
@@ -91,7 +92,13 @@ fun ProcedureScreen(
                 }
 
                 item {
-                    balmInfo?.let { balmInfo -> CheckBalmCountAndOrder(modifier, balmInfo) }
+                    balmInfo?.let { balmInfo ->
+                        CheckBalmCountAndOrder(modifier, balmInfo) {
+                            if (chipTitle != null) {
+                                startProcedure.invoke(chipTitle)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -102,6 +109,6 @@ fun ProcedureScreen(
 @Composable
 fun PreviewMenuScreen() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        ProcedureScreen()
+        ProcedureScreen(){}
     }
 }

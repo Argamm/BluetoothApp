@@ -33,7 +33,7 @@
     <string name="select_product_temperature_value" translatable="false">%1$s°</string>
     <!--    SelectProduct Page end-->
 
-    <!-- MenuScreen start -->
+    <!--    MenuScreen start -->
     <string name="menu_screen_disconnect">Disconnect</string>
     <string name="menu_screen_last_subtitle">© LLC “Success”, 2024. All rights reserved.</string>
     <string name="menu_screen_top_app_bar_title">Menu</string>
@@ -58,9 +58,9 @@
     <string name="menu_screen_cancel">Cancel</string>
     <string name="menu_screen_yes">Yes</string>
     <string name="menu_screen_cancel_title">Are you sure you want to disconnect?</string>
-    <!-- MenuScreen Page end -->
+    <!--    MenuScreen Page end -->
 
-    <!-- ProcedureScreen Page start -->
+    <!--    ProcedureScreen Page start -->
     <string name="procedure_screen_need_balm">Need to add balm</string>
     <string name="procedure_screen_balm_filled">Balm filled</string>
     <string name="procedure_screen_order">Order</string>
@@ -68,5 +68,13 @@
     <string name="procedure_screen_start_procedure">Start procedure</string>
     <string name="procedure_screen_tooltip_message">Not enough balm for\nthe selected program.</string>
     <string name="procedure_screen_title">Procedure</string>
-    <!-- ProcedureScreen Page end -->
+    <!--    ProcedureScreen Page end -->
+
+    <!--    PreparingTheCabinScreen Page start -->
+    <string name="preparing_the_cabin_cancel_procedure">Cancel Procedure</string>
+    <string name="preparing_the_cabin_waiting">Please wait, Zdravnica is preparing...</string>
+    <string name="preparing_the_cabin_ready">Zdravnica is ready! Please enter</string>
+    <string name="preparing_the_cabin_cancel_procedure_question">Are you sure you want to cancel the procedure?</string>
+    <string name="preparing_the_cabin_time_and_temperature_info">%1$s° · %2$s minutes</string>
+    <!--    PreparingTheCabinScreen Page end -->
 </resources>

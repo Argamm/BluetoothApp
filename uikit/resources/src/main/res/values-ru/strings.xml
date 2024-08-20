@@ -68,4 +68,12 @@
     <string name="procedure_screen_tooltip_message">Недостаточно бальзама для\n выбранной программы.</string>
     <string name="procedure_screen_title">Процедура</string>
     <!--    ProcedureScreen Page end-->
+
+    <!--    PreparingTheCabinScreen Page start -->
+    <string name="preparing_the_cabin_cancel_procedure">Отменить процедуру</string>
+    <string name="preparing_the_cabin_waiting">Подождите, здравница готовится...</string>
+    <string name="preparing_the_cabin_ready">Здравница готова! Заходите внутрь</string>
+    <string name="preparing_the_cabin_cancel_procedure_question">Вы уверены что хотите отменить процедуру</string>
+    <string name="preparing_the_cabin_time_and_temperature_info">%1$s° · %2$s минут</string>
+    <!--    PreparingTheCabinScreen Page end -->
 </resources>

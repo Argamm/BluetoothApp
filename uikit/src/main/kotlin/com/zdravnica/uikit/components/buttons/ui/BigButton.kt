@@ -21,7 +21,7 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicarStyle
 import com.zdravnica.resources.ui.theme.models.featureColors.BigButtonStateColor
-import com.zdravnica.uikit.MAX_LINES_COUNT_ONE
+import com.zdravnica.uikit.COUNT_ONE
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
 import com.zdravnica.uikit.components.buttons.preview_params.PrimaryButtonPreviewParams
 
@@ -64,7 +64,7 @@ fun BigButton(
             modifier = bigButtonModel.textModifier.wrapContentSize(),
             text = bigButtonModel.buttonText,
             style = bigButtonModel.textStyle ?: ZdravnicaAppTheme.typography.bodyMediumSemi,
-            maxLines = MAX_LINES_COUNT_ONE,
+            maxLines = COUNT_ONE,
             overflow = TextOverflow.Ellipsis
         )
     }

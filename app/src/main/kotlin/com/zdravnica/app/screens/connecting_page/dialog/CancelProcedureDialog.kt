@@ -31,6 +31,7 @@ import com.zdravnica.uikit.CLOSE_ICON_DESCRIPTION
 
 @Composable
 fun CancelProcedureDialog(
+    titleText: String,
     onClose: () -> Unit,
     onNoClick: () -> Unit,
     onYesClick: () -> Unit
@@ -72,7 +73,7 @@ fun CancelProcedureDialog(
                     }
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size18))
                     Text(
-                        text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_cancel_title),
+                        text = titleText,
                         style = ZdravnicaAppTheme.typography.bodyMediumRegular,
                         color = ZdravnicaAppTheme.colors.baseAppColor.gray200,
                     )
@@ -125,6 +126,7 @@ fun CancelProcedureDialog(
 fun PreviewCancelProcedureDialog() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         CancelProcedureDialog(
+            titleText = "cancel?",
             onClose = {},
             onNoClick = {},
             onYesClick = {}

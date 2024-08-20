@@ -1,6 +1,7 @@
 package com.zdravnica.app.di
 
 import com.zdravnica.app.screens.connecting_page.menuScreen.viewModels.MenuScreenViewModel
+import com.zdravnica.app.screens.connecting_page.preparingTheCabin.viewModels.PreparingTheCabinScreenViewModel
 import com.zdravnica.app.screens.connecting_page.procedure.viewModels.ProcedureScreenViewModel
 import com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels.SelectProcedureViewModel
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
@@ -12,4 +13,5 @@ val zdravnicaViewModelsKoinModules = module {
     viewModelOf(::SelectProcedureViewModel)
     viewModelOf(::MenuScreenViewModel)
     viewModelOf(::ProcedureScreenViewModel)
+    viewModelOf(::PreparingTheCabinScreenViewModel)
 }

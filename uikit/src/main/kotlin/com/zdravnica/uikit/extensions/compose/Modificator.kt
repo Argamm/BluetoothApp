@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.semantics.Role
+import com.zdravnica.uikit.COUNT_TO_100
 
 fun Modifier.clickableSingle(
     enabled: Boolean = true,
@@ -53,14 +54,22 @@ fun Int.formatAsValue(isMinutes: Boolean): String {
 
 fun getValueRange(isMinutes: Boolean): Pair<Int, Int> {
     return if (isMinutes) {
-        NUMBER_FOR_COUNT_0 to NUMBER_FOR_COUNT_1800
+        MIN_MINUTES to MAX_MINUTES
     } else {
-        NUMBER_FOR_COUNT_0 to NUMBER_FOR_COUNT_80
+        MIN_TEMPERATURE to MAX_TEMPERATURE
     }
+}
+
+fun calculateProgress(currentTemperature: Int, targetTemperature: Int): Int {
+    val maxTemperature = targetTemperature
+    val minTemperature = 0
+    val percentage = ((currentTemperature - minTemperature).toFloat() / (maxTemperature - minTemperature)) * COUNT_TO_100
+    return percentage.toInt().coerceIn(0, COUNT_TO_100)
 }
 
 const val NUMBER_FOR_COUNT_60 = 60
 const val NUMBER_FOR_COUNT_2 = 2
-const val NUMBER_FOR_COUNT_1800 = 1800
-const val NUMBER_FOR_COUNT_80 = 80
-const val NUMBER_FOR_COUNT_0 = 0
+const val MAX_MINUTES = 1800
+const val MIN_MINUTES = 600
+const val MAX_TEMPERATURE = 80
+const val MIN_TEMPERATURE = 40

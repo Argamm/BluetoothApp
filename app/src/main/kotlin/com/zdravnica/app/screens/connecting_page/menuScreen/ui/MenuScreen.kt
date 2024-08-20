@@ -131,6 +131,7 @@ fun MenuScreen(
 
     if (menuScreenViewState.uiModel.idDialogVisible) {
         CancelProcedureDialog(
+            titleText = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_cancel_title),
             onClose = {
                 menuScreenViewModel.onChangeCancelDialogPageVisibility(false)
             },

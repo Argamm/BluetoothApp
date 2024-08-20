@@ -17,6 +17,7 @@ import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
 import com.zdravnica.app.screens.connecting_page.ConnectingPageScreen
 import com.zdravnica.app.screens.connecting_page.dialog.ShowDevicesDialog
 import com.zdravnica.app.screens.connecting_page.menuScreen.ui.MenuScreen
+import com.zdravnica.app.screens.connecting_page.preparingTheCabin.ui.PreparingTheCabinScreen
 import com.zdravnica.app.screens.connecting_page.procedure.ui.ProcedureScreen
 import com.zdravnica.app.screens.connecting_page.selectProcedure.ui.SelectProcedureScreen
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
@@ -110,12 +111,29 @@ fun RootNavigationGraph(
             composable(
                 route = "${AppNavGraph.ProcedureScreen.route}/{chipTitle}",
                 arguments = listOf(navArgument("chipTitle") { type = NavType.IntType })
-            ) {backStackEntry ->
+            ) { backStackEntry ->
                 val chipData = backStackEntry.arguments?.getInt("chipTitle")
 
                 ProcedureScreen(
                     chipTitle = chipData,
-                    onNavigateUp = { navHostController.navigateUp() }
+                    onNavigateUp = { navHostController.navigateUp() },
+                    startProcedure = {chipTitle ->
+                        navHostController.navigate("${AppNavGraph.PreparingTheCabinScreen.route}/${chipTitle}")
+                    }
+                )
+            }
+
+            composable(
+                route = "${AppNavGraph.PreparingTheCabinScreen.route}/{chipTitle}",
+                arguments = listOf(navArgument("chipTitle") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val chipTitle = backStackEntry.arguments?.getInt("chipTitle")
+
+                PreparingTheCabinScreen(
+                    chipTitleId = chipTitle,
+                    navigateToSelectProcedureScreen = {
+                        navHostController.navigate(AppNavGraph.SelectProcedureScreen.route)
+                    }
                 )
             }
         }
