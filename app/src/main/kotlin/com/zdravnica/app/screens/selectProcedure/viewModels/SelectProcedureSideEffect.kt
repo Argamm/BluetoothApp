@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels
+package com.zdravnica.app.screens.selectProcedure.viewModels
 
 import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
 

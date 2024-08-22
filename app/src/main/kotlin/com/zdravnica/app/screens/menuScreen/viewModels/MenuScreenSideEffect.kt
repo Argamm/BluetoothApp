@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.menuScreen.viewModels
+package com.zdravnica.app.screens.menuScreen.viewModels
 
 sealed interface MenuScreenSideEffect {
 

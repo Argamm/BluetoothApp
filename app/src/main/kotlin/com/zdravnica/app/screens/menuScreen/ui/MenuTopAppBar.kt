@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.menuScreen.ui
+package com.zdravnica.app.screens.menuScreen.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer

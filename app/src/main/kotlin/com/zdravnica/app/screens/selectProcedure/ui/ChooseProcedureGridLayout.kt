@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.selectProcedure.ui
+package com.zdravnica.app.screens.selectProcedure.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

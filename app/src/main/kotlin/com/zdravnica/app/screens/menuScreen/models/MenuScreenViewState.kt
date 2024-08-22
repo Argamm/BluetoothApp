@@ -1,7 +1,8 @@
-package com.zdravnica.app.screens.connecting_page.menuScreen.models
+package com.zdravnica.app.screens.menuScreen.models
 
 import androidx.compose.runtime.Immutable
 import com.zdravnica.app.core.models.BaseViewState
+import com.zdravnica.app.screens.menuScreen.models.MenuScreenUiModel
 
 @Immutable
 data class MenuScreenViewState(

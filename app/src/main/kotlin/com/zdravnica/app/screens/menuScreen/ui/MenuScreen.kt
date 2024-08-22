@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.menuScreen.ui
+package com.zdravnica.app.screens.menuScreen.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.zdravnica.app.screens.connecting_page.menuScreen.viewModels.MenuScreenSideEffect
-import com.zdravnica.app.screens.connecting_page.menuScreen.viewModels.MenuScreenViewModel
+import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenSideEffect
+import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.resources.R

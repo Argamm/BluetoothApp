@@ -13,10 +13,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
 import com.zdravnica.app.screens.connecting_page.ConnectingPageScreen
-import com.zdravnica.app.screens.connecting_page.dialog.CancelProcedureDialog
-import com.zdravnica.app.screens.connecting_page.dialog.ShowDevicesDialog
-import com.zdravnica.app.screens.connecting_page.menuScreen.ui.MenuScreen
-import com.zdravnica.app.screens.connecting_page.selectProcedure.ui.SelectProcedureScreen
+import com.zdravnica.app.screens.dialog.CancelProcedureDialog
+import com.zdravnica.app.screens.dialog.ShowDevicesDialog
+import com.zdravnica.app.screens.menuScreen.ui.MenuScreen
+import com.zdravnica.app.screens.selectProcedure.ui.SelectProcedureScreen
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.SLIDE_ANIMATION_DURATION_300
