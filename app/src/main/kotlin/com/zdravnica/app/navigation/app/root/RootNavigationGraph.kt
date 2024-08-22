@@ -15,16 +15,12 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
 import com.zdravnica.app.screens.connecting_page.ConnectingPageScreen
-import com.zdravnica.app.screens.procedure.ui.ProcedureScreen
-import com.zdravnica.app.screens.connecting_page.dialog.ShowDevicesDialog
-import com.zdravnica.app.screens.connecting_page.menuScreen.ui.MenuScreen
-import com.zdravnica.app.screens.connecting_page.preparingTheCabin.ui.PreparingTheCabinScreen
-import com.zdravnica.app.screens.connecting_page.procedure.ui.ProcedureScreen
-import com.zdravnica.app.screens.connecting_page.selectProcedure.ui.SelectProcedureScreen
+import com.zdravnica.app.screens.preparingTheCabin.ui.PreparingTheCabinScreen
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
 import com.zdravnica.app.screens.dialog.CancelProcedureDialog
 import com.zdravnica.app.screens.dialog.ShowDevicesDialog
 import com.zdravnica.app.screens.menuScreen.ui.MenuScreen
+import com.zdravnica.app.screens.procedure.ui.ProcedureScreen
 import com.zdravnica.app.screens.selectProcedure.ui.SelectProcedureScreen
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.SLIDE_ANIMATION_DURATION_300
@@ -111,14 +107,26 @@ fun RootNavigationGraph(
                     navigateGToConnectionScreen = {
                         navHostController.navigate(AppNavGraph.Connection.route)
                     },
-                    navigateToCancelDialogPage = {
-                        navHostController.navigate(AppNavGraph.CancelProcedureDialog.route)
+                    navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
+                        navHostController.navigate("${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}")
                     }
                 )
             }
 
-            dialog(AppNavGraph.CancelProcedureDialog.route) {
+            dialog(
+                route = "${AppNavGraph.CancelProcedureDialog.route}/{navigateToSelectProcedure}/{cancelDialog}",
+                arguments = listOf(navArgument("navigateToSelectProcedure") {
+                    type = NavType.BoolType
+                }, navArgument("cancelDialog") {
+                    type = NavType.StringType
+                })
+            ) { backStackEntry ->
+                val navigateToSelectProcedure =
+                    backStackEntry.arguments?.getBoolean("navigateToSelectProcedure")
+                val cancelDialog = backStackEntry.arguments?.getString("cancelDialog")
+
                 CancelProcedureDialog(
+                    titleText = cancelDialog ?: "",
                     onClose = {
                         navHostController.navigateUp()
                     },
@@ -126,7 +134,18 @@ fun RootNavigationGraph(
                         navHostController.navigateUp()
                     },
                     onYesClick = {
-                        navHostController.navigate(AppNavGraph.Connection.route)
+                        if (navigateToSelectProcedure == true)
+                            navHostController.navigate(AppNavGraph.SelectProcedureScreen.route){
+                                popUpTo(AppNavGraph.Connection.route) {
+                                    inclusive = true
+                                }
+                            }
+                        else
+                            navHostController.navigate(AppNavGraph.Connection.route){
+                                popUpTo(AppNavGraph.Connection.route) {
+                                    inclusive = true
+                                }
+                            }
                     }
                 )
             }
@@ -140,7 +159,7 @@ fun RootNavigationGraph(
                 ProcedureScreen(
                     chipTitle = chipData,
                     onNavigateUp = { navHostController.navigateUp() },
-                    startProcedure = {chipTitle ->
+                    startProcedure = { chipTitle ->
                         navHostController.navigate("${AppNavGraph.PreparingTheCabinScreen.route}/${chipTitle}")
                     }
                 )
@@ -156,6 +175,11 @@ fun RootNavigationGraph(
                     chipTitleId = chipTitle,
                     navigateToSelectProcedureScreen = {
                         navHostController.navigate(AppNavGraph.SelectProcedureScreen.route)
+                    },
+                    navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
+                        navHostController.navigate(
+                            "${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}"
+                        )
                     }
                 )
             }

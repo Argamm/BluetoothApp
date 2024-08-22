@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.preparingTheCabin.ui
+package com.zdravnica.app.screens.preparingTheCabin.ui
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +25,7 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.TOP_APP_BAR_TEMPERATURE_DESCRIPTION
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.fourItemIndicator.IndicatorFourIcons
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun PreparingTheCabinTopAppBar(
@@ -44,14 +45,14 @@ fun PreparingTheCabinTopAppBar(
                     modifier = Modifier
                         .padding(top = ZdravnicaAppTheme.dimens.size6)
                         .size(ZdravnicaAppTheme.dimens.size60),
-                    imageVector = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_temp),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_temp),
                     contentDescription = TOP_APP_BAR_TEMPERATURE_DESCRIPTION,
                     tint = ZdravnicaAppTheme.colors.baseAppColor.primary500
                 )
                 Text(
                     modifier = Modifier.padding(top = ZdravnicaAppTheme.dimens.size12),
                     text = stringResource(
-                        com.zdravnica.uikit.resources.R.string.select_product_temperature_value,
+                        R.string.select_product_temperature_value,
                         temperature
                     ),
                     color = ZdravnicaAppTheme.colors.baseAppColor.primary500,

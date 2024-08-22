@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.preparingTheCabin.ui
+package com.zdravnica.app.screens.preparingTheCabin.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

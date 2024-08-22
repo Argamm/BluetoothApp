@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.preparingTheCabin.models
+package com.zdravnica.app.screens.preparingTheCabin.models
 
 import androidx.compose.runtime.Immutable
 import com.zdravnica.app.core.models.BaseViewState

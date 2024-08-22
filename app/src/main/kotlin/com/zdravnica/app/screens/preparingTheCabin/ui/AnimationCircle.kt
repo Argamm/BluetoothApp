@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.preparingTheCabin.ui
+package com.zdravnica.app.screens.preparingTheCabin.ui
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke

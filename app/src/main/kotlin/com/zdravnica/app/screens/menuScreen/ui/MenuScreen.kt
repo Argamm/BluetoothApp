@@ -36,9 +36,10 @@ fun MenuScreen(
     menuScreenViewModel: MenuScreenViewModel = koinViewModel(),
     onNavigateUp: (() -> Unit)? = null,
     navigateGToConnectionScreen: (() -> Unit)? = null,
-    navigateToCancelDialogPage: (() -> Unit)? = null,
+    navigateToCancelDialogPage: (Boolean, String) -> Unit,
 ) {
     val menuScreenViewState by menuScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
+    val cancelDialog = stringResource(id = R.string.menu_screen_cancel_title)
 
     menuScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -47,7 +48,8 @@ fun MenuScreen(
             is MenuScreenSideEffect.OnSiteClick -> {}
             is MenuScreenSideEffect.OnEmailClick -> {}
             is MenuScreenSideEffect.OnCallClick -> {}
-            is MenuScreenSideEffect.OnNavigateToCancelDialogPage -> navigateToCancelDialogPage?.invoke()
+            is MenuScreenSideEffect.OnNavigateToCancelDialogPage ->
+                navigateToCancelDialogPage.invoke(false, cancelDialog)
         }
     }
 
@@ -154,6 +156,6 @@ fun MenuScreen(
 @Composable
 fun PreviewMenuScreen() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        MenuScreen()
+        MenuScreen(navigateToCancelDialogPage = {a, b->})
     }
 }

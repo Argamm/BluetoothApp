@@ -30,9 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.MAX_LINES_COUNT_ONE
-import com.zdravnica.uikit.resources.R
 import com.zdravnica.uikit.COUNT_ONE
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun MenuConnectToUs(

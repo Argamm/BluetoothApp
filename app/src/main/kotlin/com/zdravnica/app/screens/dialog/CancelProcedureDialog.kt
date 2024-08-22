@@ -33,7 +33,7 @@ import com.zdravnica.uikit.resources.R
 @Composable
 fun CancelProcedureDialog(
     modifier: Modifier = Modifier,
-    titleText: String,
+    titleText: String = "",
     onClose: () -> Unit,
     onNoClick: () -> Unit,
     onYesClick: () -> Unit

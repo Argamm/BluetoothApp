@@ -1,7 +1,7 @@
-package com.zdravnica.app.screens.connecting_page.preparingTheCabin.viewModels
+package com.zdravnica.app.screens.preparingTheCabin.viewModels
 
 import com.zdravnica.app.core.viewmodel.BaseViewModel
-import com.zdravnica.app.screens.connecting_page.preparingTheCabin.models.PreparingTheCabinScreenViewState
+import com.zdravnica.app.screens.preparingTheCabin.models.PreparingTheCabinScreenViewState
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
@@ -18,9 +18,10 @@ class PreparingTheCabinScreenViewModel :
         reduce {
             state.copy(uiModel = state.uiModel.copy(isDialogVisible = isVisible))
         }
+
     }
 
-    fun navigateToSelectProcedureScreen() {
-        postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToSelectProcedureScreen)
+    fun navigateToCancelDialogPage() {
+        postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToCancelDialogPage)
     }
 }
