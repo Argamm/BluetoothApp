@@ -1,0 +1,159 @@
+package com.zdravnica.app.screens.menuScreen.ui
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenSideEffect
+import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenViewModel
+import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
+import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.resources.R
+import com.zdravnica.uikit.components.topAppBar.SimpleTopAppBar
+import org.koin.androidx.compose.koinViewModel
+import org.orbitmvi.orbit.compose.collectSideEffect
+
+@Composable
+fun MenuScreen(
+    modifier: Modifier = Modifier,
+    menuScreenViewModel: MenuScreenViewModel = koinViewModel(),
+    onNavigateUp: (() -> Unit)? = null,
+    navigateGToConnectionScreen: (() -> Unit)? = null,
+    navigateToCancelDialogPage: (() -> Unit)? = null,
+) {
+    val menuScreenViewState by menuScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
+
+    menuScreenViewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is MenuScreenSideEffect.OnNavigateToConnectionScreen -> navigateGToConnectionScreen?.invoke()
+            is MenuScreenSideEffect.OnNavigateUp -> onNavigateUp?.invoke()
+            is MenuScreenSideEffect.OnSiteClick -> {}
+            is MenuScreenSideEffect.OnEmailClick -> {}
+            is MenuScreenSideEffect.OnCallClick -> {}
+            is MenuScreenSideEffect.OnNavigateToCancelDialogPage -> navigateToCancelDialogPage?.invoke()
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                menuScreenViewModel.onChangeCancelDialogPageVisibility(false)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    Scaffold(
+        modifier = modifier
+            .fillMaxSize()
+            .then(
+                if (menuScreenViewState.uiModel.idDialogVisible) {
+                    Modifier.blur(ZdravnicaAppTheme.dimens.size15)
+                } else Modifier
+            ),
+        topBar = {
+            SimpleTopAppBar(
+                title = stringResource(R.string.menu_screen_top_app_bar_title),
+                onNavigateUp = menuScreenViewModel::onNavigateUp
+            )
+        },
+        content = { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(
+                        top = ZdravnicaAppTheme.dimens.size12,
+                        start = ZdravnicaAppTheme.dimens.size12,
+                        end = ZdravnicaAppTheme.dimens.size12
+                    )
+            ) {
+                item {
+                    MenuTemperatureInfo(
+                        //this data must get from bluetooth
+                        temperature = 50,
+                    )
+                }
+                item {
+                    MenuIndicators()
+                }
+                item {
+                    //this data must get from bluetooth
+                    MenuBalms(
+                        firstBalmCount = 100,
+                        secondBalmCount = 100,
+                        thirdBalmCount = 0
+                    )
+                }
+                item {
+                    MenuConnectToUs(
+                        onSiteClick = menuScreenViewModel::onSiteClick,
+                        onEmailClick = menuScreenViewModel::onEmailClick,
+                        onCallClick = menuScreenViewModel::onCallClick,
+                    )
+                }
+                item {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = ZdravnicaAppTheme.dimens.size24)
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) {
+                                menuScreenViewModel.onChangeCancelDialogPageVisibility(true)
+                                menuScreenViewModel.navigateToCancelDialogPage()
+                            },
+                        text = stringResource(R.string.menu_screen_disconnect),
+                        style = ZdravnicaAppTheme.typography.bodyMediumSemi,
+                        color = ZdravnicaAppTheme.colors.baseAppColor.gray200,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                item {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = ZdravnicaAppTheme.dimens.size12,
+                                bottom = ZdravnicaAppTheme.dimens.size6
+                            ),
+                        text = stringResource(R.string.menu_screen_last_subtitle),
+                        style = ZdravnicaAppTheme.typography.bodyNormalMedium,
+                        color = ZdravnicaAppTheme.colors.baseAppColor.gray500,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    )
+}
+
+@Preview
+@Composable
+fun PreviewMenuScreen() {
+    ZdravnicaAppExerciseTheme(darkThem = false) {
+        MenuScreen()
+    }
+}

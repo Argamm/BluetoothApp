@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.CLOSE_ICON_DESCRIPTION
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun SimpleTopAppBar(
@@ -36,7 +37,7 @@ fun SimpleTopAppBar(
                     onNavigateUp()
                 }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_close),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_close),
                     contentDescription = CLOSE_ICON_DESCRIPTION,
                     tint = MaterialTheme.colors.onSurface
                 )
@@ -63,7 +64,7 @@ fun SimpleTopAppBar(
 
 @Preview
 @Composable
-fun PreviewMenuTopAppBar() {
+fun PreviewSimpleTopAppBar() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         SimpleTopAppBar {}
     }
