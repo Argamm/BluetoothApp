@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
 import com.zdravnica.app.screens.connecting_page.ConnectingPageScreen
+import com.zdravnica.app.screens.connecting_page.dialog.CancelProcedureDialog
 import com.zdravnica.app.screens.connecting_page.dialog.ShowDevicesDialog
 import com.zdravnica.app.screens.connecting_page.menuScreen.ui.MenuScreen
 import com.zdravnica.app.screens.connecting_page.selectProcedure.ui.SelectProcedureScreen
@@ -97,6 +98,23 @@ fun RootNavigationGraph(
                         navHostController.navigateUp()
                     },
                     navigateGToConnectionScreen = {
+                        navHostController.navigate(AppNavGraph.Connection.route)
+                    },
+                    navigateToCancelDialogPage = {
+                        navHostController.navigate(AppNavGraph.CancelProcedureDialog.route)
+                    }
+                )
+            }
+
+            dialog(AppNavGraph.CancelProcedureDialog.route) {
+                CancelProcedureDialog(
+                    onClose = {
+                        navHostController.navigateUp()
+                    },
+                    onNoClick = {
+                        navHostController.navigateUp()
+                    },
+                    onYesClick = {
                         navHostController.navigate(AppNavGraph.Connection.route)
                     }
                 )

@@ -1,6 +1,13 @@
 package com.zdravnica.app.screens.connecting_page.menuScreen.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -21,6 +28,7 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.ERROR_ICON_DESCRIPTION
 import com.zdravnica.uikit.ORDER_DESCRIPTION
 import com.zdravnica.uikit.components.buttons.ui.OrderBalmButton
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun MenuBalms(
@@ -45,20 +53,20 @@ fun MenuBalms(
             modifier = Modifier.padding(ZdravnicaAppTheme.dimens.size16)
         ) {
             Text(
-                text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_balm_title),
+                text = stringResource(R.string.menu_screen_balm_title),
                 style = ZdravnicaAppTheme.typography.bodyNormalMedium,
                 color = ZdravnicaAppTheme.colors.baseAppColor.gray500
             )
 
             Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size16))
-            BalmRow(stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_nut), firstBalmCount)
-            BalmRow(stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_burdock), secondBalmCount)
-            BalmRow(stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_mint), thirdBalmCount)
+            BalmRow(stringResource(R.string.menu_screen_nut), firstBalmCount)
+            BalmRow(stringResource(R.string.menu_screen_burdock), secondBalmCount)
+            BalmRow(stringResource(R.string.menu_screen_mint), thirdBalmCount)
 
             if (zeroTextVisible.value) {
                 Text(
                     modifier = Modifier.padding(top = ZdravnicaAppTheme.dimens.size12),
-                    text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_add_some_balm),
+                    text = stringResource(R.string.menu_screen_add_some_balm),
                     style = ZdravnicaAppTheme.typography.bodyNormalMedium,
                     color = ZdravnicaAppTheme.colors.baseAppColor.error500
                 )
@@ -69,9 +77,9 @@ fun MenuBalms(
                 isDisabled = false,
                 contentDescription = ORDER_DESCRIPTION,
                 text = if (zeroTextVisible.value)
-                    stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_balm_filled)
+                    stringResource(R.string.menu_screen_balm_filled)
                 else
-                    stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_order_balm),
+                    stringResource(R.string.menu_screen_order_balm),
                 onClick = { }
             )
 
@@ -79,7 +87,7 @@ fun MenuBalms(
                 Text(
                     modifier = Modifier
                         .padding(top = ZdravnicaAppTheme.dimens.size12),
-                    text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_add_balm_instruction),
+                    text = stringResource(R.string.menu_screen_add_balm_instruction),
                     style = ZdravnicaAppTheme.typography.bodyNormalMedium,
                     color = ZdravnicaAppTheme.colors.baseAppColor.gray500,
                     textAlign = TextAlign.Center
@@ -103,7 +111,7 @@ fun BalmRow(label: String, balmValue: Int) {
         Spacer(modifier = Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_balm_count, balmValue),
+                text = stringResource(R.string.menu_screen_balm_count, balmValue),
                 style = ZdravnicaAppTheme.typography.bodyNormalBold,
                 color = if (balmValue != 0) ZdravnicaAppTheme.colors.baseAppColor.gray200
                 else ZdravnicaAppTheme.colors.baseAppColor.gray500
@@ -111,7 +119,7 @@ fun BalmRow(label: String, balmValue: Int) {
             if (balmValue == 0) {
                 Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size8))
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_error),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_error),
                     contentDescription = ERROR_ICON_DESCRIPTION,
                     tint = ZdravnicaAppTheme.colors.baseAppColor.gray500,
                     modifier = Modifier.size(ZdravnicaAppTheme.dimens.size18)

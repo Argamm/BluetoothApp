@@ -18,8 +18,8 @@ class MenuScreenViewModel : BaseViewModel<MenuScreenViewState, MenuScreenSideEff
         }
     }
 
-    fun navigateGToConnectionScreen(){
-        postSideEffect(MenuScreenSideEffect.OnNavigateToConnectionScreen)
+    fun navigateToCancelDialogPage() {
+        postSideEffect(MenuScreenSideEffect.OnNavigateToCancelDialogPage)
     }
 
     fun onNavigateUp(){

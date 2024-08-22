@@ -11,4 +11,6 @@ sealed interface MenuScreenSideEffect {
     data object OnEmailClick : MenuScreenSideEffect
 
     data object OnCallClick : MenuScreenSideEffect
+
+    data object OnNavigateToCancelDialogPage : MenuScreenSideEffect
 }

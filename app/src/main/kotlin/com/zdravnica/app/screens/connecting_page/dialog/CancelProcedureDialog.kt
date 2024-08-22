@@ -28,9 +28,11 @@ import androidx.compose.ui.window.DialogProperties
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.CLOSE_ICON_DESCRIPTION
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun CancelProcedureDialog(
+    modifier: Modifier = Modifier,
     onClose: () -> Unit,
     onNoClick: () -> Unit,
     onYesClick: () -> Unit
@@ -40,7 +42,7 @@ fun CancelProcedureDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(
                     horizontal = ZdravnicaAppTheme.dimens.size14
@@ -58,10 +60,9 @@ fun CancelProcedureDialog(
                         .padding(ZdravnicaAppTheme.dimens.size16)
                         .fillMaxWidth()
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.TopEnd
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -72,7 +73,7 @@ fun CancelProcedureDialog(
                     }
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size18))
                     Text(
-                        text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_cancel_title),
+                        text = stringResource(R.string.menu_screen_cancel_title),
                         style = ZdravnicaAppTheme.typography.bodyMediumRegular,
                         color = ZdravnicaAppTheme.colors.baseAppColor.gray200,
                     )
@@ -92,7 +93,7 @@ fun CancelProcedureDialog(
                                     top = ZdravnicaAppTheme.dimens.size12,
                                     bottom = ZdravnicaAppTheme.dimens.size12
                                 ),
-                                text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_cancel),
+                                text = stringResource(R.string.menu_screen_cancel),
                                 style = ZdravnicaAppTheme.typography.bodyMediumSemi,
                             )
                         }
@@ -108,7 +109,7 @@ fun CancelProcedureDialog(
                                     top = ZdravnicaAppTheme.dimens.size12,
                                     bottom = ZdravnicaAppTheme.dimens.size12
                                 ),
-                                text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_yes),
+                                text = stringResource(R.string.menu_screen_yes),
                                 color = Color.White,
                                 style = ZdravnicaAppTheme.typography.bodyMediumSemi
                             )

@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.CLOSE_ICON_DESCRIPTION
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun MenuTopAppBar(
@@ -27,6 +28,7 @@ fun MenuTopAppBar(
     onNavigateUp: () -> Unit
 ) {
     TopAppBar(
+        modifier = modifier,
         backgroundColor = MaterialTheme.colors.surface,
         elevation = 0.dp,
         navigationIcon = {
@@ -35,7 +37,7 @@ fun MenuTopAppBar(
                     onNavigateUp()
                 }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_close),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_close),
                     contentDescription = CLOSE_ICON_DESCRIPTION,
                     tint = MaterialTheme.colors.onSurface
                 )
@@ -48,7 +50,7 @@ fun MenuTopAppBar(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_top_app_bar_title),
+                    text = stringResource(R.string.menu_screen_top_app_bar_title),
                     style = ZdravnicaAppTheme.typography.bodyNormalMedium,
                     color = MaterialTheme.colors.onSurface
                 )

@@ -27,6 +27,7 @@ import com.zdravnica.uikit.TOP_APP_BAR_MENU_ICON_DESCRIPTION
 import com.zdravnica.uikit.TOP_APP_BAR_TEMPERATURE_DESCRIPTION
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.fourItemIndicator.IndicatorFourIcons
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun SelectProcedureTopAppBar(
@@ -44,13 +45,13 @@ fun SelectProcedureTopAppBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_temp),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_temp),
                     contentDescription = TOP_APP_BAR_TEMPERATURE_DESCRIPTION,
                     tint = Color.Black
                 )
                 Text(
                     text = stringResource(
-                        com.zdravnica.uikit.resources.R.string.select_product_temperature_value,
+                        R.string.select_product_temperature_value,
                         temperature
                     ), color = Color.Black
                 )
@@ -79,7 +80,7 @@ fun SelectProcedureTopAppBar(
                     ) { onRightIconClick() }
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_menu),
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_menu),
                         contentDescription = TOP_APP_BAR_MENU_ICON_DESCRIPTION,
                         tint = Color.Black,
                     )
