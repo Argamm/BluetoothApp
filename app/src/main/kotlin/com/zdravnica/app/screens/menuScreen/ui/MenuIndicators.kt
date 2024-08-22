@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.menuScreen.ui
+package com.zdravnica.app.screens.menuScreen.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +24,7 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.ERROR_ICON_DESCRIPTION
 import com.zdravnica.uikit.INDICATOR_ICON_DESCRIPTION
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun MenuIndicators(
@@ -42,7 +43,7 @@ fun MenuIndicators(
             modifier = Modifier.padding(ZdravnicaAppTheme.dimens.size16)
         ) {
             Text(
-                text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_indicators_title),
+                text = stringResource(R.string.menu_screen_indicators_title),
                 style = ZdravnicaAppTheme.typography.bodyNormalMedium,
                 color = ZdravnicaAppTheme.colors.baseAppColor.gray500
             )
@@ -50,26 +51,26 @@ fun MenuIndicators(
             Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size16))
 
             IndicatorRowLine(
-                indicatorIcon = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_fan),
-                indicatorText = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_fan),
+                indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_fan),
+                indicatorText = stringResource(R.string.menu_screen_fan),
                 errorIconVisible = true
             )
 
             IndicatorRowLine(
-                indicatorIcon = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_ten),
-                indicatorText = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_ten),
+                indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_ten),
+                indicatorText = stringResource(R.string.menu_screen_ten),
                 errorIconVisible = true
             )
 
             IndicatorRowLine(
-                indicatorIcon = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_compressor),
-                indicatorText = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_compressor),
+                indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_compressor),
+                indicatorText = stringResource(R.string.menu_screen_compressor),
                 errorIconVisible = true
             )
 
             IndicatorRowLine(
-                indicatorIcon = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_ik),
-                indicatorText = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_ik),
+                indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_ik),
+                indicatorText = stringResource(R.string.menu_screen_ik),
                 errorIconVisible = false
             )
         }
@@ -102,7 +103,7 @@ fun IndicatorRowLine(
         Spacer(modifier = Modifier.weight(1f))
         if (errorIconVisible) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_error),
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_error),
                 contentDescription = ERROR_ICON_DESCRIPTION,
                 tint = ZdravnicaAppTheme.colors.baseAppColor.gray500,
                 modifier = Modifier.size(ZdravnicaAppTheme.dimens.size18)

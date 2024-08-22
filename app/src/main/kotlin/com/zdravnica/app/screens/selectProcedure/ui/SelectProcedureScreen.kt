@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.selectProcedure.ui
+package com.zdravnica.app.screens.selectProcedure.ui
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -18,8 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels.SelectProcedureSideEffect
-import com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels.SelectProcedureViewModel
+import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideEffect
+import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.DURATION_TO_SCROLL_DOWN

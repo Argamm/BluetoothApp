@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.dialog
+package com.zdravnica.app.screens.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

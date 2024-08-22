@@ -1,7 +1,7 @@
-package com.zdravnica.app.screens.connecting_page.menuScreen.viewModels
+package com.zdravnica.app.screens.menuScreen.viewModels
 
 import com.zdravnica.app.core.viewmodel.BaseViewModel
-import com.zdravnica.app.screens.connecting_page.menuScreen.models.MenuScreenViewState
+import com.zdravnica.app.screens.menuScreen.models.MenuScreenViewState
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
@@ -18,8 +18,8 @@ class MenuScreenViewModel : BaseViewModel<MenuScreenViewState, MenuScreenSideEff
         }
     }
 
-    fun navigateGToConnectionScreen(){
-        postSideEffect(MenuScreenSideEffect.OnNavigateToConnectionScreen)
+    fun navigateToCancelDialogPage() {
+        postSideEffect(MenuScreenSideEffect.OnNavigateToCancelDialogPage)
     }
 
     fun onNavigateUp(){

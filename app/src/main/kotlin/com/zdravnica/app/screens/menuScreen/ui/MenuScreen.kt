@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.menuScreen.ui
+package com.zdravnica.app.screens.menuScreen.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,19 +9,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.zdravnica.app.screens.connecting_page.dialog.CancelProcedureDialog
-import com.zdravnica.app.screens.connecting_page.menuScreen.viewModels.MenuScreenSideEffect
-import com.zdravnica.app.screens.connecting_page.menuScreen.viewModels.MenuScreenViewModel
+import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenSideEffect
+import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.resources.R
 import com.zdravnica.uikit.components.topAppBar.SimpleTopAppBar
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -32,6 +36,7 @@ fun MenuScreen(
     menuScreenViewModel: MenuScreenViewModel = koinViewModel(),
     onNavigateUp: (() -> Unit)? = null,
     navigateGToConnectionScreen: (() -> Unit)? = null,
+    navigateToCancelDialogPage: (() -> Unit)? = null,
 ) {
     val menuScreenViewState by menuScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
 
@@ -42,6 +47,20 @@ fun MenuScreen(
             is MenuScreenSideEffect.OnSiteClick -> {}
             is MenuScreenSideEffect.OnEmailClick -> {}
             is MenuScreenSideEffect.OnCallClick -> {}
+            is MenuScreenSideEffect.OnNavigateToCancelDialogPage -> navigateToCancelDialogPage?.invoke()
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                menuScreenViewModel.onChangeCancelDialogPageVisibility(false)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
@@ -55,7 +74,7 @@ fun MenuScreen(
             ),
         topBar = {
             SimpleTopAppBar(
-                title = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_top_app_bar_title),
+                title = stringResource(R.string.menu_screen_top_app_bar_title),
                 onNavigateUp = menuScreenViewModel::onNavigateUp
             )
         },
@@ -104,8 +123,9 @@ fun MenuScreen(
                                 interactionSource = remember { MutableInteractionSource() }
                             ) {
                                 menuScreenViewModel.onChangeCancelDialogPageVisibility(true)
+                                menuScreenViewModel.navigateToCancelDialogPage()
                             },
-                        text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_disconnect),
+                        text = stringResource(R.string.menu_screen_disconnect),
                         style = ZdravnicaAppTheme.typography.bodyMediumSemi,
                         color = ZdravnicaAppTheme.colors.baseAppColor.gray200,
                         textAlign = TextAlign.Center
@@ -119,7 +139,7 @@ fun MenuScreen(
                                 top = ZdravnicaAppTheme.dimens.size12,
                                 bottom = ZdravnicaAppTheme.dimens.size6
                             ),
-                        text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_last_subtitle),
+                        text = stringResource(R.string.menu_screen_last_subtitle),
                         style = ZdravnicaAppTheme.typography.bodyNormalMedium,
                         color = ZdravnicaAppTheme.colors.baseAppColor.gray500,
                         textAlign = TextAlign.Center
@@ -128,18 +148,6 @@ fun MenuScreen(
             }
         }
     )
-
-    if (menuScreenViewState.uiModel.idDialogVisible) {
-        CancelProcedureDialog(
-            onClose = {
-                menuScreenViewModel.onChangeCancelDialogPageVisibility(false)
-            },
-            onNoClick = {
-                menuScreenViewModel.onChangeCancelDialogPageVisibility(false)
-            },
-            onYesClick = menuScreenViewModel::navigateGToConnectionScreen
-        )
-    }
 }
 
 @Preview

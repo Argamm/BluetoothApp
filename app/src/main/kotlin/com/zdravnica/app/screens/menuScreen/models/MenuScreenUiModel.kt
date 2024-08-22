@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.menuScreen.models
+package com.zdravnica.app.screens.menuScreen.models
 
 import androidx.compose.runtime.Immutable
 

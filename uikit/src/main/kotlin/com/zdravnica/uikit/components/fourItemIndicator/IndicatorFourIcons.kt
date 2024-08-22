@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.base_type.IconState
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun IndicatorFourIcons(iconStates: SnapshotStateList<IconState>) {
@@ -32,10 +33,10 @@ fun IndicatorFourIcons(iconStates: SnapshotStateList<IconState>) {
 
     ) {
         val icons = listOf(
-            com.zdravnica.uikit.resources.R.drawable.ic_fan,
-            com.zdravnica.uikit.resources.R.drawable.ic_ten,
-            com.zdravnica.uikit.resources.R.drawable.ic_compressor,
-            com.zdravnica.uikit.resources.R.drawable.ic_ik
+            R.drawable.ic_fan,
+            R.drawable.ic_ten,
+            R.drawable.ic_compressor,
+            R.drawable.ic_ik
         )
         val iconCount = icons.size
 

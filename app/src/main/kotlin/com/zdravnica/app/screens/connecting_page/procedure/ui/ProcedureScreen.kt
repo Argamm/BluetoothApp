@@ -22,6 +22,7 @@ import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getBalm
 import com.zdravnica.uikit.components.topAppBar.SimpleTopAppBar
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun ProcedureScreen(
@@ -57,7 +58,7 @@ fun ProcedureScreen(
             .fillMaxSize(),
         topBar = {
             SimpleTopAppBar(
-                title = stringResource(com.zdravnica.uikit.resources.R.string.procedure_screen_title),
+                title = stringResource(R.string.procedure_screen_title),
                 onNavigateUp = procedureScreenViewModel::onNavigateUp
             )
         },

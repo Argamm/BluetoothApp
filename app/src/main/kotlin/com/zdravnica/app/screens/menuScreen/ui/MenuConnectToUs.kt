@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.menuScreen.ui
+package com.zdravnica.app.screens.menuScreen.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.Dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.MAX_LINES_COUNT_ONE
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun MenuConnectToUs(
@@ -43,30 +44,30 @@ fun MenuConnectToUs(
         val maxTextWidth = maxWidth / CARDS_TITLE_COUNT - (ZdravnicaAppTheme.dimens.size14 + ZdravnicaAppTheme.dimens.size16)
 
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .padding(ZdravnicaAppTheme.dimens.size16)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
         ) {
             ConnectColumn(
-                icon = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_network),
-                text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_site),
+                icon = ImageVector.vectorResource(id = R.drawable.ic_network),
+                text = stringResource(R.string.menu_screen_site),
                 onClick = onSiteClick,
                 width = maxTextWidth
             )
             Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size8))
 
             ConnectColumn(
-                icon = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_email),
-                text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_email),
+                icon = ImageVector.vectorResource(id = R.drawable.ic_email),
+                text = stringResource(R.string.menu_screen_email),
                 onClick = onEmailClick,
                 width = maxTextWidth
             )
             Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size8))
 
             ConnectColumn(
-                icon = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_phone),
-                text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_call),
+                icon = ImageVector.vectorResource(id = R.drawable.ic_phone),
+                text = stringResource(R.string.menu_screen_call),
                 onClick = onCallClick,
                 width = maxTextWidth
             )

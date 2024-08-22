@@ -15,11 +15,12 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
 import com.zdravnica.app.screens.connecting_page.ConnectingPageScreen
-import com.zdravnica.app.screens.connecting_page.dialog.ShowDevicesDialog
-import com.zdravnica.app.screens.connecting_page.menuScreen.ui.MenuScreen
 import com.zdravnica.app.screens.connecting_page.procedure.ui.ProcedureScreen
-import com.zdravnica.app.screens.connecting_page.selectProcedure.ui.SelectProcedureScreen
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
+import com.zdravnica.app.screens.dialog.CancelProcedureDialog
+import com.zdravnica.app.screens.dialog.ShowDevicesDialog
+import com.zdravnica.app.screens.menuScreen.ui.MenuScreen
+import com.zdravnica.app.screens.selectProcedure.ui.SelectProcedureScreen
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.SLIDE_ANIMATION_DURATION_300
 import org.koin.androidx.compose.koinViewModel
@@ -102,6 +103,23 @@ fun RootNavigationGraph(
                         navHostController.navigateUp()
                     },
                     navigateGToConnectionScreen = {
+                        navHostController.navigate(AppNavGraph.Connection.route)
+                    },
+                    navigateToCancelDialogPage = {
+                        navHostController.navigate(AppNavGraph.CancelProcedureDialog.route)
+                    }
+                )
+            }
+
+            dialog(AppNavGraph.CancelProcedureDialog.route) {
+                CancelProcedureDialog(
+                    onClose = {
+                        navHostController.navigateUp()
+                    },
+                    onNoClick = {
+                        navHostController.navigateUp()
+                    },
+                    onYesClick = {
                         navHostController.navigate(AppNavGraph.Connection.route)
                     }
                 )

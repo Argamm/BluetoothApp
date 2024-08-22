@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.menuScreen.ui
+package com.zdravnica.app.screens.menuScreen.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +20,7 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.MAX_TEMPERATURE
 import com.zdravnica.uikit.TEMPERATURE_ICON_DESCRIPTION
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun MenuTemperatureInfo(
@@ -50,7 +51,7 @@ fun MenuTemperatureInfo(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_temp),
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_temp),
                 contentDescription = TEMPERATURE_ICON_DESCRIPTION,
                 modifier = Modifier.size(ZdravnicaAppTheme.dimens.size48),
                 tint = primaryColor
@@ -58,14 +59,14 @@ fun MenuTemperatureInfo(
             Column {
                 Text(
                     text = stringResource(
-                        com.zdravnica.uikit.resources.R.string.select_product_temperature_value,
+                        R.string.select_product_temperature_value,
                         temperature
                     ),
                     style = ZdravnicaAppTheme.typography.headH3,
                     color = primaryColor
                 )
                 Text(
-                    text = stringResource(com.zdravnica.uikit.resources.R.string.menu_screen_temperature_title),
+                    text = stringResource(R.string.menu_screen_temperature_title),
                     style = ZdravnicaAppTheme.typography.bodyNormalMedium,
                     color = primaryColor
                 )

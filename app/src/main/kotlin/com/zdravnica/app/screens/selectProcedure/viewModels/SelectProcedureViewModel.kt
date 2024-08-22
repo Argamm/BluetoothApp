@@ -1,7 +1,7 @@
-package com.zdravnica.app.screens.connecting_page.selectProcedure.viewModels
+package com.zdravnica.app.screens.selectProcedure.viewModels
 
 import com.zdravnica.app.core.viewmodel.BaseViewModel
-import com.zdravnica.app.screens.connecting_page.selectProcedure.models.SelectProcedureViewState
+import com.zdravnica.app.screens.selectProcedure.models.SelectProcedureViewState
 import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
 import org.orbitmvi.orbit.viewmodel.container
 
