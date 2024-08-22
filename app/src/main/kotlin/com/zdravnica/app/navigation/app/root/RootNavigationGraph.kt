@@ -15,7 +15,7 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
 import com.zdravnica.app.screens.connecting_page.ConnectingPageScreen
-import com.zdravnica.app.screens.connecting_page.procedure.ui.ProcedureScreen
+import com.zdravnica.app.screens.procedure.ui.ProcedureScreen
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
 import com.zdravnica.app.screens.dialog.CancelProcedureDialog
 import com.zdravnica.app.screens.dialog.ShowDevicesDialog
@@ -44,7 +44,8 @@ fun RootNavigationGraph(
                         .fillMaxSize()
                         .background(ZdravnicaAppTheme.colors.primaryBackgroundColor),
                     onShowAllDevicesDialog = {
-                        navHostController.navigate(AppNavGraph.BluetoothDevicesDialog.route)
+//                        navHostController.navigate(AppNavGraph.BluetoothDevicesDialog.route)
+                        navHostController.navigate(AppNavGraph.SelectProcedureScreen.route)
                     }
                 )
             }

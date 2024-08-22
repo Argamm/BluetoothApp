@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.procedure.ui
+package com.zdravnica.app.screens.procedure.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,8 +12,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.zdravnica.app.screens.connecting_page.procedure.viewModels.ProcedureScreenSideEffect
-import com.zdravnica.app.screens.connecting_page.procedure.viewModels.ProcedureScreenViewModel
+import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenSideEffect
+import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.components.chips.models.BigChipType

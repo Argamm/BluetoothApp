@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.procedure.ui
+package com.zdravnica.app.screens.procedure.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

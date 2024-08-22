@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.procedure.ui
+package com.zdravnica.app.screens.procedure.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

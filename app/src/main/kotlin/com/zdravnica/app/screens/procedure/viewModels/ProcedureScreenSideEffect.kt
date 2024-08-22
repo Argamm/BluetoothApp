@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.procedure.viewModels
+package com.zdravnica.app.screens.procedure.viewModels
 
 sealed interface ProcedureScreenSideEffect {
     data object OnNavigateUp : ProcedureScreenSideEffect

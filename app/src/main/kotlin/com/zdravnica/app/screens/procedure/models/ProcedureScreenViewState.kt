@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.connecting_page.procedure.models
+package com.zdravnica.app.screens.procedure.models
 
 import androidx.compose.runtime.Immutable
 import com.zdravnica.app.core.models.BaseViewState

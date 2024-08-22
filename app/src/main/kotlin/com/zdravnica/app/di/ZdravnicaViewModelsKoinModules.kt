@@ -1,6 +1,6 @@
 package com.zdravnica.app.di
 
-import com.zdravnica.app.screens.connecting_page.procedure.viewModels.ProcedureScreenViewModel
+import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenViewModel
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
 import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenViewModel
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
