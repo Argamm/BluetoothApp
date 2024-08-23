@@ -76,4 +76,14 @@
     <string name="preparing_the_cabin_cancel_procedure_question">Вы уверены что хотите отменить процедуру</string>
     <string name="preparing_the_cabin_time_and_temperature_info">%1$s° · %2$s минут</string>
     <!--    PreparingTheCabinScreen Page end -->
+
+    <!--    ProcedureProcessScreen Page start -->
+    <string name="procedure_process_temperature_skin">Температура \nкожи</string>
+    <string name="procedure_process_calory">Расход \nкаллорий</string>
+    <string name="procedure_process_pulse">Пульс</string>
+    <string name="procedure_process_procedure_end">Процедура завершена</string>
+    <string name="procedure_process_cooling">Идет охлаждение тэна</string>
+    <string name="procedure_process_to_main_screen">На главную</string>
+    <string name="procedure_process_to_the_end_of_procedure">До конца процедуры</string>
+    <!--    ProcedureProcessScreen Page end -->
 </resources>

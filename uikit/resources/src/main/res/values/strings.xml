@@ -77,4 +77,15 @@
     <string name="preparing_the_cabin_cancel_procedure_question">Are you sure you want to cancel the procedure?</string>
     <string name="preparing_the_cabin_time_and_temperature_info">%1$s° · %2$s minutes</string>
     <!--    PreparingTheCabinScreen Page end -->
+
+    <!--    ProcedureProcessScreen Page start -->
+    <string name="procedure_process_time_format" translatable="false">%1$02d:%2$02d</string>
+    <string name="procedure_process_temperature_skin">Skin Temperature</string>
+    <string name="procedure_process_calory">Calorie Consumption</string>
+    <string name="procedure_process_pulse">Pulse</string>
+    <string name="procedure_process_procedure_end">Procedure Completed</string>
+    <string name="procedure_process_cooling">Heating Element Cooling Down</string>
+    <string name="procedure_process_to_main_screen">To Main Screen</string>
+    <string name="procedure_process_to_the_end_of_procedure">Time Remaining</string>
+    <!--    ProcedureProcessScreen Page end -->
 </resources>

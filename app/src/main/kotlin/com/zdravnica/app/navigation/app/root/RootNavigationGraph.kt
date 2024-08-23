@@ -15,11 +15,12 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
 import com.zdravnica.app.screens.connecting_page.ConnectingPageScreen
-import com.zdravnica.app.screens.preparingTheCabin.ui.PreparingTheCabinScreen
+import com.zdravnica.app.screens.procedureProcess.ui.ProcedureProcessScreen
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
 import com.zdravnica.app.screens.dialog.CancelProcedureDialog
 import com.zdravnica.app.screens.dialog.ShowDevicesDialog
 import com.zdravnica.app.screens.menuScreen.ui.MenuScreen
+import com.zdravnica.app.screens.preparingTheCabin.ui.PreparingTheCabinScreen
 import com.zdravnica.app.screens.procedure.ui.ProcedureScreen
 import com.zdravnica.app.screens.selectProcedure.ui.SelectProcedureScreen
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
@@ -134,18 +135,18 @@ fun RootNavigationGraph(
                         navHostController.navigateUp()
                     },
                     onYesClick = {
-                        if (navigateToSelectProcedure == true)
-                            navHostController.navigate(AppNavGraph.SelectProcedureScreen.route){
-                                popUpTo(AppNavGraph.Connection.route) {
-                                    inclusive = true
-                                }
+                        val route = if (navigateToSelectProcedure == true) {
+                            AppNavGraph.SelectProcedureScreen.route
+                        } else {
+                            AppNavGraph.Connection.route
+                        }
+
+                        navHostController.navigate(route) {
+                            popUpTo(AppNavGraph.Connection.route) {
+                                inclusive = true
                             }
-                        else
-                            navHostController.navigate(AppNavGraph.Connection.route){
-                                popUpTo(AppNavGraph.Connection.route) {
-                                    inclusive = true
-                                }
-                            }
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -180,7 +181,23 @@ fun RootNavigationGraph(
                         navHostController.navigate(
                             "${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}"
                         )
+                    },
+                    navigateToProcedureProcessScreen = {
+                        navHostController.navigate(AppNavGraph.ProcedureProcessScreen.route)
                     }
+                )
+            }
+
+            composable(AppNavGraph.ProcedureProcessScreen.route) {
+                ProcedureProcessScreen(
+                    navigateToMainScreen = {
+                        navHostController.navigate(AppNavGraph.SelectProcedureScreen.route)
+                    },
+                    navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
+                        navHostController.navigate(
+                            "${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}"
+                        )
+                    },
                 )
             }
         }

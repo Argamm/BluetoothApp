@@ -41,6 +41,7 @@ import com.zdravnica.uikit.PINK_BACK_PROGRESS_UNTIL
 import com.zdravnica.uikit.RED_BACK_PROGRESS_FROM
 import com.zdravnica.uikit.RED_BACK_PROGRESS_UNTIL
 import com.zdravnica.uikit.WHITE_BACK_PROGRESS
+import com.zdravnica.uikit.components.topAppBar.ProcedureProcessTopAppBar
 import com.zdravnica.uikit.extensions.compose.calculateProgress
 import com.zdravnica.uikit.resources.R
 import kotlinx.coroutines.delay
@@ -54,6 +55,7 @@ fun PreparingTheCabinScreen(
     chipTitleId: Int? = null,
     navigateToSelectProcedureScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
+    navigateToProcedureProcessScreen: () -> Unit,
 ) {
     val context = LocalContext.current
     val preparingTheCabinScreenViewState by preparingTheCabinScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
@@ -123,7 +125,7 @@ fun PreparingTheCabinScreen(
             ),
         backgroundColor = backgroundColor,
         topBar = {
-            PreparingTheCabinTopAppBar(
+            ProcedureProcessTopAppBar(
                 modifier = Modifier.background(backgroundColor),
                 temperature = currentTemperature,
                 fourSwitchState = false,
@@ -176,7 +178,7 @@ fun PreparingTheCabinScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     AnimationCircle(animationEnd = {
-                        //navigate to Procedure in Process screen
+                        navigateToProcedureProcessScreen.invoke()
                     })
                 }
             }
@@ -188,6 +190,10 @@ fun PreparingTheCabinScreen(
 @Composable
 private fun PreparingTheCabinScreenPrev() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        PreparingTheCabinScreen(navigateToSelectProcedureScreen = {}) {a,b ->}
+        PreparingTheCabinScreen(
+            navigateToSelectProcedureScreen = {},
+            navigateToCancelDialogPage={a,b ->},
+            navigateToProcedureProcessScreen = {}
+        )
     }
 }
