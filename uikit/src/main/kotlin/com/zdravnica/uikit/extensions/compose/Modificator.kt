@@ -1,5 +1,9 @@
 package com.zdravnica.uikit.extensions.compose
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,7 +16,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import com.zdravnica.uikit.COUNT_TO_100
 import com.zdravnica.uikit.COUNT_TWO
+import com.zdravnica.uikit.EMAIL_DATA
 import com.zdravnica.uikit.ONE_MINUTE_IN_SEC
+import com.zdravnica.uikit.PHONE_CALL_DATA
 import com.zdravnica.uikit.resources.R
 
 fun Modifier.clickableSingle(
@@ -77,6 +83,25 @@ fun calculateTimeText(totalSeconds: Int): String {
     val minutes = totalSeconds / ONE_MINUTE_IN_SEC
     val seconds = totalSeconds % ONE_MINUTE_IN_SEC
     return stringResource(R.string.procedure_process_time_format, minutes, seconds)
+}
+
+fun Context.sendEmailActivity(email: String) {
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        type = EMAIL_DATA
+        putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+    }
+    if (intent.resolveActivity(packageManager) != null) {
+        startActivity(Intent.createChooser(intent, "Choose Email App"))
+    } else {
+        Toast.makeText(this, "No email app found", Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun Context.callPhoneActivity(phone: String) {
+    val intent = Intent(Intent.ACTION_DIAL).apply {
+        data = Uri.parse("$PHONE_CALL_DATA$phone")
+    }
+    startActivity(intent)
 }
 
 const val MAX_MINUTES = 1800

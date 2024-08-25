@@ -11,4 +11,5 @@ internal object AppDestinationsRouteNames {
     const val MENU_SCREEN = "MenuScreen"
     const val PREPARING_THE_CABIN_SCREEN = "PreparingTheCabinScreen"
     const val PROCEDURE_PROCESS_SCREEN = "ProcedureProcessScreen"
+    const val STATUS_SCREEN = "StatusScreen"
 }

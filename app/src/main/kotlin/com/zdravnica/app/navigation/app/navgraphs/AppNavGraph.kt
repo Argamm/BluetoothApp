@@ -16,4 +16,5 @@ sealed class AppNavGraph(val route: String) {
     data object ProcedureScreen : AppNavGraph(route = AppDestinationsRouteNames.PROCEDURE_SCREEN)
     data object PreparingTheCabinScreen : AppNavGraph(route = AppDestinationsRouteNames.PREPARING_THE_CABIN_SCREEN)
     data object ProcedureProcessScreen : AppNavGraph(route = AppDestinationsRouteNames.PROCEDURE_PROCESS_SCREEN)
+    data object StatusScreen : AppNavGraph(route = AppDestinationsRouteNames.STATUS_SCREEN)
 }

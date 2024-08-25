@@ -58,6 +58,9 @@
     <string name="menu_screen_cancel">Cancel</string>
     <string name="menu_screen_yes">Yes</string>
     <string name="menu_screen_cancel_title">Are you sure you want to disconnect?</string>
+    <string name="menu_screen_zdravnica_support_email_address" translatable="false">info@sibkedr.ru</string>
+    <string name="menu_screen_zdravnica_support_phone_number" translatable="false">+88007759552</string>
+    <string name="menu_screen_zdravnica_uri_path" translatable="false">https://www.zdrav.sibkedr.ru/</string>
     <!--    MenuScreen Page end -->
 
     <!--    ProcedureScreen Page start -->
@@ -80,12 +83,26 @@
 
     <!--    ProcedureProcessScreen Page start -->
     <string name="procedure_process_time_format" translatable="false">%1$02d:%2$02d</string>
-    <string name="procedure_process_temperature_skin">Skin Temperature</string>
-    <string name="procedure_process_calory">Calorie Consumption</string>
+    <string name="procedure_process_temperature_skin">Skin \nTemperature</string>
+    <string name="procedure_process_calory">Calorie \nConsumption</string>
     <string name="procedure_process_pulse">Pulse</string>
     <string name="procedure_process_procedure_end">Procedure Completed</string>
     <string name="procedure_process_cooling">Heating Element Cooling Down</string>
     <string name="procedure_process_to_main_screen">To Main Screen</string>
     <string name="procedure_process_to_the_end_of_procedure">Time Remaining</string>
     <!--    ProcedureProcessScreen Page end -->
+
+    <!--    StatusScreen Page start -->
+    <string name="status_info_sensor_error">Sensor Error</string>
+    <string name="status_info_sensor_error_instruction">Instruction:\n· The temperature sensor is either missing or defective.\n· Check the quality of the sensor\'s contact connection.\n· Clean the sensor with an alcohol solution.\n· Contact the manufacturer.</string>
+    <string name="status_info_thermostat_activation">Thermostat Activation</string>
+    <string name="status_info_thermostat_activation_instruction">Instruction: \n· Wait for the fan to stop \n· Check the free air access to the fan \n· Clean the filter screen \n· Clean the temperature sensor with an alcohol solution.</string>
+    <string name="status_info_temperature_exceeded">Temperature Exceeded by 5°C</string>
+    <string name="status_info_temperature_exceeded_instruction">Instruction:\n· Clean the temperature sensor with an alcohol solution.\n· Check the cleanliness of the filter screen.\n· Contact the manufacturer.</string>
+    <string name="status_info_connection_lost">Connection Lost</string>
+    <string name="status_info_connection_lost_instruction">To restore the connection, return to the Bluetooth coverage area and reconnect.</string>
+    <string name="status_info_support">Support</string>
+    <string name="status_info_ok">OK</string>
+    <!--    StatusScreen Page end -->
+
 </resources>

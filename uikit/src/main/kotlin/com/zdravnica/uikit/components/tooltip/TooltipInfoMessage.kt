@@ -14,20 +14,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 
 @Composable
 fun TooltipInfoMessage(
+    modifier: Modifier = Modifier,
     message: String,
     offset: IntOffset,
-    modifier: Modifier = Modifier,
-    isRightIcon: Boolean = true,
-    isBigButton: Boolean = false,
+    isFirstItem: Boolean = false,
+    isLastItem: Boolean = false
 ) {
     Popup(alignment = Alignment.Center, offset = offset) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = when {
+                isFirstItem -> Alignment.Start
+                isLastItem -> Alignment.End
+                else -> Alignment.CenterHorizontally
+            },
             modifier = modifier,
         ) {
             Card(
@@ -59,10 +64,8 @@ fun TooltipInfoMessage(
                 modifier = Modifier
                     .padding(
                         PaddingValues(
-                            end = if (isRightIcon || isBigButton)
-                                ZdravnicaAppTheme.dimens.size8
-                            else
-                                ZdravnicaAppTheme.dimens.size120
+                            start = if (isFirstItem) ZdravnicaAppTheme.dimens.size20 else 0.dp,
+                            end = if (isLastItem) ZdravnicaAppTheme.dimens.size20 else 0.dp,
                         )
                     )
                     .size(
@@ -73,7 +76,6 @@ fun TooltipInfoMessage(
                         color = Color.White,
                         shape = TriangleShape()
                     )
-                    .size(ZdravnicaAppTheme.dimens.size20, ZdravnicaAppTheme.dimens.size10)
             )
         }
     }

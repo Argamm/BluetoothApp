@@ -25,7 +25,7 @@ import com.zdravnica.uikit.resources.R
 @Composable
 fun MenuTemperatureInfo(
     modifier: Modifier = Modifier,
-    temperature: Short,
+    temperature: Int,
 ) {
     val primaryColor =
         if (temperature > MAX_TEMPERATURE)

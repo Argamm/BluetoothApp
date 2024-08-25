@@ -240,8 +240,8 @@ fun CheckBalmCountAndOrder(
                 else
                     ZdravnicaAppTheme.dimens.size12
             ),
-            isRightIcon = isRightIcon,
-            isBigButton = isBigButtonClick
+            isFirstItem = firstIconClicked && position.x <= screenWidthPx / COUNT_THREE,
+            isLastItem = !firstIconClicked && position.x > screenWidthPx / (COUNT_THREE / 2)
         )
     }
 }

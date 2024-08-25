@@ -11,22 +11,28 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zdravnica.app.PreferencesHelper
 import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenSideEffect
 import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.resources.R
 import com.zdravnica.uikit.components.topAppBar.SimpleTopAppBar
+import com.zdravnica.uikit.extensions.compose.callPhoneActivity
+import com.zdravnica.uikit.extensions.compose.sendEmailActivity
+import com.zdravnica.uikit.resources.R
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -38,16 +44,30 @@ fun MenuScreen(
     navigateGToConnectionScreen: (() -> Unit)? = null,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
 ) {
+    val context = LocalContext.current
     val menuScreenViewState by menuScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.menu_screen_cancel_title)
+    val temperature by remember { mutableIntStateOf(PreferencesHelper.getTemperature(context)) }
+    val supportEmailAddress = stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
+    val supportPhoneNumber = stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
+    val localUriHandler = LocalUriHandler.current
+    val faqInfoUriPath = stringResource(id = R.string.menu_screen_zdravnica_uri_path)
 
     menuScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is MenuScreenSideEffect.OnNavigateToConnectionScreen -> navigateGToConnectionScreen?.invoke()
             is MenuScreenSideEffect.OnNavigateUp -> onNavigateUp?.invoke()
-            is MenuScreenSideEffect.OnSiteClick -> {}
-            is MenuScreenSideEffect.OnEmailClick -> {}
-            is MenuScreenSideEffect.OnCallClick -> {}
+            is MenuScreenSideEffect.OnSiteClick -> {
+                localUriHandler.openUri(faqInfoUriPath)
+            }
+            is MenuScreenSideEffect.OnEmailClick -> {
+                context.sendEmailActivity(supportEmailAddress)
+            }
+
+            is MenuScreenSideEffect.OnCallClick -> {
+                context.callPhoneActivity(supportPhoneNumber)
+            }
+
             is MenuScreenSideEffect.OnNavigateToCancelDialogPage ->
                 navigateToCancelDialogPage.invoke(false, cancelDialog)
         }
@@ -94,7 +114,7 @@ fun MenuScreen(
                 item {
                     MenuTemperatureInfo(
                         //this data must get from bluetooth
-                        temperature = 50,
+                        temperature = temperature,
                     )
                 }
                 item {
@@ -156,6 +176,6 @@ fun MenuScreen(
 @Composable
 fun PreviewMenuScreen() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        MenuScreen(navigateToCancelDialogPage = {a, b->})
+        MenuScreen(navigateToCancelDialogPage = { a, b -> })
     }
 }

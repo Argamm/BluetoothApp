@@ -86,4 +86,17 @@
     <string name="procedure_process_to_main_screen">На главную</string>
     <string name="procedure_process_to_the_end_of_procedure">До конца процедуры</string>
     <!--    ProcedureProcessScreen Page end -->
+
+    <!--    StatusScreen Page start -->
+    <string name="status_info_sensor_error">Неисправлен термодатчик</string>
+    <string name="status_info_sensor_error_instruction">Инструкция:\n· Отсутствует либо неисправлен температурный датчик.\n· Проверить качество контактного соединения термодатчика.\n· Протереть термодатчик спиртовым раствором.\n· Обратиться к производителям</string>
+    <string name="status_info_thermostat_activation">Срабатывание термостата</string>
+    <string name="status_info_thermostat_activation_instruction">Инструкция: \n· Дождитесь остановки вентилятора \n· Проверить свободный доступ воздуха к вентилятору \n· Прочистить сетку-фильтр \n· Протереть термодатчик спиртовым раствором.</string>
+    <string name="status_info_temperature_exceeded">Превышение температуры на 5°C</string>
+    <string name="status_info_temperature_exceeded_instruction">Инструкция:\n· Протереть термодатчик спиртовым раствором.\n· Проверить чистоту сетки-фильтр.\n· Обратиться в производителям.</string>
+    <string name="status_info_connection_lost">Потеряно соединение</string>
+    <string name="status_info_connection_lost_instruction">Для восстановления связи вернитесь в зону покрытия bluetooth и подключитесь заново</string>
+    <string name="status_info_support">Поддержка</string>
+    <string name="status_info_ok">Ок</string>
+    <!--    StatusScreen Page end -->
 </resources>

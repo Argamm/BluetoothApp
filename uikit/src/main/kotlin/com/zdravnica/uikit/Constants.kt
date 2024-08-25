@@ -40,3 +40,5 @@ const val GRADIENT_ICON_BUTTON_INCREASE_DESCRIPTION = "Gradient Icon Button Incr
 const val BLUETOOTH_ICON_DESCRIPTION = "Icon bluetooth"
 const val APP_LOGO_DESCRIPTION = "App logo"
 const val ORDER_DESCRIPTION = "Order button"
+const val EMAIL_DATA = "message/rfc822"
+const val PHONE_CALL_DATA = "tel:"
