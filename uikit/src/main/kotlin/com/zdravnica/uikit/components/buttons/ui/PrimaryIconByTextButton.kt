@@ -24,7 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
@@ -80,7 +81,7 @@ fun PrimaryIconByTextButton(
         horizontalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size12)
     ) {
         Icon(
-            painter = painterResource(id = model.iconRes),
+            imageVector = ImageVector.vectorResource(id = model.iconRes),
             contentDescription = null,
             modifier = Modifier.requiredSize(ZdravnicaAppTheme.dimens.size24),
             tint = when {
