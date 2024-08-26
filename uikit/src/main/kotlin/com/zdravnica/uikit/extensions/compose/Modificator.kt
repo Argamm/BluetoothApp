@@ -3,11 +3,19 @@ package com.zdravnica.uikit.extensions.compose
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 
 fun Modifier.clickableSingle(
     enabled: Boolean = true,
@@ -56,6 +64,24 @@ fun getValueRange(isMinutes: Boolean): Pair<Int, Int> {
         NUMBER_FOR_COUNT_0 to NUMBER_FOR_COUNT_1800
     } else {
         NUMBER_FOR_COUNT_0 to NUMBER_FOR_COUNT_80
+    }
+}
+
+@Composable
+fun buildGradientAnnotatedString(
+    titleRes: Int?,
+    gradientColors: List<Color>
+): AnnotatedString {
+    return buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                brush = Brush.linearGradient(
+                    colors = gradientColors
+                )
+            )
+        ) {
+            append(titleRes?.let { stringResource(id = it) } ?: "")
+        }
     }
 }
 

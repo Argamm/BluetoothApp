@@ -13,17 +13,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.extensions.compose.buildGradientAnnotatedString
 import com.zdravnica.uikit.resources.R
 
 @Composable
@@ -52,17 +49,7 @@ fun ProcedureChipInformation(
         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size8))
 
         Text(
-            text = buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        brush = Brush.linearGradient(
-                            colors = ZdravnicaAppTheme.colors.timeAndTemperatureColor
-                        )
-                    )
-                ) {
-                    append(titleRes?.let { stringResource(id = it) })
-                }
-            },
+            text = buildGradientAnnotatedString(titleRes, ZdravnicaAppTheme.colors.timeAndTemperatureColor),
             style = ZdravnicaAppTheme.typography.headH2,
             textAlign = TextAlign.Center,
             modifier = Modifier

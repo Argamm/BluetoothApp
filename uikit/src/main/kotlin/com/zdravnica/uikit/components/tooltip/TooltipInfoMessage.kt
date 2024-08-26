@@ -33,25 +33,21 @@ fun TooltipInfoMessage(
                 shape = RoundedCornerShape(size = ZdravnicaAppTheme.dimens.size6),
                 elevation = ZdravnicaAppTheme.dimens.size10,
                 backgroundColor = Color.White,
-                modifier = Modifier
+                modifier = Modifier.background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(size = ZdravnicaAppTheme.dimens.size6)
+                )
             ) {
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(size = ZdravnicaAppTheme.dimens.size6)
-                        )
-                ) {
-                    Text(
-                        text = message,
-                        color = Color.Black,
-                        style = ZdravnicaAppTheme.typography.bodyXSMedium,
-                        modifier = Modifier.padding(
-                            horizontal = ZdravnicaAppTheme.dimens.size8,
-                            vertical = ZdravnicaAppTheme.dimens.size4
-                        )
+
+                Text(
+                    text = message,
+                    color = Color.Black,
+                    style = ZdravnicaAppTheme.typography.bodyXSMedium,
+                    modifier = Modifier.padding(
+                        horizontal = ZdravnicaAppTheme.dimens.size8,
+                        vertical = ZdravnicaAppTheme.dimens.size4
                     )
-                }
+                )
             }
 
             Box(
