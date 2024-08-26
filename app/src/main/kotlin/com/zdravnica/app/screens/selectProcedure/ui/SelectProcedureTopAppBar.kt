@@ -33,7 +33,6 @@ import com.zdravnica.uikit.resources.R
 fun SelectProcedureTopAppBar(
     modifier: Modifier = Modifier,
     temperature: Int,
-    fourSwitchState: Boolean,
     onRightIconClick: () -> Unit,
     iconStates: SnapshotStateList<IconState>? = null
 ) {
@@ -92,7 +91,6 @@ fun PreviewCustomTopAppBar() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         SelectProcedureTopAppBar(
             temperature = 54,
-            fourSwitchState = true,
             onRightIconClick = {},
             iconStates = null
         )

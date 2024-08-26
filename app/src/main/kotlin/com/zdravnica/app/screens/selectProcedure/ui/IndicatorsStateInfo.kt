@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.ERROR_ICON_DESCRIPTION
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun IndicatorsStateInf(
@@ -49,7 +50,7 @@ fun IndicatorsStateInf(
                 modifier = Modifier.padding()
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = com.zdravnica.uikit.resources.R.drawable.ic_error),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_error),
                     contentDescription = ERROR_ICON_DESCRIPTION,
                     tint = ZdravnicaAppTheme.colors.baseAppColor.gray200,
                     modifier = Modifier.size(ZdravnicaAppTheme.dimens.size36)

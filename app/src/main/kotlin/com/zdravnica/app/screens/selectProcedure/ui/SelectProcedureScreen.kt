@@ -103,7 +103,6 @@ fun SelectProcedureScreen(
         topBar = {
             SelectProcedureTopAppBar(
                 temperature = temperature,
-                fourSwitchState = ikSwitchState,
                 onRightIconClick = selectProcedureViewModel::navigateToMenuScreen,
                 iconStates = iconStates
             )
