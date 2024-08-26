@@ -129,8 +129,6 @@ fun Context.callPhoneActivity(phone: String) {
     startActivity(intent)
 }
 
-const val NUMBER_FOR_COUNT_60 = 60
-const val NUMBER_FOR_COUNT_2 = 2
 const val MAX_MINUTES = 1800
 const val MIN_MINUTES = 600
 const val MAX_TEMPERATURE = 80
