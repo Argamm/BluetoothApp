@@ -5,5 +5,5 @@ import com.zdravnica.app.core.models.BaseViewState
 
 @Immutable
 data class ProcedureScreenViewState(
-    val someData: Int = 0,
+    val balmCount: Int = 0,
 ) : BaseViewState()
