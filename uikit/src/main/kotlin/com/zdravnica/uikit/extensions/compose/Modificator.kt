@@ -20,9 +20,11 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import com.zdravnica.uikit.CHOOSE_EMAIL_APP
 import com.zdravnica.uikit.COUNT_TO_100
 import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.EMAIL_DATA
+import com.zdravnica.uikit.NO_EMAIL_APP
 import com.zdravnica.uikit.ONE_MINUTE_IN_SEC
 import com.zdravnica.uikit.PHONE_CALL_DATA
 import com.zdravnica.uikit.resources.R
@@ -116,9 +118,9 @@ fun Context.sendEmailActivity(email: String) {
         putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
     }
     if (intent.resolveActivity(packageManager) != null) {
-        startActivity(Intent.createChooser(intent, "Choose Email App"))
+        startActivity(Intent.createChooser(intent, CHOOSE_EMAIL_APP))
     } else {
-        Toast.makeText(this, "No email app found", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, NO_EMAIL_APP, Toast.LENGTH_SHORT).show()
     }
 }
 
