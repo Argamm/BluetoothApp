@@ -28,6 +28,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.COUNT_ONE
@@ -41,7 +42,8 @@ fun MenuConnectToUs(
     onCallClick: () -> Unit
 ) {
     BoxWithConstraints {
-        val maxTextWidth = maxWidth / CARDS_TITLE_COUNT - (ZdravnicaAppTheme.dimens.size14 + ZdravnicaAppTheme.dimens.size16)
+        val maxTextWidth =
+            maxWidth / CARDS_TITLE_COUNT - (ZdravnicaAppTheme.dimens.size14 + ZdravnicaAppTheme.dimens.size16)
 
         Row(
             modifier = modifier
@@ -84,7 +86,7 @@ fun ConnectColumn(
     width: Dp
 ) {
     Card(
-        elevation = ZdravnicaAppTheme.dimens.size4,
+        elevation = 0.dp,
         shape = RoundedCornerShape(ZdravnicaAppTheme.dimens.size24),
         backgroundColor = Color.White,
         modifier = modifier
@@ -128,7 +130,7 @@ fun ConnectColumn(
 
 const val CARDS_TITLE_COUNT = 3
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewMenuConnectToUs() {
     ZdravnicaAppExerciseTheme(darkThem = false) {

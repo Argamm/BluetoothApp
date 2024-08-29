@@ -1,10 +1,11 @@
 package com.zdravnica.uikit.components.buttons.ui
 
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSizeIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ButtonDefaults
@@ -14,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -44,7 +47,21 @@ fun BigButton(
 
     OutlinedButton(
         onClick = { bigButtonModel.onClick?.invoke() },
-        modifier = modifier,
+        modifier = modifier
+            .then(
+                if (bigButtonModel.isEnabled) {
+                    Modifier
+                        .shadow(
+                            elevation = ZdravnicaAppTheme.dimens.size8,
+                            shape = ZdravnicaAppTheme.roundedCornerShape.shapeR24,
+                            clip = false,
+                            ambientColor = Color.LightGray,
+                            spotColor = Color.Gray
+                        )
+                        .padding(top = ZdravnicaAppTheme.dimens.size15)
+                        .offset(y = -ZdravnicaAppTheme.dimens.size10)
+                } else modifier
+            ),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = backgroundColor,
             contentColor = contentColor

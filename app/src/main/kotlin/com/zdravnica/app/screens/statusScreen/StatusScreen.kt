@@ -85,7 +85,9 @@ fun StatusScreen(
                 }
             },
             style = ZdravnicaAppTheme.typography.headH4,
-            modifier = Modifier.padding(horizontal = ZdravnicaAppTheme.dimens.size36)
+            modifier = Modifier
+                .padding(horizontal = ZdravnicaAppTheme.dimens.size36)
+                .align(Alignment.CenterHorizontally)
         )
 
         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size8))
@@ -94,7 +96,9 @@ fun StatusScreen(
             text = stringResource(id = data.instruction),
             style = ZdravnicaAppTheme.typography.bodyNormalRegular,
             color = ZdravnicaAppTheme.colors.baseAppColor.gray300,
-            modifier = Modifier.padding(horizontal = ZdravnicaAppTheme.dimens.size36)
+            modifier = Modifier
+                .padding(horizontal = ZdravnicaAppTheme.dimens.size36)
+                .align(Alignment.CenterHorizontally)
         )
 
         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size81))

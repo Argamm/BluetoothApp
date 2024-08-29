@@ -18,6 +18,12 @@ val fontFamily = FontFamily(
 val typography
     @Composable get() =
         ZdravnicaAppTypography(
+            gigaSans = TextStyle(
+                fontSize = 160.sp,
+                fontFamily = fontFamily,
+                fontWeight = FontWeight.W800,
+                lineHeight = 208.sp
+            ),
             headH1 = TextStyle(
                 fontSize = 80.sp,
                 fontFamily = fontFamily,

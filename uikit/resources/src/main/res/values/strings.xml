@@ -90,6 +90,7 @@
     <string name="procedure_process_cooling">Heating Element Cooling Down</string>
     <string name="procedure_process_to_main_screen">To Main Screen</string>
     <string name="procedure_process_to_the_end_of_procedure">Time Remaining</string>
+    <string name="procedure_process_balm_supply">Balm supply included</string>
     <!--    ProcedureProcessScreen Page end -->
 
     <!--    StatusScreen Page start -->
@@ -104,5 +105,4 @@
     <string name="status_info_support">Support</string>
     <string name="status_info_ok">OK</string>
     <!--    StatusScreen Page end -->
-
 </resources>

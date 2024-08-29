@@ -7,6 +7,7 @@ const val COUNT_ONE = 1
 const val COUNT_TWO = 2
 const val COUNT_THREE = 3
 const val TIMER_DISCOUNT_VALUE = 5
+const val COUNT_SIX = 6
 const val COUNT_TO_100 = 100
 const val ANIMATION_DURATION_700 = 700
 const val TOOLTIP_SHOWING_DURATION_2500 = 2500L

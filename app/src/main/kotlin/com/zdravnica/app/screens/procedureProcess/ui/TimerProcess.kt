@@ -18,6 +18,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import com.zdravnica.app.utils.isTablet
 import com.zdravnica.uikit.resources.R
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
@@ -27,7 +28,11 @@ import com.zdravnica.uikit.extensions.compose.calculateTimeText
 import kotlinx.coroutines.delay
 
 @Composable
-fun TimerProcess(totalSeconds: Int, onTimerFinish: () -> Unit) {
+fun TimerProcess(
+    modifier: Modifier = Modifier,
+    totalSeconds: Int,
+    onTimerFinish: () -> Unit
+) {
     val remainingSeconds = remember { mutableIntStateOf(totalSeconds) }
 
     LaunchedEffect(remainingSeconds.intValue) {
@@ -42,7 +47,7 @@ fun TimerProcess(totalSeconds: Int, onTimerFinish: () -> Unit) {
     val timeText = calculateTimeText(remainingSeconds.intValue)
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(top = ZdravnicaAppTheme.dimens.size32),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -59,14 +64,19 @@ fun TimerProcess(totalSeconds: Int, onTimerFinish: () -> Unit) {
                     append(timeText)
                 }
             },
-            style = ZdravnicaAppTheme.typography.headH1
+            style = if (isTablet())
+                ZdravnicaAppTheme.typography.gigaSans
+            else
+                ZdravnicaAppTheme.typography.headH1
         )
         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size16))
         Text(
             text = stringResource(R.string.procedure_process_to_the_end_of_procedure),
-            style = ZdravnicaAppTheme.typography.bodyMediumMedium.copy(
-                color = ZdravnicaAppTheme.colors.baseAppColor.gray300
-            ),
+            style = if (isTablet())
+                ZdravnicaAppTheme.typography.bodyLargeMedium
+            else
+                ZdravnicaAppTheme.typography.bodyMediumMedium,
+            color = ZdravnicaAppTheme.colors.baseAppColor.gray300
         )
     }
 }

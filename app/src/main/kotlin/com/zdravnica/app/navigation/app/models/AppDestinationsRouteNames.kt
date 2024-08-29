@@ -12,4 +12,10 @@ internal object AppDestinationsRouteNames {
     const val PREPARING_THE_CABIN_SCREEN = "PreparingTheCabinScreen"
     const val PROCEDURE_PROCESS_SCREEN = "ProcedureProcessScreen"
     const val STATUS_SCREEN = "StatusScreen"
+
+    const val SHOW_CANCEL_PROCEDURE_DIALOG_T = "Cancel Procedure Tablet Dialog"
+    const val SELECT_PROCEDURE_SCREEN_T = "SelectProcedureScreenT"
+    const val PROCEDURE_SCREEN_T = "ProcedureScreenT"
+    const val MENU_SCREEN_T = "MenuScreen tablet"
+    const val PROCEDURE_PROCESS_SCREEN_T = "ProcedureProcessScreenT"
 }

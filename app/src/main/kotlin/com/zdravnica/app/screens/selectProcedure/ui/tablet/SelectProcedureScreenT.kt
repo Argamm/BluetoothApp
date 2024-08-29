@@ -1,12 +1,15 @@
-package com.zdravnica.app.screens.selectProcedure.ui
+package com.zdravnica.app.screens.selectProcedure.ui.tablet
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Scaffold
@@ -23,11 +26,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.app.PreferencesHelper
+import com.zdravnica.app.screens.selectProcedure.ui.ChooseProcedureGridLayout
+import com.zdravnica.app.screens.selectProcedure.ui.IndicatorsStateInf
+import com.zdravnica.app.screens.selectProcedure.ui.SelectProcedureTopAppBar
+import com.zdravnica.app.screens.selectProcedure.ui.TemperatureOrDurationAdjuster
+import com.zdravnica.app.screens.selectProcedure.ui.TextWithSwitches
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideEffect
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
-import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.DURATION_TO_SCROLL_DOWN
 import com.zdravnica.uikit.base_type.IconState
@@ -43,7 +49,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun SelectProcedureScreen(
+fun SelectProcedureScreenT(
     modifier: Modifier = Modifier,
     selectProcedureViewModel: SelectProcedureViewModel = koinViewModel(),
     navigateToMenuScreen: () -> Unit,
@@ -61,7 +67,7 @@ fun SelectProcedureScreen(
     var duration by remember { mutableIntStateOf(PreferencesHelper.getDuration(context)) }
     val iconStates = remember(ikSwitchState) {
         mutableStateListOf(
-            IconState.ENABLED,//this data must come from bluetooth
+            IconState.ENABLED,//TODO this data must come from bluetooth
             IconState.ENABLED,
             IconState.ENABLED,
             if (ikSwitchState) IconState.ENABLED else IconState.DISABLED
@@ -136,6 +142,7 @@ fun SelectProcedureScreen(
                         )
                         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size12))
                     }
+                    YTHorizontalDivider()
 
                     TextWithSwitches(
                         switchState = ikSwitchState,
@@ -144,21 +151,30 @@ fun SelectProcedureScreen(
                         }
                     )
                     YTHorizontalDivider()
-                    TemperatureOrDurationAdjuster(
-                        isMinutes = false,
-                        value = temperature,
-                        onValueChange = { temperature = it }
-                    )
-                    YTHorizontalDivider()
-                    TemperatureOrDurationAdjuster(
-                        isMinutes = true,
-                        value = duration,
-                        onValueChange = { duration = it }
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = ZdravnicaAppTheme.dimens.size16)
+                    ) {
+                        TemperatureOrDurationAdjuster(
+                            isMinutes = false,
+                            value = temperature,
+                            onValueChange = { temperature = it },
+                            modifier = Modifier.weight(1f)
+                        )
+                        Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size12))
+                        TemperatureOrDurationAdjuster(
+                            isMinutes = true,
+                            value = duration,
+                            onValueChange = { duration = it },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                     YTHorizontalDivider()
 
                     ChooseProcedureGridLayout(
                         bigChipsList = sampleChips,
+                        isTablet = true,
                         onCardClick = { chip ->
                             selectProcedureViewModel.onProcedureCardClick(chip)
                         }
@@ -185,13 +201,5 @@ fun SelectProcedureScreen(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewSelectProcedureScreen() {
-    ZdravnicaAppExerciseTheme(darkThem = false) {
-        SelectProcedureScreen(navigateToMenuScreen = {}, navigateToProcedureScreen = {})
     }
 }

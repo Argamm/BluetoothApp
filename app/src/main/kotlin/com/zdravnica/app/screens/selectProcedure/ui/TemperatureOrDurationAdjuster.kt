@@ -3,8 +3,10 @@ package com.zdravnica.app.screens.selectProcedure.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -59,7 +61,7 @@ fun TemperatureOrDurationAdjuster(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
         ) {
             GradientIconButton(
                 modifier = Modifier.padding(start = ZdravnicaAppTheme.dimens.size44),
@@ -76,6 +78,8 @@ fun TemperatureOrDurationAdjuster(
                 }
             )
 
+            Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size12))
+
             Text(
                 text = buildAnnotatedString {
                     withStyle(
@@ -91,6 +95,7 @@ fun TemperatureOrDurationAdjuster(
                 style = ZdravnicaAppTheme.typography.headH2,
                 modifier = Modifier.padding(horizontal = ZdravnicaAppTheme.dimens.size16),
             )
+            Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size12))
 
             GradientIconButton(
                 modifier = Modifier.padding(end = ZdravnicaAppTheme.dimens.size44),

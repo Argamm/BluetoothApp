@@ -85,6 +85,7 @@
     <string name="procedure_process_cooling">Идет охлаждение тэна</string>
     <string name="procedure_process_to_main_screen">На главную</string>
     <string name="procedure_process_to_the_end_of_procedure">До конца процедуры</string>
+    <string name="procedure_process_balm_supply">Включена подача бальзама</string>
     <!--    ProcedureProcessScreen Page end -->
 
     <!--    StatusScreen Page start -->

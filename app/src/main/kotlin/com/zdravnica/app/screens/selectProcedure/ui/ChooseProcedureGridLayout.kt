@@ -13,9 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.COUNT_SIX
 import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
 import com.zdravnica.uikit.components.chips.ui.BigChipsComponent
@@ -25,6 +27,7 @@ import com.zdravnica.uikit.resources.R
 fun ChooseProcedureGridLayout(
     modifier: Modifier = Modifier,
     bigChipsList: List<BigChipsStateModel>,
+    isTablet: Boolean = false,
     onCardClick: (BigChipsStateModel) -> Unit,
 ) {
     Column(
@@ -47,7 +50,7 @@ fun ChooseProcedureGridLayout(
         )
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(COUNT_TWO),
+            columns = GridCells.Fixed(if (isTablet) COUNT_SIX else COUNT_TWO),
             userScrollEnabled = false,
             modifier = Modifier
                 .fillMaxSize()
@@ -82,6 +85,28 @@ fun PreviewTopTextAndGridLayout() {
         )
     )
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        ChooseProcedureGridLayout(bigChipsList = sampleChips) {}
+        ChooseProcedureGridLayout(bigChipsList = sampleChips, isTablet = false) {}
+    }
+}
+
+@Preview(showBackground = true, device = Devices.TABLET)
+@Composable
+fun PreviewTopTextAndGridLayoutT() {
+    val sampleChips = listOf(
+        BigChipsStateModel(
+            isEnabled = true,
+            title = R.string.select_product_without_balm,
+            description = R.string.select_product_without_balm_description,
+            iconRes = null
+        ),
+        BigChipsStateModel(
+            isEnabled = false,
+            title = R.string.select_product_nose,
+            description = R.string.select_product_nose_description,
+            iconRes = R.mipmap.ic_nose
+        )
+    )
+    ZdravnicaAppExerciseTheme(darkThem = false) {
+        ChooseProcedureGridLayout(bigChipsList = sampleChips, isTablet = true) {}
     }
 }

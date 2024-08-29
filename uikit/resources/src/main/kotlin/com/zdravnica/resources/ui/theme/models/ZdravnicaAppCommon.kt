@@ -116,6 +116,7 @@ data class CurrentColor(
 
 @Immutable
 data class ZdravnicaAppTypography(
+    val gigaSans: TextStyle,
     val headH1: TextStyle,
     val headH2: TextStyle,
     val headH3: TextStyle,
@@ -202,10 +203,15 @@ data class ZdravnicaAppDimens(
     val size68: Dp,
     val size81: Dp,
     val size82: Dp,
+    val size86: Dp,
     val size120: Dp,
     val size126: Dp,
+    val size130: Dp,
+    val size137: Dp,
     val size140: Dp,
+    val size143: Dp,
     val size144: Dp,
+    val size152: Dp,
     val size164: Dp,
     val size198: Dp,
     val size200: Dp,
@@ -213,6 +219,9 @@ data class ZdravnicaAppDimens(
     val size250: Dp,
     val size280: Dp,
     val size320: Dp,
+    val size360: Dp,
+    val size430: Dp,
+    val size500: Dp,
     val size1000: Dp,
     val size1500: Dp,
 )
