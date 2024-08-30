@@ -30,6 +30,8 @@ import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewM
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.ANIMATION_DURATION_3000
+import com.zdravnica.uikit.COUNT_FOUR
+import com.zdravnica.uikit.COUNT_ONE
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.buttons.models.IconButtonModel
 import com.zdravnica.uikit.components.buttons.models.IconButtonType
@@ -99,6 +101,16 @@ fun SelectProcedureScreen(
         }
     }
 
+    LaunchedEffect(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset) {
+        if (listState.firstVisibleItemIndex == COUNT_ONE) {
+            isButtonVisible = true
+        }
+        if (listState.firstVisibleItemIndex == COUNT_FOUR) {
+            isButtonVisible = false
+            scrollToEnd = false
+        }
+    }
+
     Scaffold(
         topBar = {
             SelectProcedureTopAppBar(
@@ -136,7 +148,8 @@ fun SelectProcedureScreen(
                         )
                         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size12))
                     }
-
+                }
+                item {
                     TextWithSwitches(
                         switchState = ikSwitchState,
                         onSwitchChange = {
@@ -144,19 +157,24 @@ fun SelectProcedureScreen(
                         }
                     )
                     YTHorizontalDivider()
+                }
+                item {
                     TemperatureOrDurationAdjuster(
                         isMinutes = false,
                         value = temperature,
                         onValueChange = { temperature = it }
                     )
                     YTHorizontalDivider()
+                }
+                item {
                     TemperatureOrDurationAdjuster(
                         isMinutes = true,
                         value = duration,
                         onValueChange = { duration = it }
                     )
                     YTHorizontalDivider()
-
+                }
+                item {
                     ChooseProcedureGridLayout(
                         bigChipsList = sampleChips,
                         onCardClick = { chip ->
@@ -178,7 +196,6 @@ fun SelectProcedureScreen(
                             type = IconButtonType.PRIMARY,
                             onClick = {
                                 scrollToEnd = true
-                                isButtonVisible = false
                             }
                         )
                     )

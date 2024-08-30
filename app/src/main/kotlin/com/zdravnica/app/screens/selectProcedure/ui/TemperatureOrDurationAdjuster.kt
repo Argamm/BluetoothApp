@@ -1,6 +1,7 @@
 package com.zdravnica.app.screens.selectProcedure.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import com.zdravnica.app.utils.isTablet
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.COUNT_ONE
@@ -58,59 +60,70 @@ fun TemperatureOrDurationAdjuster(
             modifier = Modifier.padding(bottom = ZdravnicaAppTheme.dimens.size16)
         )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
         ) {
-            GradientIconButton(
-                modifier = Modifier.padding(start = ZdravnicaAppTheme.dimens.size44),
-                isDisabled = isMinusDisabled,
-                icon = ImageVector.vectorResource(id = R.drawable.ic_minus),
-                contentDescription = GRADIENT_ICON_BUTTON_DECREASE_DESCRIPTION,
-                onClick = {
-                    if (!isMinusDisabled) onValueChange(
-                        value - if (isMinutes)
-                            ONE_MINUTE_IN_SEC
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = if (isTablet())
+                            ZdravnicaAppTheme.dimens.size140
                         else
-                            COUNT_ONE
+                            ZdravnicaAppTheme.dimens.size48
                     )
-                }
-            )
-
-            Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size12))
-
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            brush = Brush.linearGradient(
-                                colors = ZdravnicaAppTheme.colors.timeAndTemperatureColor
-                            )
+            ) {
+                GradientIconButton(
+                    isDisabled = isMinusDisabled,
+                    icon = ImageVector.vectorResource(id = R.drawable.ic_minus),
+                    contentDescription = GRADIENT_ICON_BUTTON_DECREASE_DESCRIPTION,
+                    onClick = {
+                        if (!isMinusDisabled) onValueChange(
+                            value - if (isMinutes)
+                                ONE_MINUTE_IN_SEC
+                            else
+                                COUNT_ONE
                         )
-                    ) {
-                        append(value.formatAsValue(isMinutes))
                     }
-                },
-                style = ZdravnicaAppTheme.typography.headH2,
-                modifier = Modifier.padding(horizontal = ZdravnicaAppTheme.dimens.size16),
-            )
-            Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size12))
+                )
 
-            GradientIconButton(
-                modifier = Modifier.padding(end = ZdravnicaAppTheme.dimens.size44),
-                isDisabled = isPlusDisabled,
-                icon = ImageVector.vectorResource(id = R.drawable.ic_plus),
-                contentDescription = GRADIENT_ICON_BUTTON_INCREASE_DESCRIPTION,
-                onClick = {
-                    if (!isPlusDisabled) onValueChange(
-                        value + if (isMinutes)
-                            ONE_MINUTE_IN_SEC
-                        else
-                            COUNT_ONE
-                    )
-                }
-            )
+                Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size12))
+
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                brush = Brush.linearGradient(
+                                    colors = ZdravnicaAppTheme.colors.timeAndTemperatureColor
+                                )
+                            )
+                        ) {
+                            append(value.formatAsValue(isMinutes))
+                        }
+                    },
+                    style = ZdravnicaAppTheme.typography.headH2,
+                    modifier = Modifier.padding(horizontal = ZdravnicaAppTheme.dimens.size16),
+                )
+
+                Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size12))
+
+                GradientIconButton(
+                    isDisabled = isPlusDisabled,
+                    icon = ImageVector.vectorResource(id = R.drawable.ic_plus),
+                    contentDescription = GRADIENT_ICON_BUTTON_INCREASE_DESCRIPTION,
+                    onClick = {
+                        if (!isPlusDisabled) onValueChange(
+                            value + if (isMinutes)
+                                ONE_MINUTE_IN_SEC
+                            else
+                                COUNT_ONE
+                        )
+                    }
+                )
+            }
         }
     }
 }

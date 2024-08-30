@@ -6,6 +6,7 @@ internal const val UNDEFINED_PROGRESS = -1f
 const val COUNT_ONE = 1
 const val COUNT_TWO = 2
 const val COUNT_THREE = 3
+const val COUNT_FOUR = 4
 const val TIMER_DISCOUNT_VALUE = 5
 const val COUNT_SIX = 6
 const val COUNT_TO_100 = 100
