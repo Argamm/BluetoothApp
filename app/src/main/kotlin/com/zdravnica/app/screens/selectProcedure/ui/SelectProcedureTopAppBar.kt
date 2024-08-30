@@ -73,6 +73,7 @@ fun SelectProcedureTopAppBar(
                     ) { onRightIconClick() }
                 ) {
                     Icon(
+                        modifier = Modifier.padding(start = ZdravnicaAppTheme.dimens.size26),
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_menu),
                         contentDescription = TOP_APP_BAR_MENU_ICON_DESCRIPTION,
                         tint = Color.Black,

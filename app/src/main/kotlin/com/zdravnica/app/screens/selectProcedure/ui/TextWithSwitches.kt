@@ -89,7 +89,7 @@ fun CustomSwitch(
 
     Box(
         modifier = Modifier
-            .size(ZdravnicaAppTheme.dimens.size60, ZdravnicaAppTheme.dimens.size35)
+            .size(ZdravnicaAppTheme.dimens.size65, ZdravnicaAppTheme.dimens.size40)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
@@ -130,7 +130,7 @@ fun CustomSwitch(
             modifier = Modifier
                 .offset(x = thumbOffset)
                 .padding(top = ZdravnicaAppTheme.dimens.size2)
-                .size(ZdravnicaAppTheme.dimens.size22)
+                .size(ZdravnicaAppTheme.dimens.size28)
                 .background(
                     brush = Brush.linearGradient(
                         colors = ZdravnicaAppTheme.colors.switchStateColor.switchBorderColor,

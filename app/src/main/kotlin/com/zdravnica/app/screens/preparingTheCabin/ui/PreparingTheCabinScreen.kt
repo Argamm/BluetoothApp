@@ -1,5 +1,7 @@
 package com.zdravnica.app.screens.preparingTheCabin.ui
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +34,7 @@ import com.zdravnica.app.screens.preparingTheCabin.viewModels.PreparingTheCabinS
 import com.zdravnica.app.screens.preparingTheCabin.viewModels.PreparingTheCabinScreenViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.ANIMATION_DURATION_3000
 import com.zdravnica.uikit.COUNT_ONE
 import com.zdravnica.uikit.COUNT_TO_100
 import com.zdravnica.uikit.DELAY_1000_ML
@@ -63,7 +66,6 @@ fun PreparingTheCabinScreen(
     val duration by remember { mutableIntStateOf(PreferencesHelper.getDuration(context)) }
     val colors = ZdravnicaAppTheme.colors.baseAppColor
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
-    var backgroundColor by remember { mutableStateOf(Color.White) }
     var showAnimationCircle by remember { mutableStateOf(false) }
     var currentTemperature by remember { mutableIntStateOf(0) }
     var progress by remember {
@@ -74,6 +76,19 @@ fun PreparingTheCabinScreen(
             )
         )
     }
+
+    val targetBackgroundColor = when {
+        progress <= WHITE_BACK_PROGRESS -> Color.White
+        progress in PINK_BACK_PROGRESS_FROM..PINK_BACK_PROGRESS_UNTIL -> colors.secondary900
+        progress in RED_BACK_PROGRESS_FROM..RED_BACK_PROGRESS_UNTIL -> colors.error900
+        progress == COUNT_TO_100 -> colors.success1000
+        else -> Color.White
+    }
+
+    val backgroundColor by animateColorAsState(
+        targetValue = targetBackgroundColor,
+        animationSpec = tween(durationMillis = ANIMATION_DURATION_3000), label = ""
+    )
 
     preparingTheCabinScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -92,13 +107,6 @@ fun PreparingTheCabinScreen(
             delay(DELAY_1000_ML)
             currentTemperature += COUNT_ONE
             progress = calculateProgress(currentTemperature, targetTemperature)
-            backgroundColor = when {
-                progress <= WHITE_BACK_PROGRESS -> Color.White
-                progress in PINK_BACK_PROGRESS_FROM..PINK_BACK_PROGRESS_UNTIL -> colors.secondary900
-                progress in RED_BACK_PROGRESS_FROM..RED_BACK_PROGRESS_UNTIL -> colors.error900
-                progress == COUNT_TO_100 -> colors.success1000
-                else -> Color.White
-            }
         }
     }
 
@@ -192,7 +200,7 @@ private fun PreparingTheCabinScreenPrev() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         PreparingTheCabinScreen(
             navigateToSelectProcedureScreen = {},
-            navigateToCancelDialogPage={a,b ->},
+            navigateToCancelDialogPage = { _, _ -> },
             navigateToProcedureProcessScreen = {}
         )
     }

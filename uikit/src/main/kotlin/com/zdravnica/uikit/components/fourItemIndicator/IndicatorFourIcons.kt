@@ -78,7 +78,7 @@ fun IconInCenter(
             imageVector = ImageVector.vectorResource(id = iconResId),
             contentDescription = null,
             tint = tintColor,
-            modifier = Modifier.size(ZdravnicaAppTheme.dimens.size24)
+            modifier = Modifier.size(ZdravnicaAppTheme.dimens.size18)
         )
     }
 }

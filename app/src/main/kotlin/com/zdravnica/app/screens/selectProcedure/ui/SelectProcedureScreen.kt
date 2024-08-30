@@ -29,7 +29,7 @@ import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideE
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.DURATION_TO_SCROLL_DOWN
+import com.zdravnica.uikit.ANIMATION_DURATION_3000
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.buttons.models.IconButtonModel
 import com.zdravnica.uikit.components.buttons.models.IconButtonType
@@ -91,7 +91,7 @@ fun SelectProcedureScreen(
 
                 listState.animateScrollBy(
                     value = totalHeight.toFloat(),
-                    animationSpec = tween(durationMillis = DURATION_TO_SCROLL_DOWN)
+                    animationSpec = tween(durationMillis = ANIMATION_DURATION_3000)
                 )
                 isButtonVisible = false
                 scrollToEnd = false
