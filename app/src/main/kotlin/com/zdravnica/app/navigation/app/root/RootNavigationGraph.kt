@@ -165,7 +165,31 @@ fun RootNavigationGraph(
 
             composable(
                 route = "${AppNavGraph.ProcedureScreen.route}/{chipTitle}",
-                arguments = listOf(navArgument("chipTitle") { type = NavType.IntType })
+                arguments = listOf(navArgument("chipTitle") { type = NavType.IntType }),
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
+                    )
+                },
+                popEnterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
+                    )
+                },
+                popExitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
+                    )
+                }
             ) { backStackEntry ->
                 val chipData = backStackEntry.arguments?.getInt("chipTitle")
 

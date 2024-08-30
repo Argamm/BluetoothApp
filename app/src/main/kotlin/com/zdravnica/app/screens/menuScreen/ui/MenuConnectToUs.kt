@@ -47,9 +47,9 @@ fun MenuConnectToUs(
 
         Row(
             modifier = modifier
-                .padding(ZdravnicaAppTheme.dimens.size16)
+                .padding(top = ZdravnicaAppTheme.dimens.size16)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             ConnectColumn(
                 icon = ImageVector.vectorResource(id = R.drawable.ic_network),
@@ -86,7 +86,7 @@ fun ConnectColumn(
     width: Dp
 ) {
     Card(
-        elevation = 0.dp,
+        elevation = ZdravnicaAppTheme.dimens.size4,
         shape = RoundedCornerShape(ZdravnicaAppTheme.dimens.size24),
         backgroundColor = Color.White,
         modifier = modifier
