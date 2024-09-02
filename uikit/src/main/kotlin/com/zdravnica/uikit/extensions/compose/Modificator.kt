@@ -7,17 +7,14 @@ import android.widget.Toast
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import com.zdravnica.uikit.CHOOSE_EMAIL_APP
-import com.zdravnica.uikit.COUNT_TO_100
 import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.EMAIL_DATA
 import com.zdravnica.uikit.NO_EMAIL_APP
@@ -67,39 +64,6 @@ fun Int.formatAsValue(isMinutes: Boolean): String {
     }
 }
 
-fun getValueRange(isMinutes: Boolean): Pair<Int, Int> {
-    return if (isMinutes) {
-        MIN_MINUTES to MAX_MINUTES
-    } else {
-        MIN_TEMPERATURE to MAX_TEMPERATURE
-    }
-}
-
-fun calculateProgress(currentTemperature: Int, targetTemperature: Int): Int {
-    val maxTemperature = targetTemperature
-    val minTemperature = 0
-    val percentage = ((currentTemperature - minTemperature).toFloat() / (maxTemperature - minTemperature)) * COUNT_TO_100
-    return percentage.toInt().coerceIn(0, COUNT_TO_100)
-}
-
-@Composable
-fun buildGradientAnnotatedString(
-    titleRes: Int?,
-    gradientColors: List<Color>
-): AnnotatedString {
-    return buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                brush = Brush.linearGradient(
-                    colors = gradientColors
-                )
-            )
-        ) {
-            append(titleRes?.let { stringResource(id = it) } ?: "")
-        }
-    }
-}
-
 @Composable
 fun calculateTimeText(totalSeconds: Int): String {
     val minutes = totalSeconds / ONE_MINUTE_IN_SEC
@@ -125,8 +89,3 @@ fun Context.callPhoneActivity(phone: String) {
     }
     startActivity(intent)
 }
-
-const val MAX_MINUTES = 1800
-const val MIN_MINUTES = 600
-const val MAX_TEMPERATURE = 80
-const val MIN_TEMPERATURE = 40

@@ -41,7 +41,6 @@ import com.zdravnica.uikit.RED_BACK_PROGRESS_FROM
 import com.zdravnica.uikit.RED_BACK_PROGRESS_UNTIL
 import com.zdravnica.uikit.WHITE_BACK_PROGRESS
 import com.zdravnica.uikit.components.topAppBar.ProcedureProcessTopAppBar
-import com.zdravnica.uikit.extensions.compose.calculateProgress
 import com.zdravnica.uikit.resources.R
 import com.zdravnica.uikit.utils.calculateProgress
 import kotlinx.coroutines.delay
