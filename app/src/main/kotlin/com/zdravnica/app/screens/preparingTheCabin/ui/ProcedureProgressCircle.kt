@@ -1,7 +1,5 @@
 package com.zdravnica.app.screens.preparingTheCabin.ui
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,7 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -22,9 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.app.screens.preparingTheCabin.models.ProcedureProgressCircleState
 import com.zdravnica.app.screens.preparingTheCabin.models.rememberProcedureProgressCircleState
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.ANIMATION_DURATION_3000
-import com.zdravnica.uikit.COUNT_ONE
-import com.zdravnica.uikit.COUNT_TO_100
 import com.zdravnica.uikit.FLOAT_0_3
 import com.zdravnica.uikit.FLOAT_1
 import com.zdravnica.uikit.FLOAT_1_6
@@ -35,29 +30,6 @@ fun ProcedureProgressCircle(
     state: ProcedureProgressCircleState
 ) {
     val dimens = ZdravnicaAppTheme.dimens
-    val targetColors = when {
-        progress <= WHITE_BACK_PROGRESS -> ZdravnicaAppTheme.colors.bigChipsStateColor.backgroundGradientColors
-        progress in PINK_BACK_PROGRESS_FROM..PINK_BACK_PROGRESS_UNTIL ->
-            listOf(colors.secondary700, colors.secondary700)
-        progress in RED_BACK_PROGRESS_FROM..RED_BACK_PROGRESS_UNTIL ->
-            listOf(colors.error700, colors.error700)
-        progress == COUNT_TO_100 ->
-            listOf(colors.success800, colors.success800)
-        else -> ZdravnicaAppTheme.colors.bigChipsStateColor.backgroundGradientColors
-    }
-
-    val animatedColors by animateColorAsState(
-        targetValue = targetColors[0],
-        animationSpec = tween(durationMillis = ANIMATION_DURATION_3000), label = ""
-    )
-    val secondAnimatedColor by animateColorAsState(
-        targetValue = targetColors.getOrElse(COUNT_ONE) { targetColors[0] },
-        animationSpec = tween(durationMillis = ANIMATION_DURATION_3000), label = ""
-    )
-
-    val animatedBackgroundBrush = Brush.linearGradient(
-        listOf(animatedColors, secondAnimatedColor)
-    )
 
     Box(
         contentAlignment = Alignment.Center,
@@ -82,7 +54,6 @@ fun ProcedureProgressCircle(
             )
             .background(
                 brush = state.backgroundBrush,
-                brush = animatedBackgroundBrush,
                 shape = CircleShape
             )
     ) {
@@ -102,7 +73,6 @@ fun ProcedureProgressCircle(
         )
     }
 }
-
 
 @Preview
 @Composable

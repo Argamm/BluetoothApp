@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -33,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.zdravnica.app.PreferencesHelper
 import com.zdravnica.app.screens.procedureProcess.ui.HealthMetricsDisplay
 import com.zdravnica.app.screens.procedureProcess.ui.TimerProcess
 import com.zdravnica.app.screens.procedureProcess.viewModels.ProcedureProcessSideEffect
@@ -55,9 +53,8 @@ fun ProcedureProcessScreenT(
     navigateToMainScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
 ) {
-    val context = LocalContext.current
     val currentTemperature by remember { mutableIntStateOf(0) }
-    val duration by remember { mutableIntStateOf(PreferencesHelper.getDuration(context)) }
+    val duration = procedureProcessViewModel.duration
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var isTimerFinished by remember { mutableStateOf(false) }
@@ -129,7 +126,7 @@ fun ProcedureProcessScreenT(
                                         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size8))
                                     }
 
-                                    TimerProcess(totalSeconds = duration) { isTimerFinished = true }
+                                    TimerProcess(totalSeconds = duration.value) { isTimerFinished = true }
                                 }
                             } else {
                                 ProcedureStateInfo(

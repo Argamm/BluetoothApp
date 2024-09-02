@@ -16,7 +16,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,9 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import com.zdravnica.app.PreferencesHelper
 import com.zdravnica.app.screens.selectProcedure.ui.ChooseProcedureGridLayout
 import com.zdravnica.app.screens.selectProcedure.ui.IndicatorsStateInf
 import com.zdravnica.app.screens.selectProcedure.ui.SelectProcedureTopAppBar
@@ -55,7 +52,6 @@ fun SelectProcedureScreenT(
     navigateToMenuScreen: () -> Unit,
     navigateToProcedureScreen: (Int) -> Unit,
 ) {
-    val context = LocalContext.current
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val bigChipTypes = getChipDataList()
@@ -63,8 +59,8 @@ fun SelectProcedureScreenT(
     var ikSwitchState by remember { mutableStateOf(false) }
     var isButtonVisible by remember { mutableStateOf(true) }
     var scrollToEnd by remember { mutableStateOf(false) }
-    var temperature by remember { mutableIntStateOf(PreferencesHelper.getTemperature(context)) }
-    var duration by remember { mutableIntStateOf(PreferencesHelper.getDuration(context)) }
+    val temperature = selectProcedureViewModel.temperature
+    val duration = selectProcedureViewModel.duration
     val iconStates = remember(ikSwitchState) {
         mutableStateListOf(
             IconState.ENABLED,//TODO this data must come from bluetooth
@@ -81,11 +77,6 @@ fun SelectProcedureScreenT(
                 navigateToProcedureScreen.invoke(sideEffect.chipData.title)
             }
         }
-    }
-
-    LaunchedEffect(temperature, duration) {
-        PreferencesHelper.saveTemperature(context, temperature)
-        PreferencesHelper.saveDuration(context, duration)
     }
 
     LaunchedEffect(scrollToEnd) {
@@ -108,7 +99,7 @@ fun SelectProcedureScreenT(
     Scaffold(
         topBar = {
             SelectProcedureTopAppBar(
-                temperature = temperature,
+                temperature = temperature.value,
                 onRightIconClick = selectProcedureViewModel::navigateToMenuScreen,
                 iconStates = iconStates
             )
@@ -158,15 +149,15 @@ fun SelectProcedureScreenT(
                     ) {
                         TemperatureOrDurationAdjuster(
                             isMinutes = false,
-                            value = temperature,
-                            onValueChange = { temperature = it },
+                            value = temperature.value,
+                            onValueChange = { selectProcedureViewModel.saveTemperature(it) },
                             modifier = Modifier.weight(1f)
                         )
                         Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size12))
                         TemperatureOrDurationAdjuster(
                             isMinutes = true,
-                            value = duration,
-                            onValueChange = { duration = it },
+                            value = duration.value,
+                            onValueChange = { selectProcedureViewModel.saveDuration(it) },
                             modifier = Modifier.weight(1f)
                         )
                     }
