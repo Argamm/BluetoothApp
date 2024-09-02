@@ -22,14 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.zdravnica.app.PreferencesHelper
+import com.zdravnica.app.screens.preparingTheCabin.models.rememberProcedureProgressCircleState
 import com.zdravnica.app.screens.preparingTheCabin.viewModels.PreparingTheCabinScreenSideEffect
 import com.zdravnica.app.screens.preparingTheCabin.viewModels.PreparingTheCabinScreenViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
@@ -45,8 +44,8 @@ import com.zdravnica.uikit.RED_BACK_PROGRESS_FROM
 import com.zdravnica.uikit.RED_BACK_PROGRESS_UNTIL
 import com.zdravnica.uikit.WHITE_BACK_PROGRESS
 import com.zdravnica.uikit.components.topAppBar.ProcedureProcessTopAppBar
-import com.zdravnica.uikit.extensions.compose.calculateProgress
 import com.zdravnica.uikit.resources.R
+import com.zdravnica.uikit.utils.calculateProgress
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -60,19 +59,18 @@ fun PreparingTheCabinScreen(
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
     navigateToProcedureProcessScreen: () -> Unit,
 ) {
-    val context = LocalContext.current
     val preparingTheCabinScreenViewState by preparingTheCabinScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
-    val targetTemperature by remember { mutableIntStateOf(PreferencesHelper.getTemperature(context)) }
-    val duration by remember { mutableIntStateOf(PreferencesHelper.getDuration(context)) }
     val colors = ZdravnicaAppTheme.colors.baseAppColor
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var showAnimationCircle by remember { mutableStateOf(false) }
     var currentTemperature by remember { mutableIntStateOf(0) }
+    val targetTemperature = preparingTheCabinScreenViewModel.temperature
+    val duration = preparingTheCabinScreenViewModel.duration
     var progress by remember {
         mutableIntStateOf(
             calculateProgress(
                 currentTemperature,
-                targetTemperature
+                targetTemperature.value
             )
         )
     }
@@ -102,11 +100,19 @@ fun PreparingTheCabinScreen(
         }
     }
 
+    /*
+    * do we need loop here? and calculating the progress happening in the view side,
+    * lets move it to some use case, you can use Flow for that and emit "state" whenev
+    * er the progress proceed some level to change the color.
+    * It is not goot practice to do all that stuff in launch effect in UI layer
+    *
+    * TODO this logic will be removed or replaced when from Bluetooth will receive data
+    */
     LaunchedEffect(currentTemperature) {
-        while (currentTemperature < targetTemperature) {
+        while (currentTemperature < targetTemperature.value) {
             delay(DELAY_1000_ML)
             currentTemperature += COUNT_ONE
-            progress = calculateProgress(currentTemperature, targetTemperature)
+            progress = calculateProgress(currentTemperature, targetTemperature.value)
         }
     }
 
@@ -152,15 +158,19 @@ fun PreparingTheCabinScreen(
                     chipTitleId?.let { stringResource(id = it) }?.let {
                         ProcedureInfo(
                             procedureName = it,
-                            temperature = targetTemperature,
-                            minutes = duration / ONE_MINUTE_IN_SEC
+                            temperature = targetTemperature.value,
+                            minutes = duration.value / ONE_MINUTE_IN_SEC
                         )
                     }
 
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size56))
 
-                    ProcedureProgressCircle(progress = progress, borderColor = backgroundColor)
-
+                    ProcedureProgressCircle(
+                        state = rememberProcedureProgressCircleState(
+                            progress = progress,
+                            borderColor = backgroundColor
+                        )
+                    )
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size36))
 
                     ControlProcedure(

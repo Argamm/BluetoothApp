@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.zdravnica.app.PreferencesHelper
 import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenSideEffect
 import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
@@ -47,7 +46,7 @@ fun MenuScreen(
     val context = LocalContext.current
     val menuScreenViewState by menuScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.menu_screen_cancel_title)
-    val temperature by remember { mutableIntStateOf(PreferencesHelper.getTemperature(context)) }
+    val temperature = menuScreenViewModel.temperature
     val supportEmailAddress = stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
     val supportPhoneNumber = stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
     val localUriHandler = LocalUriHandler.current
@@ -114,7 +113,7 @@ fun MenuScreen(
                 item {
                     MenuTemperatureInfo(
                         //this data must get from bluetooth
-                        temperature = temperature,
+                        temperature = temperature.value,
                     )
                 }
                 item {

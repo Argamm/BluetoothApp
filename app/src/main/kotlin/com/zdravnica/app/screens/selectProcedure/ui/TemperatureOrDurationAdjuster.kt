@@ -29,8 +29,8 @@ import com.zdravnica.uikit.GRADIENT_ICON_BUTTON_INCREASE_DESCRIPTION
 import com.zdravnica.uikit.ONE_MINUTE_IN_SEC
 import com.zdravnica.uikit.components.buttons.ui.GradientIconButton
 import com.zdravnica.uikit.extensions.compose.formatAsValue
-import com.zdravnica.uikit.extensions.compose.getValueRange
 import com.zdravnica.uikit.resources.R
+import com.zdravnica.uikit.utils.getValueRange
 
 @Composable
 fun TemperatureOrDurationAdjuster(

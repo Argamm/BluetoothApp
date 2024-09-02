@@ -7,6 +7,7 @@ import org.koin.dsl.module
 val appKoinModules = module {
     includes(
         bluetoothKoinModule,
-        zdravnicaViewModelsKoinModules
+        zdravnicaViewModelsKoinModules,
+        dataStoreModule,
     )
 }
