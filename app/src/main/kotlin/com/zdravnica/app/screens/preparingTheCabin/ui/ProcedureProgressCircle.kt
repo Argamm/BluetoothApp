@@ -17,46 +17,19 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import com.zdravnica.app.screens.preparingTheCabin.models.ProcedureProgressCircleState
+import com.zdravnica.app.screens.preparingTheCabin.models.rememberProcedureProgressCircleState
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.COUNT_TO_100
 import com.zdravnica.uikit.FLOAT_0_3
 import com.zdravnica.uikit.FLOAT_1
 import com.zdravnica.uikit.FLOAT_1_6
-import com.zdravnica.uikit.PINK_BACK_PROGRESS_FROM
-import com.zdravnica.uikit.PINK_BACK_PROGRESS_UNTIL
-import com.zdravnica.uikit.RED_BACK_PROGRESS_FROM
-import com.zdravnica.uikit.RED_BACK_PROGRESS_UNTIL
-import com.zdravnica.uikit.WHITE_BACK_PROGRESS
 
 @Composable
 fun ProcedureProgressCircle(
     modifier: Modifier = Modifier,
-    progress: Int,
-    borderColor: Color,
+    state: ProcedureProgressCircleState
 ) {
-    val colors = ZdravnicaAppTheme.colors.baseAppColor
     val dimens = ZdravnicaAppTheme.dimens
-    val backgroundBrush = when {
-        progress <= WHITE_BACK_PROGRESS -> Brush.linearGradient(
-            ZdravnicaAppTheme.colors.bigChipsStateColor.backgroundGradientColors
-        )
-
-        progress in PINK_BACK_PROGRESS_FROM..PINK_BACK_PROGRESS_UNTIL ->
-            Brush.linearGradient(listOf(colors.secondary700, colors.secondary700))
-
-
-        progress in RED_BACK_PROGRESS_FROM..RED_BACK_PROGRESS_UNTIL ->
-            Brush.linearGradient(listOf(colors.error700, colors.error700))
-
-
-        progress == COUNT_TO_100 ->
-            Brush.linearGradient(listOf(colors.success800, colors.success800))
-
-
-        else -> Brush.linearGradient(
-            ZdravnicaAppTheme.colors.bigChipsStateColor.backgroundGradientColors
-        )
-    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -76,11 +49,11 @@ fun ProcedureProgressCircle(
                 )
             }
             .border(
-                border = BorderStroke(dimens.size3, borderColor),
+                border = BorderStroke(dimens.size3, state.borderColor),
                 shape = CircleShape
             )
             .background(
-                brush = backgroundBrush,
+                brush = state.backgroundBrush,
                 shape = CircleShape
             )
     ) {
@@ -93,7 +66,7 @@ fun ProcedureProgressCircle(
                         )
                     )
                 ) {
-                    append("$progress%")
+                    append("${state.progress}%")
                 }
             },
             style = ZdravnicaAppTheme.typography.headH1
@@ -101,8 +74,10 @@ fun ProcedureProgressCircle(
     }
 }
 
+
 @Preview
 @Composable
 fun PreviewProcedureProgressCircle() {
-    ProcedureProgressCircle(progress = 75, borderColor = Color.White)
+    val state = rememberProcedureProgressCircleState(progress = 75, borderColor = Color.White)
+    ProcedureProgressCircle(state = state)
 }
