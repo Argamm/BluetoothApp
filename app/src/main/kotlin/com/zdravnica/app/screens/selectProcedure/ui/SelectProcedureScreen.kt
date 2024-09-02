@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.zdravnica.app.PreferencesHelper
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideEffect
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
@@ -49,7 +48,6 @@ fun SelectProcedureScreen(
     navigateToMenuScreen: () -> Unit,
     navigateToProcedureScreen: (Int) -> Unit,
 ) {
-    val context = LocalContext.current
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val bigChipTypes = getChipDataList()
@@ -57,8 +55,8 @@ fun SelectProcedureScreen(
     var ikSwitchState by remember { mutableStateOf(false) }
     var isButtonVisible by remember { mutableStateOf(true) }
     var scrollToEnd by remember { mutableStateOf(false) }
-    var temperature by remember { mutableIntStateOf(PreferencesHelper.getTemperature(context)) }
-    var duration by remember { mutableIntStateOf(PreferencesHelper.getDuration(context)) }
+    val temperature by selectProcedureViewModel.temperature
+    val duration by selectProcedureViewModel.duration
     val iconStates = remember(ikSwitchState) {
         mutableStateListOf(
             IconState.ENABLED,//this data must come from bluetooth
@@ -67,7 +65,6 @@ fun SelectProcedureScreen(
             if (ikSwitchState) IconState.ENABLED else IconState.DISABLED
         )
     }
-
     selectProcedureViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is SelectProcedureSideEffect.OnNavigateToMenuScreen -> navigateToMenuScreen.invoke()
@@ -75,11 +72,6 @@ fun SelectProcedureScreen(
                 navigateToProcedureScreen.invoke(sideEffect.chipData.title)
             }
         }
-    }
-
-    LaunchedEffect(temperature, duration) {
-        PreferencesHelper.saveTemperature(context, temperature)
-        PreferencesHelper.saveDuration(context, duration)
     }
 
     LaunchedEffect(scrollToEnd) {
@@ -145,13 +137,13 @@ fun SelectProcedureScreen(
                     TemperatureOrDurationAdjuster(
                         isMinutes = false,
                         value = temperature,
-                        onValueChange = { temperature = it }
+                        onValueChange = { selectProcedureViewModel.saveTemperature(it) }
                     )
                     YTHorizontalDivider()
                     TemperatureOrDurationAdjuster(
                         isMinutes = true,
                         value = duration,
-                        onValueChange = { duration = it }
+                        onValueChange = { selectProcedureViewModel.saveDuration(it) }
                     )
                     YTHorizontalDivider()
                     ChooseProcedureGridLayout(
