@@ -99,6 +99,11 @@ fun OrderBalmButton(
                 contentAlignment = Alignment.Center
             ) {
                 Row(
+                    modifier = Modifier.padding(
+                        top = ZdravnicaAppTheme.dimens.size15,
+                        bottom = ZdravnicaAppTheme.dimens.size15,
+                        end = ZdravnicaAppTheme.dimens.size15
+                    ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4)
                 ) {
@@ -112,11 +117,9 @@ fun OrderBalmButton(
                     )
 
                     Text(
-                        modifier = Modifier.padding(
-                            top = ZdravnicaAppTheme.dimens.size15,
-                            bottom = ZdravnicaAppTheme.dimens.size15,
-                            end = ZdravnicaAppTheme.dimens.size15
-                        ),
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(top = ZdravnicaAppTheme.dimens.size3),
                         style = ZdravnicaAppTheme.typography.bodyNormalSemi,
                         text = text,
                         color = if (isDisabled)

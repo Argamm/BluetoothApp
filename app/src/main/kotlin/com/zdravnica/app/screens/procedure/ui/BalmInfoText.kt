@@ -21,7 +21,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.resources.R
 
@@ -77,8 +79,20 @@ fun BalmInfoText(
                 else
                     ZdravnicaAppTheme.colors.baseAppColor.gray300,
                 style = ZdravnicaAppTheme.typography.bodyXSMedium,
-                modifier = Modifier.padding(start = ZdravnicaAppTheme.dimens.size4)
+                modifier = Modifier.padding(
+                    top = ZdravnicaAppTheme.dimens.size2,
+                    start = ZdravnicaAppTheme.dimens.size2,
+                    end = ZdravnicaAppTheme.dimens.size8
+                )
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun BalmInfoTextPrev() {
+    ZdravnicaAppExerciseTheme(darkThem = false) {
+        BalmInfoText(text = "Балм", isBalmCountZero = false)
     }
 }
