@@ -36,6 +36,7 @@ import com.zdravnica.app.screens.procedureProcess.ui.HealthMetricsDisplay
 import com.zdravnica.app.screens.procedureProcess.ui.TimerProcess
 import com.zdravnica.app.screens.procedureProcess.viewModels.ProcedureProcessSideEffect
 import com.zdravnica.app.screens.procedureProcess.viewModels.ProcedureProcessViewModel
+import com.zdravnica.app.utils.isLandscape
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
@@ -47,7 +48,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun ProcedureProcessScreenT(
+fun ProcedureProcessTabletScreen(
     modifier: Modifier = Modifier,
     procedureProcessViewModel: ProcedureProcessViewModel = koinViewModel(),
     navigateToMainScreen: () -> Unit,
@@ -116,7 +117,10 @@ fun ProcedureProcessScreenT(
                     ) {
                         Box(modifier = Modifier
                             .weight(1f)
-                            .padding(start = ZdravnicaAppTheme.dimens.size152)) {
+                            .padding(start = if(isLandscape())
+                                ZdravnicaAppTheme.dimens.size152
+                            else
+                                ZdravnicaAppTheme.dimens.size50)) {
                             if (!isTimerFinished) {
                                 Column {
                                     if (false) {//TODO push notification for showing this message
@@ -138,7 +142,10 @@ fun ProcedureProcessScreenT(
 
                         Box(modifier = Modifier
                             .weight(1f)
-                            .padding(end = ZdravnicaAppTheme.dimens.size143)) {
+                            .padding(end = if(isLandscape())
+                                ZdravnicaAppTheme.dimens.size143
+                            else
+                                ZdravnicaAppTheme.dimens.size50)) {
 
                             HealthMetricsDisplay(
                                 temperatureValue = "36.5°C", //TODO replace with actual Bluetooth data
@@ -197,7 +204,7 @@ fun ProcedureProcessScreenT(
 @Composable
 private fun ProcedureProcessScreenPrevT() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        ProcedureProcessScreenT(
+        ProcedureProcessTabletScreen(
             navigateToMainScreen = {},
             navigateToCancelDialogPage = { _, _ -> })
     }

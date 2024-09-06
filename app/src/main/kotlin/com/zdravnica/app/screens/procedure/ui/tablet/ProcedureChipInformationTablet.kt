@@ -20,7 +20,7 @@ import androidx.compose.ui.text.withStyle
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 
 @Composable
-fun ProcedureChipInformationT(
+fun ProcedureChipInformationTablet(
     modifier: Modifier = Modifier,
     titleRes: Int?,
     descriptionRes: Int?

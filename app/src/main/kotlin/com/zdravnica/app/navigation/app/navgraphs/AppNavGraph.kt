@@ -18,9 +18,9 @@ sealed class AppNavGraph(val route: String) {
     data object ProcedureProcessScreen : AppNavGraph(route = AppDestinationsRouteNames.PROCEDURE_PROCESS_SCREEN)
     data object StatusScreen : AppNavGraph(route = AppDestinationsRouteNames.STATUS_SCREEN)
 
-    data object CancelProcedureDialogT : AppNavGraph(route = AppDestinationsRouteNames.SHOW_CANCEL_PROCEDURE_DIALOG_T)
-    data object SelectProcedureScreenT : AppNavGraph(route = AppDestinationsRouteNames.SELECT_PROCEDURE_SCREEN_T)
-    data object ManuScreenT : AppNavGraph(route = AppDestinationsRouteNames.MENU_SCREEN_T)
-    data object ProcedureScreenT : AppNavGraph(route = AppDestinationsRouteNames.PROCEDURE_SCREEN_T)
-    data object ProcedureProcessScreenT : AppNavGraph(route = AppDestinationsRouteNames.PROCEDURE_PROCESS_SCREEN_T)
+    data object CancelProcedureTabletDialog : AppNavGraph(route = AppDestinationsRouteNames.SHOW_CANCEL_PROCEDURE_TABLET_DIALOG)
+    data object SelectProcedureTabletScreen : AppNavGraph(route = AppDestinationsRouteNames.SELECT_PROCEDURE_TABLET_SCREEN)
+    data object ManuTabletScreen : AppNavGraph(route = AppDestinationsRouteNames.MENU_TABLET_SCREEN)
+    data object ProcedureTabletScreen : AppNavGraph(route = AppDestinationsRouteNames.PROCEDURE_TABLET_SCREEN)
+    data object ProcedureProcessTabletScreen : AppNavGraph(route = AppDestinationsRouteNames.PROCEDURE_PROCESS_TABLET_SCREEN)
 }

@@ -15,7 +15,6 @@
         tools:targetApi="34">
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="locked"
             android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true"
             android:label="@string/app_name"

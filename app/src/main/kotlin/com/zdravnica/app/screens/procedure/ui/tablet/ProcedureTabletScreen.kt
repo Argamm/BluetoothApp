@@ -32,7 +32,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun ProcedureScreenT(
+fun ProcedureTabletScreen(
     modifier: Modifier = Modifier,
     procedureScreenViewModel: ProcedureScreenViewModel = koinViewModel(),
     chipTitle: Int? = null,
@@ -116,12 +116,12 @@ fun ProcedureScreenT(
                                 .align(Alignment.CenterVertically)
                                 .padding(top = ZdravnicaAppTheme.dimens.size137)
                         ) {
-                            ProcedureChipInformationT(
+                            ProcedureChipInformationTablet(
                                 titleRes = chipData?.title,
                                 descriptionRes = chipData?.description
                             )
                             balmInfo?.let { balmInfo ->
-                                CheckBalmCountAndOrderT(modifier, balmInfo) {
+                                CheckBalmCountAndOrderTablet(modifier, balmInfo) {
                                     if (chipTitle != null) {
                                         startProcedure.invoke(chipTitle)
                                     }

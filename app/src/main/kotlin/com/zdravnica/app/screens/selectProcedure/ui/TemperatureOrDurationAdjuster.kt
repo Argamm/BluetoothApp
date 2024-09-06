@@ -20,6 +20,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import com.zdravnica.app.utils.isLandscape
 import com.zdravnica.app.utils.isTablet
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
@@ -70,9 +71,12 @@ fun TemperatureOrDurationAdjuster(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        horizontal = if (isTablet())
-                            ZdravnicaAppTheme.dimens.size140
-                        else
+                        horizontal = if (isTablet()) {
+                            if (isLandscape())
+                                ZdravnicaAppTheme.dimens.size140
+                            else
+                                ZdravnicaAppTheme.dimens.size48
+                        } else
                             ZdravnicaAppTheme.dimens.size48
                     )
             ) {
@@ -81,7 +85,7 @@ fun TemperatureOrDurationAdjuster(
                     icon = ImageVector.vectorResource(id = R.drawable.ic_minus),
                     contentDescription = GRADIENT_ICON_BUTTON_DECREASE_DESCRIPTION,
                     onClick = {
-                        if (!isMinusDisabled) onValueChange(
+                        onValueChange(
                             value - if (isMinutes)
                                 ONE_MINUTE_IN_SEC
                             else
@@ -115,7 +119,7 @@ fun TemperatureOrDurationAdjuster(
                     icon = ImageVector.vectorResource(id = R.drawable.ic_plus),
                     contentDescription = GRADIENT_ICON_BUTTON_INCREASE_DESCRIPTION,
                     onClick = {
-                        if (!isPlusDisabled) onValueChange(
+                        onValueChange(
                             value + if (isMinutes)
                                 ONE_MINUTE_IN_SEC
                             else

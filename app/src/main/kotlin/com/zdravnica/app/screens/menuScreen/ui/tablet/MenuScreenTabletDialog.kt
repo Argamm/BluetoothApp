@@ -15,7 +15,7 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MenuScreenDialogT(
+fun MenuScreenTabletDialog(
     modifier: Modifier = Modifier,
     menuScreenViewModel: MenuScreenViewModel = koinViewModel(),
     onNavigateUp: (() -> Unit)? = null,

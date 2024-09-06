@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,21 +26,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.zdravnica.app.screens.dialog.models.CancelProcedureDialogState
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.CLOSE_ICON_DESCRIPTION
+import com.zdravnica.uikit.components.buttons.ui.ActionDialogButton
 import com.zdravnica.uikit.resources.R
 
 @Composable
 fun CancelProcedureDialog(
     modifier: Modifier = Modifier,
-    titleText: String = "",
-    onClose: () -> Unit,
-    onNoClick: () -> Unit,
-    onYesClick: () -> Unit
+    state: CancelProcedureDialogState = CancelProcedureDialogState(),
 ) {
     Dialog(
-        onDismissRequest = onClose,
+        onDismissRequest = state.onClose,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Box(
@@ -69,12 +69,12 @@ fun CancelProcedureDialog(
                             imageVector = Icons.Default.Close,
                             contentDescription = CLOSE_ICON_DESCRIPTION,
                             modifier = Modifier
-                                .clickable(onClick = onClose)
+                                .clickable(onClick = state.onClose)
                         )
                     }
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size18))
                     Text(
-                        text = titleText,
+                        text = state.titleText,
                         style = ZdravnicaAppTheme.typography.bodyMediumRegular,
                         color = ZdravnicaAppTheme.colors.baseAppColor.gray200,
                     )
@@ -84,37 +84,24 @@ fun CancelProcedureDialog(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Button(
-                            onClick = onNoClick,
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                            elevation = null
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(
-                                    top = ZdravnicaAppTheme.dimens.size12,
-                                    bottom = ZdravnicaAppTheme.dimens.size12
-                                ),
-                                text = stringResource(R.string.menu_screen_cancel),
-                                style = ZdravnicaAppTheme.typography.bodyMediumSemi,
-                            )
-                        }
-                        Button(
-                            onClick = onYesClick,
-                            colors = ButtonDefaults.buttonColors(backgroundColor = ZdravnicaAppTheme.colors.baseAppColor.primary500),
+                        ActionDialogButton(
+                            text = stringResource(R.string.menu_screen_cancel),
+                            onClick = state.onNoClick,
+                            backgroundColor = Color.Transparent
+                        )
+                        ActionDialogButton(
+                            text = stringResource(R.string.menu_screen_yes),
+                            onClick = state.onYesClick,
+                            backgroundColor = ZdravnicaAppTheme.colors.baseAppColor.primary500,
+                            textColor = Color.White,
                             shape = RoundedCornerShape(ZdravnicaAppTheme.dimens.size24),
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(
-                                    start = ZdravnicaAppTheme.dimens.size36,
-                                    end = ZdravnicaAppTheme.dimens.size36,
-                                    top = ZdravnicaAppTheme.dimens.size12,
-                                    bottom = ZdravnicaAppTheme.dimens.size12
-                                ),
-                                text = stringResource(R.string.menu_screen_yes),
-                                color = Color.White,
-                                style = ZdravnicaAppTheme.typography.bodyMediumSemi
+                            paddingValues = PaddingValues(
+                                start = ZdravnicaAppTheme.dimens.size36,
+                                end = ZdravnicaAppTheme.dimens.size36,
+                                top = ZdravnicaAppTheme.dimens.size12,
+                                bottom = ZdravnicaAppTheme.dimens.size12
                             )
-                        }
+                        )
                     }
                 }
             }
@@ -126,11 +113,11 @@ fun CancelProcedureDialog(
 @Composable
 fun PreviewCancelProcedureDialog() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        CancelProcedureDialog(
-            titleText = "cancel?",
-            onClose = {},
-            onNoClick = {},
-            onYesClick = {}
+        CancelProcedureDialogState(
+            titleText = "Are you sure you want to cancel?",
+            onClose = { /* Handle close */ },
+            onNoClick = { /* Handle No */ },
+            onYesClick = { /* Handle Yes */ }
         )
     }
 }

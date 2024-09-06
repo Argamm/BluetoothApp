@@ -11,6 +11,7 @@ import org.orbitmvi.orbit.viewmodel.container
 class SelectProcedureViewModel(
     private val localDataStore: LocalDataStore
 ) : BaseViewModel<SelectProcedureViewState, SelectProcedureSideEffect>() {
+
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
 

@@ -13,9 +13,9 @@ internal object AppDestinationsRouteNames {
     const val PROCEDURE_PROCESS_SCREEN = "ProcedureProcessScreen"
     const val STATUS_SCREEN = "StatusScreen"
 
-    const val SHOW_CANCEL_PROCEDURE_DIALOG_T = "Cancel Procedure Tablet Dialog"
-    const val SELECT_PROCEDURE_SCREEN_T = "SelectProcedureScreenT"
-    const val PROCEDURE_SCREEN_T = "ProcedureScreenT"
-    const val MENU_SCREEN_T = "MenuScreen tablet"
-    const val PROCEDURE_PROCESS_SCREEN_T = "ProcedureProcessScreenT"
+    const val SHOW_CANCEL_PROCEDURE_TABLET_DIALOG = "Cancel Procedure Tablet Dialog"
+    const val SELECT_PROCEDURE_TABLET_SCREEN = "SelectProcedureTabletScreen"
+    const val PROCEDURE_TABLET_SCREEN = "ProcedureTabletScreen"
+    const val MENU_TABLET_SCREEN = "MenuScreen tablet"
+    const val PROCEDURE_PROCESS_TABLET_SCREEN = "ProcedureProcessTabletScreen"
 }

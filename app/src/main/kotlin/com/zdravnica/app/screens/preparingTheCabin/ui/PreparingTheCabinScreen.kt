@@ -4,7 +4,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -65,13 +64,11 @@ fun PreparingTheCabinScreen(
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var showAnimationCircle by remember { mutableStateOf(false) }
     var currentTemperature by remember { mutableIntStateOf(0) }
-    val targetTemperature = preparingTheCabinScreenViewModel.temperature
-    val duration = preparingTheCabinScreenViewModel.duration
     var progress by remember {
         mutableIntStateOf(
             calculateProgress(
                 currentTemperature,
-                targetTemperature.value
+                preparingTheCabinScreenViewModel.temperature.value
             )
         )
     }
@@ -110,10 +107,13 @@ fun PreparingTheCabinScreen(
     * TODO this logic will be removed or replaced when from Bluetooth will receive data
     */
     LaunchedEffect(currentTemperature) {
-        while (currentTemperature < targetTemperature.value) {
+        while (currentTemperature < preparingTheCabinScreenViewModel.temperature.value) {
             delay(DELAY_1000_ML)
             currentTemperature += COUNT_ONE
-            progress = calculateProgress(currentTemperature, targetTemperature.value)
+            progress = calculateProgress(
+                currentTemperature,
+                preparingTheCabinScreenViewModel.temperature.value
+            )
         }
     }
 
@@ -160,8 +160,8 @@ fun PreparingTheCabinScreen(
                         chipTitleId?.let { stringResource(id = it) }?.let {
                             ProcedureInfo(
                                 procedureName = it,
-                                temperature = targetTemperature.value,
-                                minutes = duration.value / ONE_MINUTE_IN_SEC
+                                temperature = preparingTheCabinScreenViewModel.temperature.value,
+                                minutes = preparingTheCabinScreenViewModel.duration.value / ONE_MINUTE_IN_SEC
                             )
                         }
 
@@ -191,7 +191,7 @@ fun PreparingTheCabinScreen(
                                 showAnimationCircle = true
                             }
                         )
-                        
+
                         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size30))
                     }
                 }

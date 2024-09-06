@@ -17,17 +17,18 @@ import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
 import com.zdravnica.app.screens.connecting_page.ConnectingPageScreen
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
 import com.zdravnica.app.screens.dialog.CancelProcedureDialog
-import com.zdravnica.app.screens.dialog.CancelProcedureDialogT
+import com.zdravnica.app.screens.dialog.CancelProcedureTabletDialog
 import com.zdravnica.app.screens.dialog.ShowDevicesDialog
+import com.zdravnica.app.screens.dialog.models.CancelProcedureDialogState
 import com.zdravnica.app.screens.menuScreen.ui.MenuScreen
-import com.zdravnica.app.screens.menuScreen.ui.tablet.MenuScreenDialogT
+import com.zdravnica.app.screens.menuScreen.ui.tablet.MenuScreenTabletDialog
 import com.zdravnica.app.screens.preparingTheCabin.ui.PreparingTheCabinScreen
 import com.zdravnica.app.screens.procedure.ui.ProcedureScreen
-import com.zdravnica.app.screens.procedure.ui.tablet.ProcedureScreenT
+import com.zdravnica.app.screens.procedure.ui.tablet.ProcedureTabletScreen
 import com.zdravnica.app.screens.procedureProcess.ui.ProcedureProcessScreen
-import com.zdravnica.app.screens.procedureProcess.ui.tablet.ProcedureProcessScreenT
+import com.zdravnica.app.screens.procedureProcess.ui.tablet.ProcedureProcessTabletScreen
 import com.zdravnica.app.screens.selectProcedure.ui.SelectProcedureScreen
-import com.zdravnica.app.screens.selectProcedure.ui.tablet.SelectProcedureScreenT
+import com.zdravnica.app.screens.selectProcedure.ui.tablet.SelectProcedureTabletScreen
 import com.zdravnica.app.screens.statusScreen.StatusScreen
 import com.zdravnica.app.utils.isTablet
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
@@ -41,6 +42,26 @@ fun RootNavigationGraph(
 ) {
     val connectivityViewModel: ConnectingPageViewModel = koinViewModel()
     val isTablet = isTablet()
+    val slideInFromRight = slideInHorizontally(
+        initialOffsetX = { fullWidth -> fullWidth },
+        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
+    )
+
+    val slideOutToLeft = slideOutHorizontally(
+        targetOffsetX = { fullWidth -> -fullWidth },
+        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
+    )
+
+    val slideInFromLeft = slideInHorizontally(
+        initialOffsetX = { fullWidth -> -fullWidth },
+        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
+    )
+
+    val slideOutToRight = slideOutHorizontally(
+        targetOffsetX = { fullWidth -> fullWidth },
+        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
+    )
+
     NavHost(
         navController = navHostController,
         route = AppNavGraph.Root.route,
@@ -55,7 +76,7 @@ fun RootNavigationGraph(
                         .background(ZdravnicaAppTheme.colors.primaryBackgroundColor),
                     onShowAllDevicesDialog = {
                         if (isTablet) {
-                            navHostController.navigate(AppNavGraph.SelectProcedureScreenT.route)
+                            navHostController.navigate(AppNavGraph.SelectProcedureTabletScreen.route)
                         } else {
                             navHostController.navigate(AppNavGraph.SelectProcedureScreen.route)
                         }
@@ -88,30 +109,10 @@ fun RootNavigationGraph(
 
             composable(
                 route = AppNavGraph.ManuScreen.route,
-                enterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
-                    )
-                },
-                exitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> -fullWidth },
-                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
-                    )
-                },
-                popEnterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { fullWidth -> -fullWidth },
-                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
-                    )
-                },
-                popExitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
-                    )
-                }
+                enterTransition = { slideInFromRight },
+                exitTransition = { slideOutToLeft },
+                popEnterTransition = { slideInFromLeft },
+                popExitTransition = { slideOutToRight },
             ) {
                 MenuScreen(
                     onNavigateUp = {
@@ -139,57 +140,39 @@ fun RootNavigationGraph(
                 val cancelDialog = backStackEntry.arguments?.getString("cancelDialog")
 
                 CancelProcedureDialog(
-                    titleText = cancelDialog ?: "",
-                    onClose = {
-                        navHostController.navigateUp()
-                    },
-                    onNoClick = {
-                        navHostController.navigateUp()
-                    },
-                    onYesClick = {
-                        val route = if (navigateToSelectProcedure == true) {
-                            AppNavGraph.SelectProcedureScreen.route
-                        } else {
-                            AppNavGraph.Connection.route
-                        }
-
-                        navHostController.navigate(route) {
-                            popUpTo(AppNavGraph.Connection.route) {
-                                inclusive = true
+                    state = CancelProcedureDialogState(
+                        titleText = cancelDialog ?: "",
+                        onClose = {
+                            navHostController.navigateUp()
+                        },
+                        onNoClick = {
+                            navHostController.navigateUp()
+                        },
+                        onYesClick = {
+                            val route = if (navigateToSelectProcedure == true) {
+                                AppNavGraph.SelectProcedureScreen.route
+                            } else {
+                                AppNavGraph.Connection.route
                             }
-                            launchSingleTop = true
+
+                            navHostController.navigate(route) {
+                                popUpTo(AppNavGraph.Connection.route) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
                         }
-                    }
+                    )
                 )
             }
 
             composable(
                 route = "${AppNavGraph.ProcedureScreen.route}/{chipTitle}",
                 arguments = listOf(navArgument("chipTitle") { type = NavType.IntType }),
-                enterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
-                    )
-                },
-                exitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> -fullWidth },
-                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
-                    )
-                },
-                popEnterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { fullWidth -> -fullWidth },
-                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
-                    )
-                },
-                popExitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
-                    )
-                }
+                enterTransition = { slideInFromRight },
+                exitTransition = { slideOutToLeft },
+                popEnterTransition = { slideInFromLeft },
+                popExitTransition = { slideOutToRight },
             ) { backStackEntry ->
                 val chipData = backStackEntry.arguments?.getInt("chipTitle")
 
@@ -216,7 +199,7 @@ fun RootNavigationGraph(
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         if (isTablet) {
                             navHostController.navigate(
-                                "${AppNavGraph.CancelProcedureDialogT.route}/${navigateToSelectProcedure}/${cancelDialog}"
+                                "${AppNavGraph.CancelProcedureTabletDialog.route}/${navigateToSelectProcedure}/${cancelDialog}"
                             )
                         } else {
                             navHostController.navigate(
@@ -226,7 +209,7 @@ fun RootNavigationGraph(
                     },
                     navigateToProcedureProcessScreen = {
                         if (isTablet) {
-                            navHostController.navigate(AppNavGraph.ProcedureProcessScreenT.route)
+                            navHostController.navigate(AppNavGraph.ProcedureProcessTabletScreen.route)
                         } else {
                             navHostController.navigate(AppNavGraph.ProcedureProcessScreen.route)
                         }
@@ -262,23 +245,23 @@ fun RootNavigationGraph(
             }
 
             //Tablets
-            composable(AppNavGraph.SelectProcedureScreenT.route) {
-                SelectProcedureScreenT(
+            composable(AppNavGraph.SelectProcedureTabletScreen.route) {
+                SelectProcedureTabletScreen(
                     navigateToMenuScreen = {
-                        navHostController.navigate(AppNavGraph.ManuScreenT.route)
+                        navHostController.navigate(AppNavGraph.ManuTabletScreen.route)
                     },
                     navigateToProcedureScreen = { chipTitle ->
-                        navHostController.navigate("${AppNavGraph.ProcedureScreenT.route}/${chipTitle}")
+                        navHostController.navigate("${AppNavGraph.ProcedureTabletScreen.route}/${chipTitle}")
                     }
                 )
             }
             composable(
-                route = "${AppNavGraph.ProcedureScreenT.route}/{chipTitle}",
+                route = "${AppNavGraph.ProcedureTabletScreen.route}/{chipTitle}",
                 arguments = listOf(navArgument("chipTitle") { type = NavType.IntType })
             ) { backStackEntry ->
                 val chipData = backStackEntry.arguments?.getInt("chipTitle")
 
-                ProcedureScreenT(
+                ProcedureTabletScreen(
                     chipTitle = chipData,
                     onNavigateUp = { navHostController.navigateUp() },
                     startProcedure = { chipTitle ->
@@ -287,21 +270,21 @@ fun RootNavigationGraph(
                 )
             }
 
-            composable(AppNavGraph.ProcedureProcessScreenT.route) {
-                ProcedureProcessScreenT(
+            composable(AppNavGraph.ProcedureProcessTabletScreen.route) {
+                ProcedureProcessTabletScreen(
                     navigateToMainScreen = {
-                        navHostController.navigate(AppNavGraph.SelectProcedureScreenT.route)
+                        navHostController.navigate(AppNavGraph.SelectProcedureTabletScreen.route)
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         navHostController.navigate(
-                            "${AppNavGraph.CancelProcedureDialogT.route}/${navigateToSelectProcedure}/${cancelDialog}"
+                            "${AppNavGraph.CancelProcedureTabletDialog.route}/${navigateToSelectProcedure}/${cancelDialog}"
                         )
                     },
                 )
             }
 
             dialog(
-                route = "${AppNavGraph.CancelProcedureDialogT.route}/{navigateToSelectProcedure}/{cancelDialog}",
+                route = "${AppNavGraph.CancelProcedureTabletDialog.route}/{navigateToSelectProcedure}/{cancelDialog}",
                 arguments = listOf(navArgument("navigateToSelectProcedure") {
                     type = NavType.BoolType
                 }, navArgument("cancelDialog") {
@@ -312,35 +295,37 @@ fun RootNavigationGraph(
                     backStackEntry.arguments?.getBoolean("navigateToSelectProcedure")
                 val cancelDialog = backStackEntry.arguments?.getString("cancelDialog")
 
-                CancelProcedureDialogT(
-                    titleText = cancelDialog ?: "",
-                    onClose = {
-                        navHostController.navigateUp()
-                    },
-                    onNoClick = {
-                        navHostController.navigateUp()
-                    },
-                    onYesClick = {
-                        val route = if (navigateToSelectProcedure == true) {
-                            AppNavGraph.SelectProcedureScreenT.route
-                        } else {
-                            AppNavGraph.Connection.route
-                        }
-
-                        navHostController.navigate(route) {
-                            popUpTo(AppNavGraph.Connection.route) {
-                                inclusive = true
+                CancelProcedureTabletDialog(
+                    state = CancelProcedureDialogState(
+                        titleText = cancelDialog ?: "",
+                        onClose = {
+                            navHostController.navigateUp()
+                        },
+                        onNoClick = {
+                            navHostController.navigateUp()
+                        },
+                        onYesClick = {
+                            val route = if (navigateToSelectProcedure == true) {
+                                AppNavGraph.SelectProcedureTabletScreen.route
+                            } else {
+                                AppNavGraph.Connection.route
                             }
-                            launchSingleTop = true
+
+                            navHostController.navigate(route) {
+                                popUpTo(AppNavGraph.Connection.route) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
                         }
-                    }
+                    ),
                 )
             }
 
             dialog(
-                route = AppNavGraph.ManuScreenT.route
+                route = AppNavGraph.ManuTabletScreen.route
             ) {
-                MenuScreenDialogT(
+                MenuScreenTabletDialog(
                     onNavigateUp = {
                         navHostController.navigateUp()
                     },
@@ -348,7 +333,7 @@ fun RootNavigationGraph(
                         navHostController.navigate(AppNavGraph.Connection.route)
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
-                        navHostController.navigate("${AppNavGraph.CancelProcedureDialogT.route}/${navigateToSelectProcedure}/${cancelDialog}")
+                        navHostController.navigate("${AppNavGraph.CancelProcedureTabletDialog.route}/${navigateToSelectProcedure}/${cancelDialog}")
                     }
                 )
             }

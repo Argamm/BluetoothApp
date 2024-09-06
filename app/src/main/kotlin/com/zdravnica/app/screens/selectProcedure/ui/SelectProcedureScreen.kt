@@ -55,8 +55,7 @@ fun SelectProcedureScreen(
     var ikSwitchState by remember { mutableStateOf(false) }
     var isButtonVisible by remember { mutableStateOf(true) }
     var scrollToEnd by remember { mutableStateOf(false) }
-    val temperature by selectProcedureViewModel.temperature
-    val duration by selectProcedureViewModel.duration
+
     val iconStates = remember(ikSwitchState) {
         mutableStateListOf(
             IconState.ENABLED,//this data must come from bluetooth
@@ -104,7 +103,7 @@ fun SelectProcedureScreen(
     Scaffold(
         topBar = {
             SelectProcedureTopAppBar(
-                temperature = temperature,
+                temperature = selectProcedureViewModel.temperature.value,
                 onRightIconClick = selectProcedureViewModel::navigateToMenuScreen,
                 iconStates = iconStates
             )
@@ -151,7 +150,7 @@ fun SelectProcedureScreen(
                 item {
                     TemperatureOrDurationAdjuster(
                         isMinutes = false,
-                        value = temperature,
+                        value = selectProcedureViewModel.temperature.value,
                         onValueChange = { selectProcedureViewModel.saveTemperature(it) }
                     )
                     YTHorizontalDivider()
@@ -159,7 +158,7 @@ fun SelectProcedureScreen(
                 item {
                     TemperatureOrDurationAdjuster(
                         isMinutes = true,
-                        value = duration,
+                        value = selectProcedureViewModel.duration.value,
                         onValueChange = { selectProcedureViewModel.saveDuration(it) }
                     )
                     YTHorizontalDivider()
