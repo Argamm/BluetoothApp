@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.zdravnica.app.screens.connecting_page.models.ConnectingPageViewState
 import com.zdravnica.app.utils.getDimensionBasedOnDeviceType
+import com.zdravnica.app.utils.isTablet
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.APP_LOGO_DESCRIPTION
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
@@ -48,7 +49,12 @@ fun ConnectingPageContentScreen(
     }
 
     Column(
-        modifier = modifier.padding(horizontal = ZdravnicaAppTheme.dimens.size48),
+        modifier = modifier.padding(
+            horizontal = if (isTablet())
+                ZdravnicaAppTheme.dimens.size280
+            else
+                ZdravnicaAppTheme.dimens.size48
+        ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

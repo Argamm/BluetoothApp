@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.COUNT_THREE
 import com.zdravnica.uikit.HEIGHT_OF_TOOLTIP
@@ -249,9 +250,11 @@ fun CheckBalmCountAndOrder(
 @Preview
 @Composable
 private fun CheckBalmCountAndOrderPrev() {
-    getBalmInfoByTitle(R.string.select_product_skin)?.let {
-        CheckBalmCountAndOrder(
-            balmInfo = it,
-        ){}
+    ZdravnicaAppExerciseTheme(darkThem = false) {
+        getBalmInfoByTitle(R.string.select_product_skin)?.let {
+            CheckBalmCountAndOrder(
+                balmInfo = it,
+            ) {}
+        }
     }
 }

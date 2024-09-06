@@ -47,6 +47,7 @@ val dimens: ZdravnicaAppDimens
         size81 = 81.dp,
         size82 = 82.dp,
         size86 = 86.dp,
+        size100 = 100.dp,
         size120 = 120.dp,
         size126 = 126.dp,
         size130 = 130.dp,

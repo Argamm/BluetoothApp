@@ -57,8 +57,6 @@ fun SelectProcedureScreenT(
     val bigChipTypes = getChipDataList()
     val sampleChips = bigChipTypes.map { it.chipData }
     var ikSwitchState by remember { mutableStateOf(false) }
-    var isButtonVisible by remember { mutableStateOf(true) }
-    var scrollToEnd by remember { mutableStateOf(false) }
     val temperature = selectProcedureViewModel.temperature
     val duration = selectProcedureViewModel.duration
     val iconStates = remember(ikSwitchState) {
@@ -75,23 +73,6 @@ fun SelectProcedureScreenT(
             is SelectProcedureSideEffect.OnNavigateToMenuScreen -> navigateToMenuScreen.invoke()
             is SelectProcedureSideEffect.OnProcedureCardClick -> {
                 navigateToProcedureScreen.invoke(sideEffect.chipData.title)
-            }
-        }
-    }
-
-    LaunchedEffect(scrollToEnd) {
-        if (scrollToEnd) {
-            coroutineScope.launch {
-                val targetIndex = sampleChips.size
-                val itemHeight = listState.layoutInfo.visibleItemsInfo.firstOrNull()?.size ?: 0
-                val totalHeight = itemHeight * targetIndex
-
-                listState.animateScrollBy(
-                    value = totalHeight.toFloat(),
-                    animationSpec = tween(durationMillis = ANIMATION_DURATION_3000)
-                )
-                isButtonVisible = false
-                scrollToEnd = false
             }
         }
     }
@@ -169,25 +150,6 @@ fun SelectProcedureScreenT(
                         onCardClick = { chip ->
                             selectProcedureViewModel.onProcedureCardClick(chip)
                         }
-                    )
-                }
-            }
-
-            if (isButtonVisible) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(ZdravnicaAppTheme.dimens.size16)
-                ) {
-                    IconButtonsComponent(
-                        iconButtonModel = IconButtonModel(
-                            isEnabled = true,
-                            type = IconButtonType.PRIMARY,
-                            onClick = {
-                                scrollToEnd = true
-                                isButtonVisible = false
-                            }
-                        )
                     )
                 }
             }

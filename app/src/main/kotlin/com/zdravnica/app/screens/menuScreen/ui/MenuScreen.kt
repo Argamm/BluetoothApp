@@ -2,8 +2,10 @@ package com.zdravnica.app.screens.menuScreen.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
@@ -11,7 +13,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -26,6 +27,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenSideEffect
 import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenViewModel
+import com.zdravnica.app.utils.isTablet
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.components.topAppBar.SimpleTopAppBar
@@ -47,8 +49,10 @@ fun MenuScreen(
     val menuScreenViewState by menuScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.menu_screen_cancel_title)
     val temperature = menuScreenViewModel.temperature
-    val supportEmailAddress = stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
-    val supportPhoneNumber = stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
+    val supportEmailAddress =
+        stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
+    val supportPhoneNumber =
+        stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
     val localUriHandler = LocalUriHandler.current
     val faqInfoUriPath = stringResource(id = R.string.menu_screen_zdravnica_uri_path)
 
@@ -59,6 +63,7 @@ fun MenuScreen(
             is MenuScreenSideEffect.OnSiteClick -> {
                 localUriHandler.openUri(faqInfoUriPath)
             }
+
             is MenuScreenSideEffect.OnEmailClick -> {
                 context.sendEmailActivity(supportEmailAddress)
             }
@@ -164,6 +169,15 @@ fun MenuScreen(
                         style = ZdravnicaAppTheme.typography.bodyNormalMedium,
                         color = ZdravnicaAppTheme.colors.baseAppColor.gray500,
                         textAlign = TextAlign.Center
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(
+                            if (isTablet())
+                                ZdravnicaAppTheme.dimens.size100
+                            else
+                                ZdravnicaAppTheme.dimens.size50
+                        )
                     )
                 }
             }

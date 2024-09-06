@@ -108,7 +108,7 @@ sealed class BigChipType {
 
     data object Nose : BigChipType() {
         override val chipData = BigChipsStateModel(
-            isEnabled = false,
+            isEnabled = true,
             title = R.string.select_product_nose,
             description = R.string.select_product_nose_description,
             iconRes = R.mipmap.ic_nose//will be replaced

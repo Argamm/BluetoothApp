@@ -100,8 +100,8 @@ fun OrderBalmButton(
             ) {
                 Row(
                     modifier = Modifier.padding(
-                        top = ZdravnicaAppTheme.dimens.size15,
-                        bottom = ZdravnicaAppTheme.dimens.size15,
+                        top = ZdravnicaAppTheme.dimens.size8,
+                        bottom = ZdravnicaAppTheme.dimens.size8,
                         end = ZdravnicaAppTheme.dimens.size15
                     ),
                     verticalAlignment = Alignment.CenterVertically,
