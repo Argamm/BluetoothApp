@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -149,44 +150,50 @@ fun PreparingTheCabinScreen(
 
         content = { paddingValues ->
             if (!showAnimationCircle) {
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    chipTitleId?.let { stringResource(id = it) }?.let {
-                        ProcedureInfo(
-                            procedureName = it,
-                            temperature = targetTemperature.value,
-                            minutes = duration.value / ONE_MINUTE_IN_SEC
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size56))
-
-                    ProcedureProgressCircle(
-                        state = rememberProcedureProgressCircleState(
-                            progress = progress,
-                            borderColor = backgroundColor
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size36))
-
-                    ControlProcedure(
-                        procedureState = if (progress < COUNT_TO_100)
-                            stringResource(R.string.preparing_the_cabin_waiting)
-                        else
-                            stringResource(R.string.preparing_the_cabin_ready),
-                        progress = progress,
-                        onCancelProcedure = {
-                            preparingTheCabinScreenViewModel.onChangeCancelDialogPageVisibility(true)
-                            preparingTheCabinScreenViewModel.navigateToCancelDialogPage()
-                        },
-                        onProcedureComplete = {
-                            showAnimationCircle = true
+                    item {
+                        chipTitleId?.let { stringResource(id = it) }?.let {
+                            ProcedureInfo(
+                                procedureName = it,
+                                temperature = targetTemperature.value,
+                                minutes = duration.value / ONE_MINUTE_IN_SEC
+                            )
                         }
-                    )
+
+                        Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size56))
+
+                        ProcedureProgressCircle(
+                            state = rememberProcedureProgressCircleState(
+                                progress = progress,
+                                borderColor = backgroundColor
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size36))
+
+                        ControlProcedure(
+                            procedureState = if (progress < COUNT_TO_100)
+                                stringResource(R.string.preparing_the_cabin_waiting)
+                            else
+                                stringResource(R.string.preparing_the_cabin_ready),
+                            progress = progress,
+                            onCancelProcedure = {
+                                preparingTheCabinScreenViewModel.onChangeCancelDialogPageVisibility(
+                                    true
+                                )
+                                preparingTheCabinScreenViewModel.navigateToCancelDialogPage()
+                            },
+                            onProcedureComplete = {
+                                showAnimationCircle = true
+                            }
+                        )
+                        
+                        Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size30))
+                    }
                 }
             } else {
                 Box(

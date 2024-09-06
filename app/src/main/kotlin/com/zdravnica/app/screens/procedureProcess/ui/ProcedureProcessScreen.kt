@@ -169,6 +169,7 @@ fun ProcedureProcessScreen(
                             )
                         )
                     }
+                    Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size30))
                 }
             }
         }
