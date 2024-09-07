@@ -14,11 +14,10 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.selectProcedure.ui.ChooseProcedureGridLayout
 import com.zdravnica.app.screens.selectProcedure.ui.IndicatorsStateInf
 import com.zdravnica.app.screens.selectProcedure.ui.SelectProcedureTopAppBar
@@ -28,7 +27,6 @@ import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideE
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.base_type.IconState
-import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getChipDataList
 import com.zdravnica.uikit.components.dividers.YTHorizontalDivider
 import com.zdravnica.uikit.components.statusDetails.StatusInfoState
 import com.zdravnica.uikit.components.statusDetails.stateDataMap
@@ -42,18 +40,14 @@ fun SelectProcedureTabletScreen(
     navigateToMenuScreen: () -> Unit,
     navigateToProcedureScreen: (Int) -> Unit,
 ) {
+    val viewState by selectProcedureViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
-    val bigChipTypes = getChipDataList()
-    val sampleChips = bigChipTypes.map { it.chipData }
-    var ikSwitchState by remember { mutableStateOf(false) }
-    val temperature = selectProcedureViewModel.temperature
-    val duration = selectProcedureViewModel.duration
-    val iconStates = remember(ikSwitchState) {
+    val iconStates = remember(viewState.ikSwitchState) {
         mutableStateListOf(
-            IconState.ENABLED,//TODO this data must come from bluetooth
+            IconState.ENABLED,//TODO this data must come from bluetooth, will moved to state soon
             IconState.ENABLED,
             IconState.ENABLED,
-            if (ikSwitchState) IconState.ENABLED else IconState.DISABLED
+            if (viewState.ikSwitchState) IconState.ENABLED else IconState.DISABLED
         )
     }
 
@@ -69,7 +63,7 @@ fun SelectProcedureTabletScreen(
     Scaffold(
         topBar = {
             SelectProcedureTopAppBar(
-                temperature = temperature.value,
+                temperature = selectProcedureViewModel.temperature.value,
                 onRightIconClick = selectProcedureViewModel::navigateToMenuScreen,
                 iconStates = iconStates
             )
@@ -106,9 +100,9 @@ fun SelectProcedureTabletScreen(
                     YTHorizontalDivider()
 
                     TextWithSwitches(
-                        switchState = ikSwitchState,
+                        switchState = viewState.ikSwitchState,
                         onSwitchChange = {
-                            ikSwitchState = it
+                            selectProcedureViewModel.updateIkSwitchState(it)
                         }
                     )
                     YTHorizontalDivider()
@@ -119,14 +113,14 @@ fun SelectProcedureTabletScreen(
                     ) {
                         TemperatureOrDurationAdjuster(
                             isMinutes = false,
-                            value = temperature.value,
+                            value = selectProcedureViewModel.temperature.value,
                             onValueChange = { selectProcedureViewModel.saveTemperature(it) },
                             modifier = Modifier.weight(1f)
                         )
                         Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size12))
                         TemperatureOrDurationAdjuster(
                             isMinutes = true,
-                            value = duration.value,
+                            value = selectProcedureViewModel.duration.value,
                             onValueChange = { selectProcedureViewModel.saveDuration(it) },
                             modifier = Modifier.weight(1f)
                         )
@@ -134,7 +128,7 @@ fun SelectProcedureTabletScreen(
                     YTHorizontalDivider()
 
                     ChooseProcedureGridLayout(
-                        bigChipsList = sampleChips,
+                        bigChipsList = viewState.bigChipsList,
                         isTablet = true,
                         onCardClick = { chip ->
                             selectProcedureViewModel.onProcedureCardClick(chip)

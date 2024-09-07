@@ -12,23 +12,24 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideEffect
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.ANIMATION_DURATION_3000
 import com.zdravnica.uikit.COUNT_FOUR
-import com.zdravnica.uikit.COUNT_ONE
+import com.zdravnica.uikit.COUNT_THREE
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.buttons.models.IconButtonModel
 import com.zdravnica.uikit.components.buttons.models.IconButtonType
@@ -48,20 +49,17 @@ fun SelectProcedureScreen(
     navigateToMenuScreen: () -> Unit,
     navigateToProcedureScreen: (Int) -> Unit,
 ) {
+    val viewState by selectProcedureViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    val bigChipTypes = getChipDataList()
-    val sampleChips = bigChipTypes.map { it.chipData }
-    var ikSwitchState by remember { mutableStateOf(false) }
-    var isButtonVisible by remember { mutableStateOf(true) }
-    var scrollToEnd by remember { mutableStateOf(false) }
-
-    val iconStates = remember(ikSwitchState) {
+    val isButtonVisible by remember { derivedStateOf { listState.firstVisibleItemIndex <= COUNT_THREE } }
+    val sampleChips = getChipDataList().map { it.chipData }
+    val iconStates = remember(viewState.ikSwitchState) {
         mutableStateListOf(
-            IconState.ENABLED,//this data must come from bluetooth
+            IconState.ENABLED,//TODO this data must come from bluetooth, will moved to state soon
             IconState.ENABLED,
             IconState.ENABLED,
-            if (ikSwitchState) IconState.ENABLED else IconState.DISABLED
+            if (viewState.ikSwitchState) IconState.ENABLED else IconState.DISABLED
         )
     }
     selectProcedureViewModel.collectSideEffect { sideEffect ->
@@ -73,8 +71,8 @@ fun SelectProcedureScreen(
         }
     }
 
-    LaunchedEffect(scrollToEnd) {
-        if (scrollToEnd) {
+    LaunchedEffect(viewState.scrollToEnd) {
+        if (viewState.scrollToEnd) {
             coroutineScope.launch {
                 val targetIndex = sampleChips.size
                 val itemHeight = listState.layoutInfo.visibleItemsInfo.firstOrNull()?.size ?: 0
@@ -84,20 +82,20 @@ fun SelectProcedureScreen(
                     value = totalHeight.toFloat(),
                     animationSpec = tween(durationMillis = ANIMATION_DURATION_3000)
                 )
-                isButtonVisible = false
-                scrollToEnd = false
+                selectProcedureViewModel.updateIsButtonVisible(false)
+                selectProcedureViewModel.updateScrollToEnd(false)
             }
         }
     }
 
-    LaunchedEffect(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset) {
-        if (listState.firstVisibleItemIndex == COUNT_ONE) {
-            isButtonVisible = true
-        }
-        if (listState.firstVisibleItemIndex == COUNT_FOUR) {
-            isButtonVisible = false
-            scrollToEnd = false
-        }
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset }
+            .collect { (firstVisibleItemIndex, _) ->
+                if (firstVisibleItemIndex == COUNT_FOUR) {
+                    selectProcedureViewModel.updateIsButtonVisible(false)
+                    selectProcedureViewModel.updateScrollToEnd(false)
+                }
+            }
     }
 
     Scaffold(
@@ -140,9 +138,9 @@ fun SelectProcedureScreen(
                 }
                 item {
                     TextWithSwitches(
-                        switchState = ikSwitchState,
+                        switchState = viewState.ikSwitchState,
                         onSwitchChange = {
-                            ikSwitchState = it
+                            selectProcedureViewModel.updateIkSwitchState(it)
                         }
                     )
                     YTHorizontalDivider()
@@ -184,7 +182,7 @@ fun SelectProcedureScreen(
                             isEnabled = true,
                             type = IconButtonType.PRIMARY,
                             onClick = {
-                                scrollToEnd = true
+                                selectProcedureViewModel.updateScrollToEnd(true)
                             }
                         )
                     )

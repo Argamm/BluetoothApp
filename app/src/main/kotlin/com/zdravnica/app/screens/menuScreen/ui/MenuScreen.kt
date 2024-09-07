@@ -46,14 +46,11 @@ fun MenuScreen(
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
 ) {
     val context = LocalContext.current
+    val localUriHandler = LocalUriHandler.current
     val menuScreenViewState by menuScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.menu_screen_cancel_title)
-    val temperature = menuScreenViewModel.temperature
-    val supportEmailAddress =
-        stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
-    val supportPhoneNumber =
-        stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
-    val localUriHandler = LocalUriHandler.current
+    val supportEmailAddress = stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
+    val supportPhoneNumber = stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
     val faqInfoUriPath = stringResource(id = R.string.menu_screen_zdravnica_uri_path)
 
     menuScreenViewModel.collectSideEffect { sideEffect ->
@@ -117,8 +114,8 @@ fun MenuScreen(
             ) {
                 item {
                     MenuTemperatureInfo(
-                        //this data must get from bluetooth
-                        temperature = temperature.value,
+                        //TODO this data must get from bluetooth
+                        temperature = menuScreenViewModel.temperature.value,
                     )
                 }
                 item {

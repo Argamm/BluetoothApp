@@ -49,7 +49,6 @@ fun ProcedureProcessScreen(
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
 ) {
     val currentTemperature by remember { mutableIntStateOf(0) }
-    val duration = procedureProcessViewModel.duration
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var isTimerFinished by remember { mutableStateOf(false) }
@@ -104,7 +103,7 @@ fun ProcedureProcessScreen(
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size38))
 
                     if (!isTimerFinished) {
-                        TimerProcess(totalSeconds = duration.value) {
+                        TimerProcess(totalSeconds = procedureProcessViewModel.duration.value) {
                             isTimerFinished = true
                         }
                     } else {
