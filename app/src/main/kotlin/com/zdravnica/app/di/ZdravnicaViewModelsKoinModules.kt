@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 val zdravnicaViewModelsKoinModules = module {
     viewModelOf(::ConnectingPageViewModel)
-    viewModel { SelectProcedureViewModel(get()) }
+    viewModel { SelectProcedureViewModel(get(), get()) }
     viewModelOf(::MenuScreenViewModel)
     viewModelOf(::ProcedureScreenViewModel)
     viewModel { PreparingTheCabinScreenViewModel(get()) }

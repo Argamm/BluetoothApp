@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,13 +16,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideEffect
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
@@ -36,8 +40,11 @@ import com.zdravnica.uikit.components.buttons.models.IconButtonType
 import com.zdravnica.uikit.components.buttons.ui.IconButtonsComponent
 import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getChipDataList
 import com.zdravnica.uikit.components.dividers.YTHorizontalDivider
+import com.zdravnica.uikit.components.snackbars.models.SnackBarTypeEnum
+import com.zdravnica.uikit.components.snackbars.ui.SnackBarComponent
 import com.zdravnica.uikit.components.statusDetails.StatusInfoState
 import com.zdravnica.uikit.components.statusDetails.stateDataMap
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -48,12 +55,14 @@ fun SelectProcedureScreen(
     selectProcedureViewModel: SelectProcedureViewModel = koinViewModel(),
     navigateToMenuScreen: () -> Unit,
     navigateToProcedureScreen: (Int) -> Unit,
+    isShowingSnackBar: Boolean = false
 ) {
     val viewState by selectProcedureViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val isButtonVisible by remember { derivedStateOf { listState.firstVisibleItemIndex <= COUNT_THREE } }
     val sampleChips = getChipDataList().map { it.chipData }
+    var currentSnackBarModel by remember { mutableStateOf<Boolean?>(null) }
     val iconStates = remember(viewState.ikSwitchState) {
         mutableStateListOf(
             IconState.ENABLED,//TODO this data must come from bluetooth, will moved to state soon
@@ -69,6 +78,16 @@ fun SelectProcedureScreen(
                 navigateToProcedureScreen.invoke(sideEffect.chipData.title)
             }
         }
+    }
+
+    LaunchedEffect(isShowingSnackBar) {
+        if (isShowingSnackBar) {
+            currentSnackBarModel = true
+        }
+    }
+
+    LaunchedEffect(selectProcedureViewModel) {
+        selectProcedureViewModel.observeSensorData()
     }
 
     LaunchedEffect(viewState.scrollToEnd) {
@@ -98,95 +117,118 @@ fun SelectProcedureScreen(
             }
     }
 
-    Scaffold(
-        topBar = {
-            SelectProcedureTopAppBar(
-                temperature = selectProcedureViewModel.temperature.value,
-                onRightIconClick = selectProcedureViewModel::navigateToMenuScreen,
-                iconStates = iconStates
-            )
-        },
-        modifier = modifier.fillMaxSize()
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            LazyColumn(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                SelectProcedureTopAppBar(
+                    temperature = viewState.temperature,
+                    onRightIconClick = selectProcedureViewModel::navigateToMenuScreen,
+                    iconStates = iconStates
+                )
+            },
+            modifier = modifier.fillMaxSize()
+        ) { paddingValues ->
+            Box(
                 modifier = Modifier
-                    .fillMaxSize(),
-                state = listState
+                    .padding(paddingValues)
+                    .fillMaxSize()
             ) {
-                item {
-                    val statusInfoState = when (IconState.DISABLED) {
-                        iconStates[0] -> StatusInfoState.THERMOSTAT_ACTIVATION
-                        iconStates[1] -> StatusInfoState.SENSOR_ERROR
-                        else -> null
-                    }
-
-                    statusInfoState?.let { state ->
-                        val statusInfoData = stateDataMap[state]
-                        IndicatorsStateInf(
-                            indicatorInfo = stringResource(id = statusInfoData?.stateInfo ?: 0),
-                            indicatorInstruction = stringResource(
-                                id = statusInfoData?.instruction ?: 0
-                            )
-                        )
-                        Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size12))
-                    }
-                }
-                item {
-                    TextWithSwitches(
-                        switchState = viewState.ikSwitchState,
-                        onSwitchChange = {
-                            selectProcedureViewModel.updateIkSwitchState(it)
-                        }
-                    )
-                    YTHorizontalDivider()
-                }
-                item {
-                    TemperatureOrDurationAdjuster(
-                        isMinutes = false,
-                        value = selectProcedureViewModel.temperature.value,
-                        onValueChange = { selectProcedureViewModel.saveTemperature(it) }
-                    )
-                    YTHorizontalDivider()
-                }
-                item {
-                    TemperatureOrDurationAdjuster(
-                        isMinutes = true,
-                        value = selectProcedureViewModel.duration.value,
-                        onValueChange = { selectProcedureViewModel.saveDuration(it) }
-                    )
-                    YTHorizontalDivider()
-                }
-                item {
-                    ChooseProcedureGridLayout(
-                        bigChipsList = sampleChips,
-                        onCardClick = { chip ->
-                            selectProcedureViewModel.onProcedureCardClick(chip)
-                        }
-                    )
-                }
-            }
-
-            if (isButtonVisible) {
-                Box(
+                LazyColumn(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(ZdravnicaAppTheme.dimens.size16)
+                        .fillMaxSize(),
+                    state = listState
                 ) {
-                    IconButtonsComponent(
-                        iconButtonModel = IconButtonModel(
-                            isEnabled = true,
-                            type = IconButtonType.PRIMARY,
-                            onClick = {
-                                selectProcedureViewModel.updateScrollToEnd(true)
+                    item {
+                        val statusInfoState = when (IconState.DISABLED) {
+                            iconStates[0] -> StatusInfoState.THERMOSTAT_ACTIVATION
+                            iconStates[1] -> StatusInfoState.SENSOR_ERROR
+                            else -> null
+                        }
+
+                        statusInfoState?.let { state ->
+                            val statusInfoData = stateDataMap[state]
+                            IndicatorsStateInf(
+                                indicatorInfo = stringResource(id = statusInfoData?.stateInfo ?: 0),
+                                indicatorInstruction = stringResource(
+                                    id = statusInfoData?.instruction ?: 0
+                                )
+                            )
+                            Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size12))
+                        }
+                    }
+                    item {
+                        TextWithSwitches(
+                            switchState = viewState.ikSwitchState,
+                            onSwitchChange = {
+                                selectProcedureViewModel.updateIkSwitchState(it)
+                                selectProcedureViewModel.switchIk()
                             }
                         )
-                    )
+                        YTHorizontalDivider()
+                    }
+                    item {
+                        TemperatureOrDurationAdjuster(
+                            isMinutes = false,
+                            value = selectProcedureViewModel.temperature.value,
+                            onValueChange = { selectProcedureViewModel.saveTemperature(it) }
+                        )
+                        YTHorizontalDivider()
+                    }
+                    item {
+                        TemperatureOrDurationAdjuster(
+                            isMinutes = true,
+                            value = selectProcedureViewModel.duration.value,
+                            onValueChange = { selectProcedureViewModel.saveDuration(it) }
+                        )
+                        YTHorizontalDivider()
+                    }
+                    item {
+                        ChooseProcedureGridLayout(
+                            bigChipsList = sampleChips,
+                            onCardClick = { chip ->
+                                selectProcedureViewModel.onProcedureCardClick(chip)
+                            }
+                        )
+                    }
                 }
+
+                if (isButtonVisible) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(ZdravnicaAppTheme.dimens.size16)
+                    ) {
+                        IconButtonsComponent(
+                            iconButtonModel = IconButtonModel(
+                                isEnabled = true,
+                                type = IconButtonType.PRIMARY,
+                                onClick = {
+                                    selectProcedureViewModel.updateScrollToEnd(true)
+                                }
+                            )
+                        )
+                    }
+                }
+            }
+        }
+        currentSnackBarModel?.let { snackBarModel ->
+            LaunchedEffect(snackBarModel) {
+                delay(3000)
+                currentSnackBarModel = null
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .zIndex(1f)
+            ) {
+                SnackBarComponent(
+                    snackBarType = SnackBarTypeEnum.SNACK_BAR_SUCCESS,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)
+                )
             }
         }
     }

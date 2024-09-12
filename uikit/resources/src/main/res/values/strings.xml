@@ -1,8 +1,14 @@
 <resources>
     <string name="app_name">Арома А-23</string>
 
-    <!--    Connecting Page-->
+    <!--    Connecting Page start-->
     <string name="connecting_with_bt_button_text">Connect via Bluetooth</string>
+    <string name="paired_devices">Paired Devices</string>
+    <string name="scanned_devices">Scanned Devices</string>
+    <string name="snack_bar_success">Connection established</string>
+    <string name="snack_bar_warning">Connected to someone else\'s device</string>
+    <string name="snack_bar_error">Connection error</string>
+    <!--    Connecting Page end-->
 
     <!--    SelectProduct Page start-->
     <string name="select_product_infrared_radiation">Infrared radiation</string>

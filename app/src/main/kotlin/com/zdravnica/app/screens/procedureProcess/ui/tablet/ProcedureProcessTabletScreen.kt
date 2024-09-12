@@ -17,7 +17,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,7 +53,6 @@ fun ProcedureProcessTabletScreen(
     navigateToMainScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
 ) {
-    val currentTemperature by remember { mutableIntStateOf(0) }
     val duration = procedureProcessViewModel.duration
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
@@ -94,7 +92,7 @@ fun ProcedureProcessTabletScreen(
         backgroundColor = Color.White,
         topBar = {
             ProcedureProcessTopAppBar(
-                temperature = currentTemperature,
+                temperature = procedureProcessViewModel.temperature.value,
                 fourSwitchState = false,
                 backgroundColor = Color.White
             )

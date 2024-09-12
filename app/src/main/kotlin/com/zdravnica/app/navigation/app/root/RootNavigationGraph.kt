@@ -67,7 +67,6 @@ fun RootNavigationGraph(
         route = AppNavGraph.Root.route,
         startDestination = startDestination,
         builder = {
-
             composable(AppNavGraph.Connection.route) {
                 ConnectingPageScreen(
                     viewModel = connectivityViewModel,
@@ -75,12 +74,17 @@ fun RootNavigationGraph(
                         .fillMaxSize()
                         .background(ZdravnicaAppTheme.colors.primaryBackgroundColor),
                     onShowAllDevicesDialog = {
+                        navHostController.navigate(AppNavGraph.BluetoothDevicesDialog.route)
+                    },
+                    navigateOnSelectProcedureScreen = { showSnackBar ->
                         if (isTablet) {
-                            navHostController.navigate(AppNavGraph.SelectProcedureTabletScreen.route)
+                            navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${showSnackBar}")
                         } else {
-                            navHostController.navigate(AppNavGraph.SelectProcedureScreen.route)
+                            navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${showSnackBar}")
                         }
-//                        navHostController.navigate(AppNavGraph.BluetoothDevicesDialog.route)
+                    },
+                    onNavigateUp = {
+                        navHostController.navigateUp()
                     }
                 )
             }
@@ -96,14 +100,21 @@ fun RootNavigationGraph(
                 )
             }
 
-            composable(AppNavGraph.SelectProcedureScreen.route) {
+            composable(
+                route = "${AppNavGraph.SelectProcedureScreen.route}/{showSnackBar}",
+                arguments = listOf(navArgument("showSnackBar") {
+                    type = NavType.BoolType
+                })
+            ) { backStackEntry ->
+                val showSnackBar = backStackEntry.arguments?.getBoolean("showSnackBar")
                 SelectProcedureScreen(
                     navigateToMenuScreen = {
                         navHostController.navigate(AppNavGraph.ManuScreen.route)
                     },
                     navigateToProcedureScreen = { chipTitle ->
                         navHostController.navigate("${AppNavGraph.ProcedureScreen.route}/${chipTitle}")
-                    }
+                    },
+                    isShowingSnackBar = showSnackBar ?: false
                 )
             }
 
@@ -150,7 +161,7 @@ fun RootNavigationGraph(
                         },
                         onYesClick = {
                             val route = if (navigateToSelectProcedure == true) {
-                                AppNavGraph.SelectProcedureScreen.route
+                                "${AppNavGraph.SelectProcedureScreen.route}/${false}"
                             } else {
                                 AppNavGraph.Connection.route
                             }
@@ -194,7 +205,7 @@ fun RootNavigationGraph(
                 PreparingTheCabinScreen(
                     chipTitleId = chipTitle,
                     navigateToSelectProcedureScreen = {
-                        navHostController.navigate(AppNavGraph.SelectProcedureScreen.route)
+                        navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}")
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         if (isTablet) {
@@ -220,7 +231,7 @@ fun RootNavigationGraph(
             composable(AppNavGraph.ProcedureProcessScreen.route) {
                 ProcedureProcessScreen(
                     navigateToMainScreen = {
-                        navHostController.navigate(AppNavGraph.SelectProcedureScreen.route)
+                        navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}")
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         navHostController.navigate(
@@ -245,14 +256,22 @@ fun RootNavigationGraph(
             }
 
             //Tablets
-            composable(AppNavGraph.SelectProcedureTabletScreen.route) {
+            composable(
+                route = "${AppNavGraph.SelectProcedureTabletScreen.route}/{showSnackBar}",
+                arguments = listOf(navArgument("showSnackBar") {
+                    type = NavType.BoolType
+                })
+            ) { backStackEntry ->
+                val showSnackBar = backStackEntry.arguments?.getBoolean("showSnackBar")
+
                 SelectProcedureTabletScreen(
                     navigateToMenuScreen = {
                         navHostController.navigate(AppNavGraph.ManuTabletScreen.route)
                     },
                     navigateToProcedureScreen = { chipTitle ->
                         navHostController.navigate("${AppNavGraph.ProcedureTabletScreen.route}/${chipTitle}")
-                    }
+                    },
+                    isShowingSnackBar = showSnackBar ?: false,
                 )
             }
             composable(
@@ -273,7 +292,7 @@ fun RootNavigationGraph(
             composable(AppNavGraph.ProcedureProcessTabletScreen.route) {
                 ProcedureProcessTabletScreen(
                     navigateToMainScreen = {
-                        navHostController.navigate(AppNavGraph.SelectProcedureTabletScreen.route)
+                        navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}")
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         navHostController.navigate(
@@ -306,7 +325,7 @@ fun RootNavigationGraph(
                         },
                         onYesClick = {
                             val route = if (navigateToSelectProcedure == true) {
-                                AppNavGraph.SelectProcedureTabletScreen.route
+                                "${AppNavGraph.SelectProcedureTabletScreen.route}/${false}"
                             } else {
                                 AppNavGraph.Connection.route
                             }

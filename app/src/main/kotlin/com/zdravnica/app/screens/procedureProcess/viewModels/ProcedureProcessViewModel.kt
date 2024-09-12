@@ -13,6 +13,9 @@ class ProcedureProcessViewModel(
     localDataStore: LocalDataStore
 ) : BaseViewModel<ProcedureProcessViewState, ProcedureProcessSideEffect>() {
 
+    private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
+    val temperature: State<Int> get() = _temperature
+
     private val _duration = mutableIntStateOf(localDataStore.getDuration())
     val duration: State<Int> get() = _duration
 

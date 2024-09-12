@@ -10,5 +10,4 @@
 
     <uses-feature android:name="android.hardware.bluetooth" />
 
-
 </manifest>

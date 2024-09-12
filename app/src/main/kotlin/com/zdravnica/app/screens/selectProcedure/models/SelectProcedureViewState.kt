@@ -8,6 +8,7 @@ import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
 data class SelectProcedureViewState(
     val isConnected: Boolean = false,
     val temperature: Int = 0,
+    val duration: Int = 0,
     val ikSwitchState: Boolean = false,
     val isButtonVisible: Boolean = true,
     val scrollToEnd: Boolean = false,

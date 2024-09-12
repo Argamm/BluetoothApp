@@ -1,8 +1,5 @@
 package com.zdravnica.uikit
 
-internal const val NO_ICON_RESOURCE = -1
-internal const val UNDEFINED_PROGRESS = -1f
-
 const val COUNT_ONE = 1
 const val COUNT_TWO = 2
 const val COUNT_THREE = 3
@@ -28,12 +25,12 @@ const val FLOAT_1_6 = 1.6f
 const val FLOAT_0_3 = 0.3f
 const val FLOAT_140 = 140f
 const val FLOAT_160 = 160f
-const val NUMBER_FOR_COUNT_60 = 60
-const val NUMBER_FOR_COUNT_2 = 2
 const val MAX_MINUTES = 1800
 const val MIN_MINUTES = 600
 const val MAX_TEMPERATURE = 80
 const val MIN_TEMPERATURE = 40
+const val DELAY_DURATION_3000 = 3000L
+const val DELAY_DURATION_1500 = 1500L
 
 const val BIG_CHIPS_ICON_DESCRIPTION = "Big chips icon"
 const val INDICATOR_ICON_DESCRIPTION = "Indicator Icon"

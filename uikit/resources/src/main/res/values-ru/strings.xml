@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Арома А-23</string>
-    <!--    Connecting Page-->
+    <!--    Connecting Page start-->
     <string name="connecting_with_bt_button_text">Подключить по Bluetooth</string>
+    <string name="paired_devices">Сопряженные устройства</string>
+    <string name="scanned_devices">Сканированные устройства</string>
+    <string name="snack_bar_success">Подключение установлено</string>
+    <string name="snack_bar_warning">Подключено к чужому устройству</string>
+    <string name="snack_bar_error">Ошибка подключения</string>
+    <!--    Connecting Page end-->
 
     <!--    SelectProduct Page start-->
     <string name="select_product_infrared_radiation">Инфракрасное излучение</string>

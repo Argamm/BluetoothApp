@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.foundation.layout.requiredSizeIn
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,42 +42,40 @@ fun ShowDevicesDialog(
     onDismiss: (() -> Unit)? = null,
     onSelectedItemDevice: ((item: DeviceUIModel) -> Unit)? = null
 ) {
-
     val viewState by viewModel.container.stateFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel) {
-        viewModel.observePairedDevices()
+        viewModel.observeBluetoothDevices()
     }
 
     YTBaseDialog(
         modifier = modifier
-            .requiredHeightIn(max = ZdravnicaAppTheme.dimens.size204),
+            .fillMaxSize()
+            .requiredHeightIn(max = ZdravnicaAppTheme.dimens.size500)
+        ,
         content = {
-            if (viewState.pairedDevices.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredHeightIn(min = ZdravnicaAppTheme.dimens.size204)
-                        .clip(ZdravnicaAppTheme.roundedCornerShape.shapeR24)
-                        .background(ZdravnicaAppTheme.colors.baseAppColor.gray900),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_bluetooth),
-                        contentDescription = BLUETOOTH_ICON_DESCRIPTION,
-                        modifier = Modifier.requiredSizeIn(
-                            minHeight = ZdravnicaAppTheme.dimens.size120,
-                            minWidth = ZdravnicaAppTheme.dimens.size120,
-                        ),
-                        tint = ZdravnicaAppTheme.colors.baseAppColor.info500
-                    )
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
 
-                    items(viewState.pairedDevices, key = { it.macAddress }) { item ->
+                if (viewState.pairedDevices.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.paired_devices),
+                            style = ZdravnicaAppTheme.typography.bodyLargeMedium.copy(
+                                color = ZdravnicaAppTheme.colors.baseAppColor.info500
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(ZdravnicaAppTheme.colors.baseAppColor.gray900)
+                                .padding(ZdravnicaAppTheme.dimens.size16)
+                        )
+                    }
+                    items(viewState.pairedDevices.withIndex().toList(), key = { indexedItem ->
+                        "${indexedItem.value.macAddress}-${indexedItem.index}"
+                    }) { (_, item) ->
                         Column {
                             TextButton(
                                 onClick = { onSelectedItemDevice?.invoke(item) }
@@ -93,6 +93,66 @@ fun ShowDevicesDialog(
                                 )
                             }
                             YTHorizontalDivider()
+                        }
+                    }
+                }
+
+                if (viewState.scannedDevices.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.scanned_devices),
+                            style = ZdravnicaAppTheme.typography.bodyLargeMedium.copy(
+                                color = ZdravnicaAppTheme.colors.baseAppColor.info500
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(ZdravnicaAppTheme.colors.baseAppColor.gray900)
+                                .padding(ZdravnicaAppTheme.dimens.size16)
+                        )
+                    }
+                    items(viewState.scannedDevices.withIndex().toList(), key = { indexedItem ->
+                        "${indexedItem.value.macAddress}-${indexedItem.index}"
+                    }) { (_, item) ->
+                        Column {
+                            TextButton(
+                                onClick = { onSelectedItemDevice?.invoke(item) }
+                            ) {
+                                Text(
+                                    text = item.name,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight(),
+                                    style = ZdravnicaAppTheme.typography.bodyNormalSemi.copy(
+                                        color = ZdravnicaAppTheme.colors.baseAppColor.info500
+                                    ),
+                                    maxLines = COUNT_ONE,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                            YTHorizontalDivider()
+                        }
+                    }
+                }
+
+                if (viewState.pairedDevices.isEmpty() && viewState.scannedDevices.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .requiredHeightIn(min = ZdravnicaAppTheme.dimens.size204)
+                                .clip(ZdravnicaAppTheme.roundedCornerShape.shapeR24)
+                                .background(ZdravnicaAppTheme.colors.baseAppColor.gray900),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_bluetooth),
+                                contentDescription = BLUETOOTH_ICON_DESCRIPTION,
+                                modifier = Modifier.requiredSizeIn(
+                                    minHeight = ZdravnicaAppTheme.dimens.size120,
+                                    minWidth = ZdravnicaAppTheme.dimens.size120,
+                                ),
+                                tint = ZdravnicaAppTheme.colors.baseAppColor.info500
+                            )
                         }
                     }
                 }

@@ -9,5 +9,6 @@ import com.zdravnica.app.core.models.BaseViewState
 data class ConnectingPageViewState(
     val isBtConnected: Boolean = false,
     val isLoading: Boolean = false,
-    val pairedDevices: SnapshotStateList<DeviceUIModel> = mutableStateListOf()
+    val pairedDevices: SnapshotStateList<DeviceUIModel> = mutableStateListOf(),
+    val scannedDevices: SnapshotStateList<DeviceUIModel> = mutableStateListOf(),
 ) : BaseViewState()

@@ -22,52 +22,49 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.resources.ui.theme.models.featureColors.SnackBarStateColor
-import com.zdravnica.uikit.components.snackbars.models.SnackBarModel
+import com.zdravnica.uikit.resources.R
 import com.zdravnica.uikit.components.snackbars.models.SnackBarTypeEnum
-import com.zdravnica.uikit.components.snackbars.previewparams.SnackBarPreviewParams
 
 @Composable
 fun SnackBarComponent(
-    snackBarModel: SnackBarModel,
+    snackBarType: SnackBarTypeEnum,
     modifier: Modifier = Modifier,
     snackBarStateColor: SnackBarStateColor = ZdravnicaAppTheme.colors.snackBarStateColor,
     shape: Shape = ZdravnicaAppTheme.roundedCornerShape.shapeR8
 ) {
+    val colors = ZdravnicaAppTheme.colors
     val backgroundColor by remember {
         mutableStateOf(
-            when (snackBarModel.snackBarType) {
+            when (snackBarType) {
                 SnackBarTypeEnum.SNACK_BAR_SUCCESS -> snackBarStateColor.successBackgroundColor
                 SnackBarTypeEnum.SNACK_BAR_WARNING -> snackBarStateColor.warningBackgroundColor
-                SnackBarTypeEnum.SNACK_BAR_ERROR -> snackBarStateColor.errorBackgroundColor
+                SnackBarTypeEnum.SNACK_BAR_ERROR -> colors.baseAppColor.error500
             }
         )
     }
 
-    val contentColor by remember {
-        mutableStateOf(
-            when (snackBarModel.snackBarType) {
-                SnackBarTypeEnum.SNACK_BAR_SUCCESS -> snackBarStateColor.successContentColor
-                SnackBarTypeEnum.SNACK_BAR_WARNING -> snackBarStateColor.warningContentColor
-                SnackBarTypeEnum.SNACK_BAR_ERROR -> snackBarStateColor.errorContentColor
-            }
-        )
+    val message = when (snackBarType) {
+        SnackBarTypeEnum.SNACK_BAR_SUCCESS -> stringResource(R.string.snack_bar_success)
+        SnackBarTypeEnum.SNACK_BAR_WARNING -> stringResource(R.string.snack_bar_warning)
+        SnackBarTypeEnum.SNACK_BAR_ERROR -> stringResource(R.string.snack_bar_error)
     }
 
     Snackbar(
         backgroundColor = Color.Transparent,
-        contentColor = contentColor,
-        actionOnNewLine = snackBarModel.actionOnNewLine,
+        contentColor = Color.White,
+        actionOnNewLine = false,
         shape = shape,
         modifier = modifier,
-        elevation = ZdravnicaAppTheme.dimens.size1,
+        elevation = 0.dp,
         content = {
             Row(
                 modifier = modifier
@@ -81,26 +78,27 @@ fun SnackBarComponent(
                     )
                     .background(backgroundColor)
                     .padding(
-                        vertical = ZdravnicaAppTheme.dimens.size24,
+                        vertical = ZdravnicaAppTheme.dimens.size15,
                         horizontal = ZdravnicaAppTheme.dimens.size8
                     ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4)
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(snackBarModel.snackBarType.iconRes),
-                    contentDescription = snackBarModel.snackBarType.name,
+                    imageVector = ImageVector.vectorResource(snackBarType.iconRes),
+                    contentDescription = snackBarType.name,
                     modifier = Modifier.requiredSize(ZdravnicaAppTheme.dimens.size20),
-                    tint = contentColor
+                    tint = Color.White
                 )
 
                 Text(
-                    text = snackBarModel.snackBarData.message,
+                    text = message,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight(),
+                        .wrapContentHeight()
+                        .padding(top = ZdravnicaAppTheme.dimens.size3),
                     style = ZdravnicaAppTheme.typography.bodyNormalMedium.copy(
-                        color = contentColor,
+                        color = Color.White,
                         textAlign = TextAlign.Start
                     ),
                     maxLines = 1,
@@ -111,15 +109,12 @@ fun SnackBarComponent(
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-private fun SnackBarComponentPreview(
-    @PreviewParameter(SnackBarPreviewParams::class)
-    snackBarModel: SnackBarModel
-) {
+private fun SnackBarComponentPreview() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         SnackBarComponent(
-            snackBarModel = snackBarModel,
+            snackBarType = SnackBarTypeEnum.SNACK_BAR_ERROR,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()

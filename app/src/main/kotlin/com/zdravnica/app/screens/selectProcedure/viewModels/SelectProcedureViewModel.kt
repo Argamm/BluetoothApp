@@ -2,16 +2,22 @@ package com.zdravnica.app.screens.selectProcedure.viewModels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.screens.selectProcedure.models.SelectProcedureViewState
+import com.zdravnica.bluetooth.data.COMMAND_IREM
+import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getChipDataList
 import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.viewmodel.container
 
 class SelectProcedureViewModel(
-    private val localDataStore: LocalDataStore
+    private val localDataStore: LocalDataStore,
+    private val bluetoothController: BluetoothController,
 ) : BaseViewModel<SelectProcedureViewState, SelectProcedureSideEffect>() {
 
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
@@ -27,7 +33,25 @@ class SelectProcedureViewModel(
             )
         )
 
-    fun navigateToMenuScreen() {
+    fun observeSensorData() = intent {
+        viewModelScope.launch {
+            bluetoothController.sensorDataFlow.collectLatest { sensorData ->
+                postViewState(
+                    state.copy(
+                        temperature = sensorData?.snsrHC ?: 0
+                    )
+                )
+            }
+        }
+    }
+
+    fun switchIk() {
+        viewModelScope.launch {
+            bluetoothController.sendCommand(COMMAND_IREM)
+        }
+    }
+
+    fun navigateToMenuScreen(){
         postSideEffect(SelectProcedureSideEffect.OnNavigateToMenuScreen)
     }
 

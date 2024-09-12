@@ -1,0 +1,16 @@
+package com.zdravnica.bluetooth.data
+
+const val COMMAND_TEN = "TEN"
+const val COMMAND_FAN = "FAN"
+const val COMMAND_KMPR = "KMPR"
+const val COMMAND_IREM = "IREM"
+const val COMMAND_STMG = "STMG"
+const val COMMAND_STV1 = "STV1"
+const val COMMAND_STV2 = "STV2"
+const val COMMAND_STV3 = "STV3"
+const val COMMAND_STV4 = "STV4"
+const val COMMAND_GETTEMP = "GETTEMP"
+const val COMMAND_ALLOFF = "ALLOFF"
+const val COMMAND_ZMR = "ZMR"
+const val COMMAND_START = "START"
+const val COMMAND_STOP = "STOP"
