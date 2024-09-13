@@ -18,6 +18,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import com.zdravnica.app.utils.isLandscape
 import com.zdravnica.app.utils.isTablet
 import com.zdravnica.uikit.resources.R
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
@@ -64,10 +65,15 @@ fun TimerProcess(
                     append(timeText)
                 }
             },
-            style = if (isTablet())
-                ZdravnicaAppTheme.typography.gigaSans
-            else
+            style = if (isTablet()) {
+                if(isLandscape()) {
+                    ZdravnicaAppTheme.typography.gigaSans
+                } else {
+                    ZdravnicaAppTheme.typography.headH1
+                }
+            } else {
                 ZdravnicaAppTheme.typography.headH1
+            }
         )
         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size16))
         Text(

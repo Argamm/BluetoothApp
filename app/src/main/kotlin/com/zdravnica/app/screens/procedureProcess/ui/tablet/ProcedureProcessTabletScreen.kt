@@ -164,9 +164,7 @@ fun ProcedureProcessTabletScreen(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
                                 ) {
-                                    procedureProcessViewModel.onChangeCancelDialogPageVisibility(
-                                        true
-                                    )
+                                    procedureProcessViewModel.onChangeCancelDialogPageVisibility(true)
                                     procedureProcessViewModel.navigateToCancelDialogPage()
                                 },
                             text = stringResource(R.string.preparing_the_cabin_cancel_procedure),

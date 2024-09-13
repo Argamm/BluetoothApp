@@ -38,7 +38,7 @@ class SelectProcedureViewModel(
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 postViewState(
                     state.copy(
-                        temperature = sensorData?.snsrHC ?: 0
+                        temperature = sensorData?.temrTmpr1 ?: 0
                     )
                 )
             }

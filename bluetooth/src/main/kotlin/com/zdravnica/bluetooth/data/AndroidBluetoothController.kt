@@ -8,10 +8,12 @@ import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
+import android.bluetooth.BluetoothStatusCodes
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.util.Log
 import com.zdravnica.bluetooth.data.mapper.toBluetoothDevice
 import com.zdravnica.bluetooth.data.mapper.toBluetoothDeviceDomain
@@ -44,6 +46,11 @@ internal class AndroidBluetoothController(
     private val context: Context,
     private val adapter: BluetoothAdapter?
 ) : BluetoothController {
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private var bluetoothGatt: BluetoothGatt? = null
+    private var serverSocket: BluetoothServerSocket? = null
+    private var clientSocket: BluetoothSocket? = null
+    private var isListening = false
 
     private val _scannedDevices = MutableStateFlow<List<BluetoothDeviceDomainModel>>(emptyList())
     override val scannedDevices: StateFlow<List<BluetoothDeviceDomainModel>> =
@@ -61,12 +68,6 @@ internal class AndroidBluetoothController(
 
     private val _sensorDataFlow = MutableStateFlow<SensorData?>(null)
     override val sensorDataFlow: StateFlow<SensorData?> = _sensorDataFlow.asStateFlow()
-
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private var bluetoothGatt: BluetoothGatt? = null
-    private var serverSocket: BluetoothServerSocket? = null
-    private var clientSocket: BluetoothSocket? = null
-    private var isListening = false
 
     override fun bluetoothIsEnabled(): Boolean = adapter?.isEnabled ?: false
 
@@ -122,7 +123,7 @@ internal class AndroidBluetoothController(
                     Log.d("Bluetooth", "Connected to ${device.name}")
 
                     scope.launch {
-                        delay(1000)
+                        delay(DELAY_DURATION_1000)
                         sendCommand(COMMAND_START)
                         _connectionResultFlow.emit(ConnectionResult.Transferred(InfoDataModel("Connected")))
                     }
@@ -155,7 +156,6 @@ internal class AndroidBluetoothController(
                     frmtSnsrData(value)
                 }
             }
-
         })
     }
 
@@ -168,7 +168,7 @@ internal class AndroidBluetoothController(
                         bluetoothGatt?.readCharacteristic(characteristic)
                     }
                 }
-                delay(3000)
+                delay(DELAY_DURATION_3000)
             }
         }
     }
@@ -186,7 +186,7 @@ internal class AndroidBluetoothController(
                 val action = intent?.action
                 if (BluetoothDevice.ACTION_FOUND == action) {
                     val device: BluetoothDevice? =
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             intent.getParcelableExtra(
                                 BluetoothDevice.EXTRA_DEVICE,
                                 BluetoothDevice::class.java
@@ -254,12 +254,26 @@ internal class AndroidBluetoothController(
             val binCmd = cmd.toByteArray(Charsets.UTF_8)
             withContext(Dispatchers.IO) {
                 if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE != 0) {
-                    characteristic.value = binCmd
-                    val result = gatt.writeCharacteristic(characteristic)
-                    if (result) {
-                        Log.d("Bluetooth", "Command sent: $cmd")
-                    } else {
-                        Log.e("Bluetooth", "Failed to send command: $cmd")
+                    try {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            val result = gatt.writeCharacteristic(characteristic, binCmd, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                            if (result == BluetoothStatusCodes.SUCCESS) {
+                                Log.d("Bluetooth", "Command sent: $cmd")
+                            } else {
+                                Log.e("Bluetooth", "Failed to send command: $cmd")
+                            }
+                        } else {
+                            @Suppress("DEPRECATION")
+                            characteristic.value = binCmd
+                            @Suppress("DEPRECATION") val result = gatt.writeCharacteristic(characteristic)
+                            if (result) {
+                                Log.d("Bluetooth", "Command sent: $cmd")
+                            } else {
+                                Log.e("Bluetooth", "Failed to send command: $cmd")
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("Bluetooth", "Error sending command: ${e.message}")
                     }
                 } else {
                     Log.e("Bluetooth", "Characteristic does not support write")
@@ -324,4 +338,6 @@ internal class AndroidBluetoothController(
     }
 }
 
+const val DELAY_DURATION_1000 = 1000L
 const val DELAY_DURATION_2000 = 2000L
+const val DELAY_DURATION_3000 = 3000L
