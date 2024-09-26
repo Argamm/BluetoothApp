@@ -33,7 +33,11 @@ class SelectProcedureViewModel(
             )
         )
 
-    fun observeSensorData() = intent {
+    init {
+        observeSensorData()
+    }
+
+    private fun observeSensorData() = intent {
         viewModelScope.launch {
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 postViewState(
@@ -79,5 +83,9 @@ class SelectProcedureViewModel(
 
     fun updateScrollToEnd(newState: Boolean) = intent {
         postViewState(state.copy(scrollToEnd = newState))
+    }
+
+    fun setSnackBarInvisible() = intent {
+        postViewState(state.copy(isShowingSnackBar = false))
     }
 }

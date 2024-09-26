@@ -13,4 +13,5 @@ data class SelectProcedureViewState(
     val isButtonVisible: Boolean = true,
     val scrollToEnd: Boolean = false,
     val bigChipsList: List<BigChipsStateModel> = listOf(),
+    val isShowingSnackBar: Boolean = true,
 ) : BaseViewState()

@@ -62,8 +62,8 @@ fun SelectProcedureTabletScreen(
     }
     var currentSnackBarModel by remember { mutableStateOf<Boolean?>(null) }
 
-    LaunchedEffect(isShowingSnackBar) {
-        if (isShowingSnackBar) {
+    LaunchedEffect(viewState.isShowingSnackBar) {
+        if (viewState.isShowingSnackBar) {
             currentSnackBarModel = true
         }
     }

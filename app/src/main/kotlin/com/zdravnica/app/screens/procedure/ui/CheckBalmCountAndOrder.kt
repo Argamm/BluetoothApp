@@ -58,6 +58,7 @@ fun CheckBalmCountAndOrder(
     modifier: Modifier = Modifier,
     balmInfo: List<ChipBalmInfoModel>,
     startProcedure: () -> Unit,
+    orderBalm: () -> Unit,
 ) {
     val isAnyBalmCountZero = balmInfo.any { it.isBalmCountZero }
     val configuration = LocalConfiguration.current
@@ -177,7 +178,7 @@ fun CheckBalmCountAndOrder(
                     contentDescription = ORDER_DESCRIPTION,
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_plus),
                     text = stringResource(R.string.procedure_screen_order_balm),
-                    onClick = { }
+                    onClick = { orderBalm.invoke() }
                 )
             }
         }
@@ -253,7 +254,7 @@ private fun CheckBalmCountAndOrderPrev() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         getBalmInfoByTitle(R.string.select_product_skin)?.let {
             CheckBalmCountAndOrder(
-                balmInfo = it,
+                balmInfo = it, startProcedure = {}
             ) {}
         }
     }

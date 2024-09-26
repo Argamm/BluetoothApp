@@ -16,10 +16,10 @@ import androidx.navigation.navArgument
 import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
 import com.zdravnica.app.screens.connecting_page.ConnectingPageScreen
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
-import com.zdravnica.app.screens.dialog.CancelProcedureDialog
-import com.zdravnica.app.screens.dialog.CancelProcedureTabletDialog
+import com.zdravnica.app.screens.dialog.cancelProcedure.ui.CancelProcedureDialog
+import com.zdravnica.app.screens.dialog.cancelProcedure.ui.teblet.CancelProcedureTabletDialog
 import com.zdravnica.app.screens.dialog.ShowDevicesDialog
-import com.zdravnica.app.screens.dialog.models.CancelProcedureDialogState
+import com.zdravnica.app.screens.dialog.cancelProcedure.models.CancelProcedureDialogState
 import com.zdravnica.app.screens.menuScreen.ui.MenuScreen
 import com.zdravnica.app.screens.menuScreen.ui.tablet.MenuScreenTabletDialog
 import com.zdravnica.app.screens.preparingTheCabin.ui.PreparingTheCabinScreen
@@ -160,17 +160,21 @@ fun RootNavigationGraph(
                             navHostController.navigateUp()
                         },
                         onYesClick = {
-                            val route = if (navigateToSelectProcedure == true) {
-                                "${AppNavGraph.SelectProcedureScreen.route}/${false}"
-                            } else {
-                                AppNavGraph.Connection.route
-                            }
-
-                            navHostController.navigate(route) {
-                                popUpTo(AppNavGraph.Connection.route) {
-                                    inclusive = true
+                            if (navigateToSelectProcedure == true) {
+                                navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}") {
+                                    popUpTo(AppNavGraph.Connection.route) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
                                 }
-                                launchSingleTop = true
+                            } else {
+                                connectivityViewModel.sendStopCommand()
+                                navHostController.navigate(AppNavGraph.Connection.route) {
+                                    popUpTo(AppNavGraph.Connection.route) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                }
                             }
                         }
                     )

@@ -5,5 +5,6 @@ import com.zdravnica.app.core.models.BaseViewState
 
 @Immutable
 data class PreparingTheCabinScreenViewState(
-    val uiModel: PreparingTheCabinUiModel = PreparingTheCabinUiModel()
+    val isDialogVisible: Boolean = false,
+    val sensorTemperature: Int = 0,
 ) : BaseViewState()

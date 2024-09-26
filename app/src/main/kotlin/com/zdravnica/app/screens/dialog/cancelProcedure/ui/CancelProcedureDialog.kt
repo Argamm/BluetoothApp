@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.dialog
+package com.zdravnica.app.screens.dialog.cancelProcedure.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,27 +20,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogWindowProvider
-import com.zdravnica.app.screens.dialog.models.CancelProcedureDialogState
+import androidx.compose.ui.window.DialogProperties
+import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
+import com.zdravnica.app.screens.dialog.cancelProcedure.models.CancelProcedureDialogState
+import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.CLOSE_ICON_DESCRIPTION
 import com.zdravnica.uikit.components.buttons.ui.ActionDialogButton
 import com.zdravnica.uikit.resources.R
 
 @Composable
-fun CancelProcedureTabletDialog(
+fun CancelProcedureDialog(
     modifier: Modifier = Modifier,
     state: CancelProcedureDialogState = CancelProcedureDialogState(),
 ) {
     Dialog(
         onDismissRequest = state.onClose,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        val dialogWindowProvider = LocalView.current.parent as? DialogWindowProvider
-        dialogWindowProvider?.window?.setDimAmount(0.9f)
-
         Box(
             modifier = modifier
                 .fillMaxWidth()
@@ -105,5 +105,18 @@ fun CancelProcedureTabletDialog(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewCancelProcedureDialog() {
+    ZdravnicaAppExerciseTheme(darkThem = false) {
+        CancelProcedureDialogState(
+            titleText = "Are you sure you want to cancel?",
+            onClose = { /* Handle close */ },
+            onNoClick = { /* Handle No */ },
+            onYesClick = { /* Handle Yes */ }
+        )
     }
 }

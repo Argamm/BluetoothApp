@@ -14,7 +14,7 @@ val zdravnicaViewModelsKoinModules = module {
     viewModelOf(::ConnectingPageViewModel)
     viewModel { SelectProcedureViewModel(get(), get()) }
     viewModelOf(::MenuScreenViewModel)
-    viewModelOf(::ProcedureScreenViewModel)
-    viewModel { PreparingTheCabinScreenViewModel(get()) }
-    viewModelOf(::ProcedureProcessViewModel)
+    viewModel { ProcedureScreenViewModel(get(), get()) }
+    viewModel { PreparingTheCabinScreenViewModel(get(), get(), get()) }
+    viewModel { ProcedureProcessViewModel(get(), get(), get()) }
 }

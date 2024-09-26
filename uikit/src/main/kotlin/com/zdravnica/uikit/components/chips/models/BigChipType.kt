@@ -15,8 +15,8 @@ sealed class BigChipType {
         )
 
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_mint, false),
-            ChipBalmInfoModel(R.string.menu_screen_nut, true)
+            ChipBalmInfoModel(R.string.menu_screen_mint, false, 30),
+            ChipBalmInfoModel(R.string.menu_screen_nut, true, 10)
         )
     }
 
@@ -29,9 +29,9 @@ sealed class BigChipType {
         )
 
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, true),
-            ChipBalmInfoModel(R.string.menu_screen_mint, false),
-            ChipBalmInfoModel(R.string.menu_screen_nut, true)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 14),
+            ChipBalmInfoModel(R.string.menu_screen_mint, false, 13),
+            ChipBalmInfoModel(R.string.menu_screen_nut, true, 13)
         )
     }
 
@@ -44,9 +44,9 @@ sealed class BigChipType {
         )
 
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, false),
-            ChipBalmInfoModel(R.string.menu_screen_mint, false),
-            ChipBalmInfoModel(R.string.menu_screen_nut, false)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, false, 13),
+            ChipBalmInfoModel(R.string.menu_screen_mint, false, 7),
+            ChipBalmInfoModel(R.string.menu_screen_nut, false, 20)
         )
     }
 
@@ -58,9 +58,9 @@ sealed class BigChipType {
             iconRes = R.mipmap.ic_intestine
         )
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, false),
-            ChipBalmInfoModel(R.string.menu_screen_mint, false),
-            ChipBalmInfoModel(R.string.menu_screen_nut, false)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, false, 8),
+            ChipBalmInfoModel(R.string.menu_screen_mint, false, 24),
+            ChipBalmInfoModel(R.string.menu_screen_nut, false, 8)
         )
     }
 
@@ -72,9 +72,9 @@ sealed class BigChipType {
             iconRes = R.mipmap.ic_uterus
         )
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, false),
-            ChipBalmInfoModel(R.string.menu_screen_mint, false),
-            ChipBalmInfoModel(R.string.menu_screen_nut, false)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, false, 10),
+            ChipBalmInfoModel(R.string.menu_screen_mint, false, 20),
+            ChipBalmInfoModel(R.string.menu_screen_nut, false, 10)
         )
     }
 
@@ -86,9 +86,9 @@ sealed class BigChipType {
             iconRes = R.mipmap.ic_brain
         )
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, true),
-            ChipBalmInfoModel(R.string.menu_screen_mint, true),
-            ChipBalmInfoModel(R.string.menu_screen_nut, true)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 16),
+            ChipBalmInfoModel(R.string.menu_screen_mint, true, 16),
+            ChipBalmInfoModel(R.string.menu_screen_nut, true, 8)
         )
     }
 
@@ -100,9 +100,8 @@ sealed class BigChipType {
             iconRes = R.mipmap.ic_knee_joint
         )
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, true),
-            ChipBalmInfoModel(R.string.menu_screen_mint, true),
-            ChipBalmInfoModel(R.string.menu_screen_nut, true)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 26),
+            ChipBalmInfoModel(R.string.menu_screen_nut, true, 14)
         )
     }
 
@@ -114,9 +113,9 @@ sealed class BigChipType {
             iconRes = R.mipmap.ic_nose//will be replaced
         )
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, true),
-            ChipBalmInfoModel(R.string.menu_screen_mint, true),
-            ChipBalmInfoModel(R.string.menu_screen_nut, true)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 5),
+            ChipBalmInfoModel(R.string.menu_screen_mint, true, 20),
+            ChipBalmInfoModel(R.string.menu_screen_nut, true, 15)
         )
     }
 

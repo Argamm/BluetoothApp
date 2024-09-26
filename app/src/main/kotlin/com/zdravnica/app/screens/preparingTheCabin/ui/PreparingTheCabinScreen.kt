@@ -12,9 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,9 +32,7 @@ import com.zdravnica.app.screens.preparingTheCabin.viewModels.PreparingTheCabinS
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.ANIMATION_DURATION_3000
-import com.zdravnica.uikit.COUNT_ONE
 import com.zdravnica.uikit.COUNT_TO_100
-import com.zdravnica.uikit.DELAY_1000_ML
 import com.zdravnica.uikit.ONE_MINUTE_IN_SEC
 import com.zdravnica.uikit.PINK_BACK_PROGRESS_FROM
 import com.zdravnica.uikit.PINK_BACK_PROGRESS_UNTIL
@@ -45,8 +41,6 @@ import com.zdravnica.uikit.RED_BACK_PROGRESS_UNTIL
 import com.zdravnica.uikit.WHITE_BACK_PROGRESS
 import com.zdravnica.uikit.components.topAppBar.ProcedureProcessTopAppBar
 import com.zdravnica.uikit.resources.R
-import com.zdravnica.uikit.utils.calculateProgress
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -60,18 +54,12 @@ fun PreparingTheCabinScreen(
     navigateToProcedureProcessScreen: () -> Unit,
 ) {
     val preparingTheCabinScreenViewState by preparingTheCabinScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
+    val progress by preparingTheCabinScreenViewModel.progress.collectAsStateWithLifecycle()
+
     val colors = ZdravnicaAppTheme.colors.baseAppColor
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var showAnimationCircle by remember { mutableStateOf(false) }
-    var currentTemperature by remember { mutableIntStateOf(0) }
-    var progress by remember {
-        mutableIntStateOf(
-            calculateProgress(
-                currentTemperature,
-                preparingTheCabinScreenViewModel.temperature.value
-            )
-        )
-    }
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val targetBackgroundColor = when {
         progress <= WHITE_BACK_PROGRESS -> Color.White
@@ -98,26 +86,6 @@ fun PreparingTheCabinScreen(
         }
     }
 
-    /*
-    * do we need loop here? and calculating the progress happening in the view side,
-    * lets move it to some use case, you can use Flow for that and emit "state" whenev
-    * er the progress proceed some level to change the color.
-    * It is not goot practice to do all that stuff in launch effect in UI layer
-    *
-    * TODO this logic will be removed or replaced when from Bluetooth will receive data
-    */
-    LaunchedEffect(currentTemperature) {
-        while (currentTemperature < preparingTheCabinScreenViewModel.temperature.value) {
-            delay(DELAY_1000_ML)
-            currentTemperature += COUNT_ONE
-            progress = calculateProgress(
-                currentTemperature,
-                preparingTheCabinScreenViewModel.temperature.value
-            )
-        }
-    }
-
-    val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -134,7 +102,7 @@ fun PreparingTheCabinScreen(
         modifier = modifier
             .fillMaxSize()
             .then(
-                if (preparingTheCabinScreenViewState.uiModel.isDialogVisible) {
+                if (preparingTheCabinScreenViewState.isDialogVisible) {
                     Modifier.blur(ZdravnicaAppTheme.dimens.size15)
                 } else Modifier
             ),
@@ -142,7 +110,7 @@ fun PreparingTheCabinScreen(
         topBar = {
             ProcedureProcessTopAppBar(
                 modifier = Modifier.background(backgroundColor),
-                temperature = currentTemperature,
+                temperature = preparingTheCabinScreenViewState.sensorTemperature,
                 fourSwitchState = false,
                 backgroundColor = backgroundColor
             )
@@ -176,10 +144,11 @@ fun PreparingTheCabinScreen(
                         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size36))
 
                         ControlProcedure(
-                            procedureState = if (progress < COUNT_TO_100)
+                            procedureState = if (progress < COUNT_TO_100) {
                                 stringResource(R.string.preparing_the_cabin_waiting)
-                            else
-                                stringResource(R.string.preparing_the_cabin_ready),
+                            } else {
+                                stringResource(R.string.preparing_the_cabin_ready)
+                            },
                             progress = progress,
                             onCancelProcedure = {
                                 preparingTheCabinScreenViewModel.onChangeCancelDialogPageVisibility(

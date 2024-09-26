@@ -94,11 +94,14 @@ fun ProcedureScreen(
 
                 item {
                     balmInfo?.let { balmInfo ->
-                        CheckBalmCountAndOrder(modifier, balmInfo) {
+                        CheckBalmCountAndOrder(modifier, balmInfo, startProcedure =  {
                             if (chipTitle != null) {
+                                procedureScreenViewModel.startProcedureWithCommands()
                                 startProcedure.invoke(chipTitle)
                             }
-                        }
+                        }, orderBalm = {
+
+                        })
                     }
                 }
             }

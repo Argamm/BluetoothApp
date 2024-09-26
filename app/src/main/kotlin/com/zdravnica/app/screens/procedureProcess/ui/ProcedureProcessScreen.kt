@@ -13,8 +13,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,7 +48,6 @@ fun ProcedureProcessScreen(
     navigateToMainScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
 ) {
-    val currentTemperature by remember { mutableIntStateOf(0) }
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var isTimerFinished by remember { mutableStateOf(false) }
@@ -76,18 +75,22 @@ fun ProcedureProcessScreen(
         }
     }
 
+    LaunchedEffect(procedureProcessViewModel) {
+        procedureProcessViewModel.observeSensorData()
+    }
+
     Scaffold(
         modifier = modifier
             .fillMaxSize()
             .then(
-                if (procedureProcessViewState.uiModel.isDialogVisible) {
+                if (procedureProcessViewState.isDialogVisible) {
                     Modifier.blur(ZdravnicaAppTheme.dimens.size15)
                 } else Modifier
             ),
         backgroundColor = Color.White,
         topBar = {
             ProcedureProcessTopAppBar(
-                temperature = currentTemperature,
+                temperature = procedureProcessViewState.sensorTemperature,
                 fourSwitchState = false,
                 backgroundColor = Color.White
             )
@@ -103,7 +106,7 @@ fun ProcedureProcessScreen(
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size38))
 
                     if (!isTimerFinished) {
-                        TimerProcess(totalSeconds = procedureProcessViewModel.duration.value) {
+                        TimerProcess(totalSeconds = 5) {//TODO change to procedureProcessViewModel.duration.value
                             isTimerFinished = true
                         }
                     } else {
@@ -123,9 +126,9 @@ fun ProcedureProcessScreen(
                     )
 
                     HealthMetricsDisplay(
-                        temperatureValue = "36.5°C", // replace with actual Bluetooth data
-                        calorieValue = "200кк.", // replace with actual Bluetooth data
-                        pulseValue = "180/60", // replace with actual Bluetooth data
+                        temperatureValue = "${procedureProcessViewState.sensorTemperature}°C",
+                        calorieValue = "${procedureProcessViewState.calorieValue} кк.",
+                        pulseValue = "${procedureProcessViewState.pulse}/60",
                     )
 
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size24))

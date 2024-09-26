@@ -5,5 +5,8 @@ import com.zdravnica.app.core.models.BaseViewState
 
 @Immutable
 data class ProcedureProcessViewState(
-    val uiModel: ProcedureProcessUiModel = ProcedureProcessUiModel(),
+    val isDialogVisible: Boolean = false,
+    val sensorTemperature: Int = 0,
+    val calorieValue: Int = 0,
+    val pulse: Int = 0,
 ) : BaseViewState()

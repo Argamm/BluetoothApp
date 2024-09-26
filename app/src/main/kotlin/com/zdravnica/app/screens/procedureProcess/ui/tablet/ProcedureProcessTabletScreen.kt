@@ -85,14 +85,14 @@ fun ProcedureProcessTabletScreen(
         modifier = modifier
             .fillMaxSize()
             .then(
-                if (procedureProcessViewState.uiModel.isDialogVisible) {
+                if (procedureProcessViewState.isDialogVisible) {
                     Modifier.blur(ZdravnicaAppTheme.dimens.size15)
                 } else Modifier
             ),
         backgroundColor = Color.White,
         topBar = {
             ProcedureProcessTopAppBar(
-                temperature = procedureProcessViewModel.temperature.value,
+                temperature = procedureProcessViewState.sensorTemperature,
                 fourSwitchState = false,
                 backgroundColor = Color.White
             )

@@ -168,7 +168,7 @@ internal class AndroidBluetoothController(
                         bluetoothGatt?.readCharacteristic(characteristic)
                     }
                 }
-                delay(DELAY_DURATION_3000)
+                delay(DELAY_DURATION_1000)
             }
         }
     }
@@ -247,6 +247,10 @@ internal class AndroidBluetoothController(
     }
 
     override suspend fun sendCommand(cmd: String) {
+        if (cmd == COMMAND_STOP) {
+            close()
+            return
+        }
         val gatt = bluetoothGatt ?: return
         val characteristic = findCharacteristic(gatt) ?: return
 
@@ -272,6 +276,7 @@ internal class AndroidBluetoothController(
                                 Log.e("Bluetooth", "Failed to send command: $cmd")
                             }
                         }
+                        delay(500)
                     } catch (e: Exception) {
                         Log.e("Bluetooth", "Error sending command: ${e.message}")
                     }

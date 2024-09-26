@@ -16,10 +16,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +27,7 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideEffect
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
+import com.zdravnica.bluetooth.data.DELAY_DURATION_3000
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.ANIMATION_DURATION_3000
@@ -62,7 +61,6 @@ fun SelectProcedureScreen(
     val coroutineScope = rememberCoroutineScope()
     val isButtonVisible by remember { derivedStateOf { listState.firstVisibleItemIndex <= COUNT_THREE } }
     val sampleChips = getChipDataList().map { it.chipData }
-    var currentSnackBarModel by remember { mutableStateOf<Boolean?>(null) }
     val iconStates = remember(viewState.ikSwitchState) {
         mutableStateListOf(
             IconState.ENABLED,//TODO this data must come from bluetooth, will moved to state soon
@@ -73,21 +71,15 @@ fun SelectProcedureScreen(
     }
     selectProcedureViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is SelectProcedureSideEffect.OnNavigateToMenuScreen -> navigateToMenuScreen.invoke()
+            is SelectProcedureSideEffect.OnNavigateToMenuScreen -> {
+                selectProcedureViewModel.setSnackBarInvisible()
+                navigateToMenuScreen.invoke()
+            }
             is SelectProcedureSideEffect.OnProcedureCardClick -> {
+                selectProcedureViewModel.setSnackBarInvisible()
                 navigateToProcedureScreen.invoke(sideEffect.chipData.title)
             }
         }
-    }
-
-    LaunchedEffect(isShowingSnackBar) {
-        if (isShowingSnackBar) {
-            currentSnackBarModel = true
-        }
-    }
-
-    LaunchedEffect(selectProcedureViewModel) {
-        selectProcedureViewModel.observeSensorData()
     }
 
     LaunchedEffect(viewState.scrollToEnd) {
@@ -211,10 +203,10 @@ fun SelectProcedureScreen(
                 }
             }
         }
-        currentSnackBarModel?.let { snackBarModel ->
-            LaunchedEffect(snackBarModel) {
-                delay(3000)
-                currentSnackBarModel = null
+        if (viewState.isShowingSnackBar && isShowingSnackBar) {
+            LaunchedEffect(Unit) {
+                delay(DELAY_DURATION_3000)
+                selectProcedureViewModel.setSnackBarInvisible()
             }
 
             Box(

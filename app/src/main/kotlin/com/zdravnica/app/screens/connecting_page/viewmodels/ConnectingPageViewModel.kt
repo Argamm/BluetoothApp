@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.screens.connecting_page.models.ConnectingPageViewState
 import com.zdravnica.app.screens.connecting_page.models.DeviceUIModel
+import com.zdravnica.bluetooth.data.COMMAND_STOP
 import com.zdravnica.bluetooth.data.models.ConnectionResult
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import com.zdravnica.bluetooth.domain.models.BluetoothDeviceDomainModel
@@ -115,6 +116,10 @@ class ConnectingPageViewModel(
                 )
             ).collectLatest { }
         }
+    }
+
+    fun sendStopCommand() = intent {
+        bluetoothController.sendCommand(COMMAND_STOP)
     }
 
     override fun onCleared() {

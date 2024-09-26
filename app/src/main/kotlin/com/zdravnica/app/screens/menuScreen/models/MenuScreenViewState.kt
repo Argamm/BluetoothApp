@@ -5,5 +5,6 @@ import com.zdravnica.app.core.models.BaseViewState
 
 @Immutable
 data class MenuScreenViewState(
-    val uiModel: MenuScreenUiModel = MenuScreenUiModel(),
+    val idDialogVisible: Boolean = false,
+    val temperature: Int = 0,
 ) : BaseViewState()

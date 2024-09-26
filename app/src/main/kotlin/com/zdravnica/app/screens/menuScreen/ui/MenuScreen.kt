@@ -12,6 +12,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -87,11 +88,15 @@ fun MenuScreen(
         }
     }
 
+    LaunchedEffect(menuScreenViewModel) {
+        menuScreenViewModel.observeSensorData()
+    }
+
     Scaffold(
         modifier = modifier
             .fillMaxSize()
             .then(
-                if (menuScreenViewState.uiModel.idDialogVisible) {
+                if (menuScreenViewState.idDialogVisible) {
                     Modifier.blur(ZdravnicaAppTheme.dimens.size15)
                 } else Modifier
             ),
@@ -115,7 +120,7 @@ fun MenuScreen(
                 item {
                     MenuTemperatureInfo(
                         //TODO this data must get from bluetooth
-                        temperature = menuScreenViewModel.temperature.value,
+                        temperature = menuScreenViewState.temperature,
                     )
                 }
                 item {
@@ -124,9 +129,9 @@ fun MenuScreen(
                 item {
                     //this data must get from bluetooth
                     MenuBalms(
-                        firstBalmCount = 100,
-                        secondBalmCount = 100,
-                        thirdBalmCount = 0
+                        firstBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_nut)),//stringResource(R.string.menu_screen_nut)
+                        secondBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_burdock)),//stringResource(R.string.menu_screen_burdock)
+                        thirdBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_mint))//stringResource(R.string.menu_screen_mint)
                     )
                 }
                 item {

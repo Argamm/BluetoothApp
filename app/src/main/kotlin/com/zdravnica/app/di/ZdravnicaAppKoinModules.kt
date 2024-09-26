@@ -9,5 +9,7 @@ val appKoinModules = module {
         bluetoothKoinModule,
         zdravnicaViewModelsKoinModules,
         dataStoreModule,
+        calculateTemperatureModule,
+        calculateCaloriesModule,
     )
 }

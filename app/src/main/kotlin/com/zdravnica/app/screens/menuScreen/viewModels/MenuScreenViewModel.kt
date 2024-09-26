@@ -1,29 +1,41 @@
 package com.zdravnica.app.screens.menuScreen.viewModels
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.screens.menuScreen.models.MenuScreenViewState
+import com.zdravnica.bluetooth.domain.controller.BluetoothController
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
 class MenuScreenViewModel(
-    localDataStore: LocalDataStore
+    private val localDataStore: LocalDataStore,
+    private val bluetoothController: BluetoothController,
 ) : BaseViewModel<MenuScreenViewState, MenuScreenSideEffect>() {
-
-    private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
-    val temperature: State<Int> get() = _temperature
 
     override val container =
         container<MenuScreenViewState, MenuScreenSideEffect>(
             MenuScreenViewState()
         )
 
+    fun observeSensorData() = intent {
+        viewModelScope.launch {
+            bluetoothController.sensorDataFlow.collectLatest { sensorData ->
+                postViewState(
+                    state.copy(
+                        temperature = sensorData?.temrTmpr1 ?: 0
+                    )
+                )
+            }
+        }
+    }
+
     fun onChangeCancelDialogPageVisibility(isVisible: Boolean) = intent {
         reduce {
-            state.copy(uiModel = state.uiModel.copy(idDialogVisible = isVisible))
+            state.copy(idDialogVisible = isVisible)
         }
     }
 
@@ -31,19 +43,23 @@ class MenuScreenViewModel(
         postSideEffect(MenuScreenSideEffect.OnNavigateToCancelDialogPage)
     }
 
-    fun onNavigateUp(){
+    fun onNavigateUp() {
         postSideEffect(MenuScreenSideEffect.OnNavigateUp)
     }
 
-    fun onSiteClick(){
+    fun onSiteClick() {
         postSideEffect(MenuScreenSideEffect.OnSiteClick)
     }
 
-    fun onEmailClick(){
+    fun onEmailClick() {
         postSideEffect(MenuScreenSideEffect.OnEmailClick)
     }
 
-    fun onCallClick(){
+    fun onCallClick() {
         postSideEffect(MenuScreenSideEffect.OnCallClick)
+    }
+
+    fun getBalmCount(balmName: String) : Int {
+        return localDataStore.getBalmCount(balmName)
     }
 }
