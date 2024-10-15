@@ -100,7 +100,7 @@ fun ProcedureScreen(
                                 startProcedure.invoke(chipTitle)
                             }
                         }, orderBalm = {
-
+//                            procedureScreenViewModel.turnOff()//this is not correct,,, add right one
                         })
                     }
                 }

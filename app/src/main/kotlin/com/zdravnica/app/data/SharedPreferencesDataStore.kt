@@ -1,6 +1,7 @@
 package com.zdravnica.app.data
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.zdravnica.uikit.MIN_MINUTES
 import com.zdravnica.uikit.MIN_TEMPERATURE
 
@@ -25,35 +26,40 @@ class SharedPreferencesDataStore(
     }
 
     // Balm related methods
-    override fun getBalmCount(balmName: String): Int {
-        return sharedPreferences.getInt(balmName, MAX_BALM_ML)
+    override fun getBalmCount(balmName: String): Float {
+        Log.i("adasdsa", "balmCount:  = ${sharedPreferences.getFloat(balmName, MAX_BALM_ML)},")
+        return sharedPreferences.getFloat(balmName, MAX_BALM_ML)
     }
 
-    override fun consumeBalm(balmName: String, consumption: Int) {
+    override fun consumeBalm(balmName: String, consumption: Double) {
         val currentBalmCount = getBalmCount(balmName)
-        val newBalmCount = (currentBalmCount - consumption).coerceAtLeast(0)
-        sharedPreferences.edit().putInt(balmName, newBalmCount).apply()
+        val newBalmCount = (currentBalmCount - consumption).coerceAtLeast(0.0)
+        Log.i("adasdsa", "consumeBalm: cuurentBalm = ${currentBalmCount}, newBalm = ${newBalmCount}")
+        sharedPreferences.edit().putFloat(balmName, newBalmCount.toFloat()).apply()
     }
 
     override fun resetBalmCount(balmName: String) {
-        sharedPreferences.edit().putInt(balmName, MAX_BALM_ML).apply()
+        sharedPreferences.edit().putFloat(balmName, MAX_BALM_ML).apply()
     }
 
     override fun resetBalmByName(balmName: String) {
         resetBalmCount(balmName)
     }
 
+    // Command state methods
     override fun saveCommandState(command: String, isOn: Boolean) {
         sharedPreferences.edit().putBoolean(command, isOn).apply()
     }
 
     override fun getCommandState(command: String): Boolean {
-        return sharedPreferences.getBoolean(command, false)
+        val state = sharedPreferences.getBoolean(command, false)
+        Log.d("LocalDataStore", "Command: $command, State: $state")
+        return state
     }
 
     companion object {
         private const val KEY_TEMPERATURE = "key_temperature"
         private const val KEY_DURATION = "key_duration"
-        private const val MAX_BALM_ML = 100
+        private const val MAX_BALM_ML = 6f
     }
 }

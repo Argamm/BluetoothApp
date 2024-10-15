@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +36,7 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
 import com.zdravnica.uikit.components.buttons.ui.BigButton
+import com.zdravnica.uikit.components.chips.models.BigChipType
 import com.zdravnica.uikit.components.push.ProcedureStateInfo
 import com.zdravnica.uikit.components.topAppBar.ProcedureProcessTopAppBar
 import com.zdravnica.uikit.resources.R
@@ -45,9 +47,11 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun ProcedureProcessScreen(
     modifier: Modifier = Modifier,
     procedureProcessViewModel: ProcedureProcessViewModel = koinViewModel(),
+    chipTitle: Int?,
     navigateToMainScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
 ) {
+    val ctx = LocalContext.current
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var isTimerFinished by remember { mutableStateOf(false) }
@@ -79,6 +83,13 @@ fun ProcedureProcessScreen(
         procedureProcessViewModel.observeSensorData()
     }
 
+    LaunchedEffect(isTimerFinished) {
+        if (isTimerFinished) {
+            procedureProcessViewModel.updateTimerStatus(true) // Update the timer status
+            procedureProcessViewModel.sendEndingCommands()
+        }
+    }
+
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -106,9 +117,36 @@ fun ProcedureProcessScreen(
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size38))
 
                     if (!isTimerFinished) {
-                        TimerProcess(totalSeconds = 5) {//TODO change to procedureProcessViewModel.duration.value
-                            isTimerFinished = true
-                        }
+                        TimerProcess(totalSeconds = procedureProcessViewModel.duration.value,
+                            onTimerFinish = {
+                                isTimerFinished = true
+                            },
+                            onNineMinutesLeft = {
+                                procedureProcessViewModel.turnOnKMPR()
+                            },
+                            onTurnOffCommand = {
+                                procedureProcessViewModel.turnOffKMPR()
+                            },
+                            onFourMinutesLeft = {
+                                procedureProcessViewModel.turnOnKMPR()
+                            },
+                            onTurnOffCommandAfterFour = {
+                                procedureProcessViewModel.turnOffKMPR()
+                            },
+                            onMinutesLeftWithCredits = {
+                                if (chipTitle != null) {
+                                    BigChipType.getBalmInfoByTitle(chipTitle)
+                                        ?.let {
+                                            procedureProcessViewModel.startSTVCommandSequence(
+                                                it, BigChipType.getAllBalmNames(
+                                                    ctx
+                                                )
+                                            )
+                                        }
+                                }
+                            }
+
+                        )
                     } else {
                         ProcedureStateInfo(
                             firstText = stringResource(R.string.procedure_process_procedure_end),
@@ -183,6 +221,7 @@ fun ProcedureProcessScreen(
 private fun ProcedureProcessScreenPrev() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         ProcedureProcessScreen(
+            chipTitle = null,
             navigateToMainScreen = {},
             navigateToCancelDialogPage = { _, _ -> })
     }

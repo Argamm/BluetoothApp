@@ -156,8 +156,8 @@ fun SelectProcedureTabletScreen(
                 }
             }
         }
-        currentSnackBarModel?.let { snackBarModel ->
-            LaunchedEffect(snackBarModel) {
+        if (viewState.isShowingSnackBar && isShowingSnackBar) {
+            LaunchedEffect(Unit) {
                 delay(DELAY_DURATION_3000)
                 currentSnackBarModel = null
             }

@@ -16,6 +16,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +42,7 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
 import com.zdravnica.uikit.components.buttons.ui.BigButton
+import com.zdravnica.uikit.components.chips.models.BigChipType
 import com.zdravnica.uikit.components.push.ProcedureStateInfo
 import com.zdravnica.uikit.components.topAppBar.ProcedureProcessTopAppBar
 import com.zdravnica.uikit.resources.R
@@ -50,10 +53,11 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun ProcedureProcessTabletScreen(
     modifier: Modifier = Modifier,
     procedureProcessViewModel: ProcedureProcessViewModel = koinViewModel(),
+    chipTitle: Int?,
     navigateToMainScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
 ) {
-    val duration = procedureProcessViewModel.duration
+    val ctx = LocalContext.current
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var isTimerFinished by remember { mutableStateOf(false) }
@@ -65,6 +69,12 @@ fun ProcedureProcessTabletScreen(
                 true,
                 cancelDialog
             )
+        }
+    }
+
+    LaunchedEffect(isTimerFinished) {
+        if (isTimerFinished) {
+            procedureProcessViewModel.sendEndingCommands()
         }
     }
 
@@ -113,12 +123,16 @@ fun ProcedureProcessTabletScreen(
                             .padding(top = ZdravnicaAppTheme.dimens.size86),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Box(modifier = Modifier
-                            .weight(1f)
-                            .padding(start = if(isLandscape())
-                                ZdravnicaAppTheme.dimens.size152
-                            else
-                                ZdravnicaAppTheme.dimens.size50)) {
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(
+                                    start = if (isLandscape())
+                                        ZdravnicaAppTheme.dimens.size152
+                                    else
+                                        ZdravnicaAppTheme.dimens.size50
+                                )
+                        ) {
                             if (!isTimerFinished) {
                                 Column {
                                     if (false) {//TODO push notification for showing this message
@@ -128,7 +142,35 @@ fun ProcedureProcessTabletScreen(
                                         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size8))
                                     }
 
-                                    TimerProcess(totalSeconds = duration.value) { isTimerFinished = true }
+                                    TimerProcess(totalSeconds = procedureProcessViewModel.duration.value,
+                                        onTimerFinish = {
+                                            isTimerFinished = true
+                                        },
+                                        onNineMinutesLeft = {
+                                            procedureProcessViewModel.turnOnKMPR()
+                                        },
+                                        onTurnOffCommand = {
+                                            procedureProcessViewModel.turnOffKMPR()
+                                        },
+                                        onFourMinutesLeft = {
+                                            procedureProcessViewModel.turnOnKMPR()
+                                        },
+                                        onTurnOffCommandAfterFour = {
+                                            procedureProcessViewModel.turnOffKMPR()
+                                        },
+                                        onMinutesLeftWithCredits = {
+                                            if (chipTitle != null) {
+                                                BigChipType.getBalmInfoByTitle(chipTitle)
+                                                    ?.let {
+                                                        procedureProcessViewModel.startSTVCommandSequence(
+                                                            it, BigChipType.getAllBalmNames(
+                                                                ctx
+                                                            )
+                                                        )
+                                                    }
+                                            }
+                                        }
+                                    )
                                 }
                             } else {
                                 ProcedureStateInfo(
@@ -138,17 +180,21 @@ fun ProcedureProcessTabletScreen(
                             }
                         }
 
-                        Box(modifier = Modifier
-                            .weight(1f)
-                            .padding(end = if(isLandscape())
-                                ZdravnicaAppTheme.dimens.size143
-                            else
-                                ZdravnicaAppTheme.dimens.size50)) {
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(
+                                    end = if (isLandscape())
+                                        ZdravnicaAppTheme.dimens.size143
+                                    else
+                                        ZdravnicaAppTheme.dimens.size50
+                                )
+                        ) {
 
                             HealthMetricsDisplay(
-                                temperatureValue = "36.5°C", //TODO replace with actual Bluetooth data
-                                calorieValue = "200кк.", // replace with actual Bluetooth data
-                                pulseValue = "180/60", // replace with actual Bluetooth data
+                                temperatureValue = "${procedureProcessViewState.sensorTemperature}°C",
+                                calorieValue = "${procedureProcessViewState.calorieValue} кк.",
+                                pulseValue = "${procedureProcessViewState.pulse}/60",
                             )
                         }
                     }
@@ -164,7 +210,9 @@ fun ProcedureProcessTabletScreen(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
                                 ) {
-                                    procedureProcessViewModel.onChangeCancelDialogPageVisibility(true)
+                                    procedureProcessViewModel.onChangeCancelDialogPageVisibility(
+                                        true
+                                    )
                                     procedureProcessViewModel.navigateToCancelDialogPage()
                                 },
                             text = stringResource(R.string.preparing_the_cabin_cancel_procedure),
@@ -201,6 +249,7 @@ fun ProcedureProcessTabletScreen(
 private fun ProcedureProcessScreenPrevT() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         ProcedureProcessTabletScreen(
+            chipTitle = null,
             navigateToMainScreen = {},
             navigateToCancelDialogPage = { _, _ -> })
     }

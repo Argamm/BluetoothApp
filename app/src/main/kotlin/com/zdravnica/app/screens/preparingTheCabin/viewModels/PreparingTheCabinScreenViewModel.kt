@@ -7,6 +7,7 @@ import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.domain.CalculateTemperatureProgressUseCase
 import com.zdravnica.app.screens.preparingTheCabin.models.PreparingTheCabinScreenViewState
+import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,9 +45,11 @@ class PreparingTheCabinScreenViewModel(
     private fun observeSensorData() = intent {
         viewModelScope.launch {
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
+                val sensorTemperature = sensorData?.temrTmpr1 ?: 0
+
                 postViewState(
                     state.copy(
-                        sensorTemperature = sensorData?.temrTmpr1 ?: 0
+                        sensorTemperature = sensorTemperature
                     )
                 )
 
@@ -68,5 +71,23 @@ class PreparingTheCabinScreenViewModel(
 
     fun navigateToCancelDialogPage() {
         postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToCancelDialogPage)
+    }
+
+    fun turnOffTenCommand() {
+        viewModelScope.launch {
+            if (localDataStore.getCommandState(COMMAND_TEN)) {
+                localDataStore.saveCommandState(COMMAND_TEN, false)
+                bluetoothController.sendCommand(COMMAND_TEN)
+            }
+        }
+    }
+
+    fun turnOnTenCommand() {
+        viewModelScope.launch {
+            if (!localDataStore.getCommandState(COMMAND_TEN)) {
+                localDataStore.saveCommandState(COMMAND_TEN, true)
+                bluetoothController.sendCommand(COMMAND_TEN)
+            }
+        }
     }
 }

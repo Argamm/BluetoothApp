@@ -119,19 +119,18 @@ fun MenuScreen(
             ) {
                 item {
                     MenuTemperatureInfo(
-                        //TODO this data must get from bluetooth
                         temperature = menuScreenViewState.temperature,
+                        isTemperatureDifferenceLarge = menuScreenViewState.isTemperatureDifferenceLarge
                     )
                 }
                 item {
                     MenuIndicators()
                 }
                 item {
-                    //this data must get from bluetooth
                     MenuBalms(
-                        firstBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_nut)),//stringResource(R.string.menu_screen_nut)
-                        secondBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_burdock)),//stringResource(R.string.menu_screen_burdock)
-                        thirdBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_mint))//stringResource(R.string.menu_screen_mint)
+                        firstBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_nut)),
+                        secondBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_burdock)),
+                        thirdBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_mint))
                     )
                 }
                 item {

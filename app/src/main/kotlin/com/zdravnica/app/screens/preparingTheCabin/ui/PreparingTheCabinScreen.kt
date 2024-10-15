@@ -145,8 +145,10 @@ fun PreparingTheCabinScreen(
 
                         ControlProcedure(
                             procedureState = if (progress < COUNT_TO_100) {
+                                preparingTheCabinScreenViewModel.turnOnTenCommand()
                                 stringResource(R.string.preparing_the_cabin_waiting)
                             } else {
+                                preparingTheCabinScreenViewModel.turnOffTenCommand()
                                 stringResource(R.string.preparing_the_cabin_ready)
                             },
                             progress = progress,

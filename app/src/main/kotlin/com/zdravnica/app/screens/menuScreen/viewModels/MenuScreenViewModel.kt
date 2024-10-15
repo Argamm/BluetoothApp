@@ -1,5 +1,7 @@
 package com.zdravnica.app.screens.menuScreen.viewModels
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
@@ -15,6 +17,8 @@ class MenuScreenViewModel(
     private val localDataStore: LocalDataStore,
     private val bluetoothController: BluetoothController,
 ) : BaseViewModel<MenuScreenViewState, MenuScreenSideEffect>() {
+    private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
+    val temperature: State<Int> get() = _temperature
 
     override val container =
         container<MenuScreenViewState, MenuScreenSideEffect>(
@@ -24,9 +28,13 @@ class MenuScreenViewModel(
     fun observeSensorData() = intent {
         viewModelScope.launch {
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
+                val sensorTemperature = sensorData?.temrTmpr1 ?: 0
+                val isDifferenceLarge = (sensorTemperature - temperature.value) > 6
+
                 postViewState(
                     state.copy(
-                        temperature = sensorData?.temrTmpr1 ?: 0
+                        temperature = sensorData?.temrTmpr1 ?: 0,
+                        isTemperatureDifferenceLarge = isDifferenceLarge,
                     )
                 )
             }
@@ -59,7 +67,7 @@ class MenuScreenViewModel(
         postSideEffect(MenuScreenSideEffect.OnCallClick)
     }
 
-    fun getBalmCount(balmName: String) : Int {
+    fun getBalmCount(balmName: String) : Float {
         return localDataStore.getBalmCount(balmName)
     }
 }

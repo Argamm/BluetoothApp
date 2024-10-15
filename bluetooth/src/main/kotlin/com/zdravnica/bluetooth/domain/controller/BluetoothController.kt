@@ -20,5 +20,5 @@ interface BluetoothController {
     fun close()
     fun startScanning()
     fun stopScanning()
-    suspend fun sendCommand(cmd: String)
+    suspend fun sendCommand(cmd: String, onSuccess: (() -> Unit)? = null)
 }

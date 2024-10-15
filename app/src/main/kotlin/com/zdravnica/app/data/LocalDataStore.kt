@@ -7,8 +7,8 @@ interface LocalDataStore {
     fun getDuration(): Int
 
     // Balm related methods
-    fun getBalmCount(balmName: String): Int
-    fun consumeBalm(balmName: String, consumption: Int)
+    fun getBalmCount(balmName: String): Float
+    fun consumeBalm(balmName: String, consumption: Double)
     fun resetBalmCount(balmName: String)
     fun resetBalmByName(balmName: String)
 

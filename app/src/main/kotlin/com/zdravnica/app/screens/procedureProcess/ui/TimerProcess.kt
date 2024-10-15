@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -32,14 +35,47 @@ import kotlinx.coroutines.delay
 fun TimerProcess(
     modifier: Modifier = Modifier,
     totalSeconds: Int,
-    onTimerFinish: () -> Unit
+    onTimerFinish: () -> Unit,
+    onNineMinutesLeft: () -> Unit,
+    onTurnOffCommand: () -> Unit,
+    onFourMinutesLeft: () -> Unit,
+    onTurnOffCommandAfterFour: () -> Unit,
+    onMinutesLeftWithCredits: () -> Unit,
 ) {
     val remainingSeconds = remember { mutableIntStateOf(totalSeconds) }
+    var hasNineMinutesBeenCalled by remember { mutableStateOf(false) }
+    var hasFourMinutesBeenCalled by remember { mutableStateOf(false) }
 
     LaunchedEffect(remainingSeconds.intValue) {
         if (remainingSeconds.intValue > 0) {
             delay(DELAY_1000_ML)
             remainingSeconds.intValue -= COUNT_ONE
+
+            if (remainingSeconds.intValue == 540 && !hasNineMinutesBeenCalled) {
+                onNineMinutesLeft()
+                hasNineMinutesBeenCalled = true
+            }
+
+            if (remainingSeconds.intValue == 544 && !hasNineMinutesBeenCalled) {
+                onMinutesLeftWithCredits()
+            }
+
+            if (remainingSeconds.intValue == 480 && hasNineMinutesBeenCalled) {
+                onTurnOffCommand()
+            }
+
+            if (remainingSeconds.intValue == 240 && !hasFourMinutesBeenCalled) {
+                onFourMinutesLeft()
+                hasFourMinutesBeenCalled = true
+            }
+
+            if (remainingSeconds.intValue == 244 && !hasFourMinutesBeenCalled) {
+                onMinutesLeftWithCredits()
+            }
+
+            if (remainingSeconds.intValue == 180 && hasFourMinutesBeenCalled) {
+                onTurnOffCommandAfterFour()
+            }
         } else {
             onTimerFinish()
         }
@@ -66,7 +102,7 @@ fun TimerProcess(
                 }
             },
             style = if (isTablet()) {
-                if(isLandscape()) {
+                if (isLandscape()) {
                     ZdravnicaAppTheme.typography.gigaSans
                 } else {
                     ZdravnicaAppTheme.typography.headH1
@@ -91,6 +127,14 @@ fun TimerProcess(
 @Composable
 fun PreviewTimerProcess() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        TimerProcess(totalSeconds = 600) {}
+        TimerProcess(
+            totalSeconds = 600,
+            onTimerFinish = {},
+            onNineMinutesLeft = {},
+            onTurnOffCommand = {},
+            onFourMinutesLeft = {},
+            onTurnOffCommandAfterFour = {},
+            onMinutesLeftWithCredits = {},
+        )
     }
 }

@@ -224,16 +224,22 @@ fun RootNavigationGraph(
                     },
                     navigateToProcedureProcessScreen = {
                         if (isTablet) {
-                            navHostController.navigate(AppNavGraph.ProcedureProcessTabletScreen.route)
+                            navHostController.navigate("${AppNavGraph.ProcedureProcessTabletScreen.route}/${chipTitle}")
                         } else {
-                            navHostController.navigate(AppNavGraph.ProcedureProcessScreen.route)
+                            navHostController.navigate("${AppNavGraph.ProcedureProcessScreen.route}/${chipTitle}")
                         }
                     }
                 )
             }
 
-            composable(AppNavGraph.ProcedureProcessScreen.route) {
+            composable(
+                route = "${AppNavGraph.ProcedureProcessScreen.route}/{chipTitle}",
+                arguments = listOf(navArgument("chipTitle") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val chipTitle = backStackEntry.arguments?.getInt("chipTitle")
+
                 ProcedureProcessScreen(
+                    chipTitle = chipTitle,
                     navigateToMainScreen = {
                         navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}")
                     },
@@ -293,8 +299,13 @@ fun RootNavigationGraph(
                 )
             }
 
-            composable(AppNavGraph.ProcedureProcessTabletScreen.route) {
+            composable(
+                route = "${AppNavGraph.ProcedureProcessTabletScreen.route}/{chipTitle}",
+                arguments = listOf(navArgument("chipTitle") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val chipData = backStackEntry.arguments?.getInt("chipTitle")
                 ProcedureProcessTabletScreen(
+                    chipTitle = chipData,
                     navigateToMainScreen = {
                         navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}")
                     },

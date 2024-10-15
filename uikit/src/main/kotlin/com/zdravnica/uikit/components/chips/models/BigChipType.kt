@@ -1,5 +1,6 @@
 package com.zdravnica.uikit.components.chips.models
 
+import android.content.Context
 import com.zdravnica.uikit.resources.R
 
 sealed class BigChipType {
@@ -15,8 +16,8 @@ sealed class BigChipType {
         )
 
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_mint, false, 30),
-            ChipBalmInfoModel(R.string.menu_screen_nut, true, 10)
+            ChipBalmInfoModel(R.string.menu_screen_nut, true, 10, 2, 0.5),
+            ChipBalmInfoModel(R.string.menu_screen_mint, false, 30, 3, 1.5)
         )
     }
 
@@ -29,9 +30,9 @@ sealed class BigChipType {
         )
 
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 14),
-            ChipBalmInfoModel(R.string.menu_screen_mint, false, 13),
-            ChipBalmInfoModel(R.string.menu_screen_nut, true, 13)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 14, 1, 0.7),
+            ChipBalmInfoModel(R.string.menu_screen_nut, true, 13, 2, 0.65),
+            ChipBalmInfoModel(R.string.menu_screen_mint, false, 13, 3, 0.65)
         )
     }
 
@@ -44,9 +45,9 @@ sealed class BigChipType {
         )
 
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, false, 13),
-            ChipBalmInfoModel(R.string.menu_screen_mint, false, 7),
-            ChipBalmInfoModel(R.string.menu_screen_nut, false, 20)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, false, 13, 1, 0.65),
+            ChipBalmInfoModel(R.string.menu_screen_nut, false, 20, 2, 1.0),
+            ChipBalmInfoModel(R.string.menu_screen_mint, false, 7, 3, 0.35)
         )
     }
 
@@ -58,9 +59,9 @@ sealed class BigChipType {
             iconRes = R.mipmap.ic_intestine
         )
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, false, 8),
-            ChipBalmInfoModel(R.string.menu_screen_mint, false, 24),
-            ChipBalmInfoModel(R.string.menu_screen_nut, false, 8)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, false, 8, 1, 0.4),
+            ChipBalmInfoModel(R.string.menu_screen_nut, false, 8, 2, 0.4),
+            ChipBalmInfoModel(R.string.menu_screen_mint, false, 24, 3, 1.2)
         )
     }
 
@@ -72,9 +73,9 @@ sealed class BigChipType {
             iconRes = R.mipmap.ic_uterus
         )
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, false, 10),
-            ChipBalmInfoModel(R.string.menu_screen_mint, false, 20),
-            ChipBalmInfoModel(R.string.menu_screen_nut, false, 10)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, false, 10, 1, 0.5),
+            ChipBalmInfoModel(R.string.menu_screen_nut, false, 10, 2, 0.75),
+            ChipBalmInfoModel(R.string.menu_screen_mint, false, 20, 3, 1.0)
         )
     }
 
@@ -86,9 +87,9 @@ sealed class BigChipType {
             iconRes = R.mipmap.ic_brain
         )
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 16),
-            ChipBalmInfoModel(R.string.menu_screen_mint, true, 16),
-            ChipBalmInfoModel(R.string.menu_screen_nut, true, 8)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 16, 1, 0.8),
+            ChipBalmInfoModel(R.string.menu_screen_nut, true, 8, 2, 0.4),
+            ChipBalmInfoModel(R.string.menu_screen_mint, true, 16, 3, 0.8)
         )
     }
 
@@ -100,8 +101,8 @@ sealed class BigChipType {
             iconRes = R.mipmap.ic_knee_joint
         )
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 26),
-            ChipBalmInfoModel(R.string.menu_screen_nut, true, 14)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 26, 1, 1.3),
+            ChipBalmInfoModel(R.string.menu_screen_nut, true, 14, 2, 0.7)
         )
     }
 
@@ -110,12 +111,12 @@ sealed class BigChipType {
             isEnabled = true,
             title = R.string.select_product_nose,
             description = R.string.select_product_nose_description,
-            iconRes = R.mipmap.ic_nose//will be replaced
+            iconRes = R.mipmap.ic_nose //will be replaced
         )
         override val chipBalmInfoList = listOf(
-            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 5),
-            ChipBalmInfoModel(R.string.menu_screen_mint, true, 20),
-            ChipBalmInfoModel(R.string.menu_screen_nut, true, 15)
+            ChipBalmInfoModel(R.string.menu_screen_burdock, true, 5, 1, 0.25),
+            ChipBalmInfoModel(R.string.menu_screen_nut, true, 15, 2, 0.4),
+            ChipBalmInfoModel(R.string.menu_screen_mint, true, 20, 3, 1.2)
         )
     }
 
@@ -164,5 +165,12 @@ sealed class BigChipType {
             CustomMix,
             WithoutBalm
         )
+
+        fun getAllBalmNames(context: Context): List<String> {
+            return getChipDataList()
+                .flatMap { it.chipBalmInfoList.orEmpty() }
+                .map { context.getString(it.balmName) }
+                .distinct()
+        }
     }
 }

@@ -29,16 +29,17 @@ import com.zdravnica.uikit.ERROR_ICON_DESCRIPTION
 import com.zdravnica.uikit.ORDER_DESCRIPTION
 import com.zdravnica.uikit.components.buttons.ui.OrderBalmButton
 import com.zdravnica.uikit.resources.R
+import kotlin.math.roundToInt
 
 @Composable
 fun MenuBalms(
     modifier: Modifier = Modifier,
-    firstBalmCount: Int,
-    secondBalmCount: Int,
-    thirdBalmCount: Int
+    firstBalmCount: Float,
+    secondBalmCount: Float,
+    thirdBalmCount: Float
 ) {
     val zeroTextVisible = remember { mutableStateOf(false) }
-    zeroTextVisible.value = firstBalmCount == 0 || secondBalmCount == 0 || thirdBalmCount == 0
+    zeroTextVisible.value = firstBalmCount == 0f || secondBalmCount == 0f || thirdBalmCount == 0f
 
     Card(
         elevation = ZdravnicaAppTheme.dimens.size4,
@@ -99,7 +100,7 @@ fun MenuBalms(
 }
 
 @Composable
-fun BalmRow(label: String, balmValue: Int) {
+fun BalmRow(label: String, balmValue: Float) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -112,12 +113,12 @@ fun BalmRow(label: String, balmValue: Int) {
         Spacer(modifier = Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = stringResource(R.string.menu_screen_balm_count, balmValue),
+                text = stringResource(R.string.menu_screen_balm_count, balmValue.roundToInt()),
                 style = ZdravnicaAppTheme.typography.bodyNormalBold,
-                color = if (balmValue != 0) ZdravnicaAppTheme.colors.baseAppColor.gray200
+                color = if (balmValue != 0f) ZdravnicaAppTheme.colors.baseAppColor.gray200
                 else ZdravnicaAppTheme.colors.baseAppColor.gray500
             )
-            if (balmValue == 0) {
+            if (balmValue == 0f) {
                 Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size8))
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_error),
@@ -135,6 +136,6 @@ fun BalmRow(label: String, balmValue: Int) {
 @Composable
 fun PreviewMenuBalms() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        MenuBalms(firstBalmCount = 100, secondBalmCount = 100, thirdBalmCount = 0)
+        MenuBalms(firstBalmCount = 6f, secondBalmCount = 6f, thirdBalmCount = 6f)
     }
 }

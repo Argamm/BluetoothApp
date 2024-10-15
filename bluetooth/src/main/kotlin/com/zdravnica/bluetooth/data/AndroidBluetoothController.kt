@@ -246,7 +246,7 @@ internal class AndroidBluetoothController(
         }
     }
 
-    override suspend fun sendCommand(cmd: String) {
+    override suspend fun sendCommand(cmd: String, onSuccess: (() -> Unit)?) {
         if (cmd == COMMAND_STOP) {
             close()
             return
@@ -257,26 +257,43 @@ internal class AndroidBluetoothController(
         if (cmd.isNotEmpty()) {
             val binCmd = cmd.toByteArray(Charsets.UTF_8)
             withContext(Dispatchers.IO) {
+                var attempt = 0
+
                 if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE != 0) {
                     try {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            val result = gatt.writeCharacteristic(characteristic, binCmd, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
-                            if (result == BluetoothStatusCodes.SUCCESS) {
-                                Log.d("Bluetooth", "Command sent: $cmd")
+                        while (attempt < 5) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                val result = gatt.writeCharacteristic(
+                                    characteristic,
+                                    binCmd,
+                                    BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+                                )
+                                if (result == BluetoothStatusCodes.SUCCESS) {
+                                    Log.d("Bluetooth", "Command sent: $cmd")
+                                    onSuccess?.invoke()
+                                    break
+                                } else {
+                                    attempt++
+                                    delay(DELAY_DURATION_1000)
+                                    Log.e("Bluetooth", "Failed to send command: $cmd")
+                                }
                             } else {
-                                Log.e("Bluetooth", "Failed to send command: $cmd")
-                            }
-                        } else {
-                            @Suppress("DEPRECATION")
-                            characteristic.value = binCmd
-                            @Suppress("DEPRECATION") val result = gatt.writeCharacteristic(characteristic)
-                            if (result) {
-                                Log.d("Bluetooth", "Command sent: $cmd")
-                            } else {
-                                Log.e("Bluetooth", "Failed to send command: $cmd")
+                                @Suppress("DEPRECATION")
+                                characteristic.value = binCmd
+                                @Suppress("DEPRECATION") val result =
+                                    gatt.writeCharacteristic(characteristic)
+                                if (result) {
+                                    Log.d("Bluetooth", "Command sent: $cmd")
+                                    onSuccess?.invoke()
+                                    break
+                                } else {
+                                    attempt++
+                                    delay(DELAY_DURATION_1000)
+                                    Log.e("Bluetooth", "Failed to send command: $cmd")
+                                }
                             }
                         }
-                        delay(500)
+                        delay(DELAY_DURATION_1000)
                     } catch (e: Exception) {
                         Log.e("Bluetooth", "Error sending command: ${e.message}")
                     }

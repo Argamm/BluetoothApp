@@ -26,9 +26,10 @@ import com.zdravnica.uikit.resources.R
 fun MenuTemperatureInfo(
     modifier: Modifier = Modifier,
     temperature: Int,
+    isTemperatureDifferenceLarge: Boolean = false,
 ) {
     val primaryColor =
-        if (temperature > MAX_TEMPERATURE)
+        if (isTemperatureDifferenceLarge)
             ZdravnicaAppTheme.colors.baseAppColor.error500
         else
             ZdravnicaAppTheme.colors.baseAppColor.primary500

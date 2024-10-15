@@ -43,6 +43,7 @@ fun CheckBalmCountAndOrderTablet(
     modifier: Modifier = Modifier,
     balmInfo: List<ChipBalmInfoModel>,
     startProcedure: () -> Unit,
+    orderBalm: () -> Unit,
 ) {
     val isAnyBalmCountZero = balmInfo.any { it.isBalmCountZero }
     val configuration = LocalConfiguration.current
@@ -116,12 +117,12 @@ fun CheckBalmCountAndOrderTablet(
 
         if (isAnyBalmCountZero) {
             ZeroBalmContent(
-                onClickOrderBalmButton = { /* Handle button click */ },
+                onClickOrderBalmButton = { orderBalm.invoke() },
                 onClickBalmFilledButton = { /* Handle button click */ },
             )
         } else {
             NonZeroBalmContent(
-                onClickOrderBalmButton = { /* Handle button click */ },
+                onClickOrderBalmButton = { orderBalm.invoke() },
                 onClickBigButton = {
                     startProcedure.invoke()
                 },

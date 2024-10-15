@@ -5,6 +5,7 @@ import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.screens.procedure.models.ProcedureScreenViewState
 import com.zdravnica.bluetooth.data.COMMAND_FAN
+import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import kotlinx.coroutines.launch
@@ -30,9 +31,16 @@ class ProcedureScreenViewModel(
 
     fun startProcedureWithCommands() {
         viewModelScope.launch {
-            bluetoothController.sendCommand(COMMAND_FAN)
-            bluetoothController.sendCommand(COMMAND_TEN)
+            bluetoothController.sendCommand(COMMAND_FAN)//turn On
+            localDataStore.saveCommandState(COMMAND_FAN, true)
+
+            if (!localDataStore.getCommandState(COMMAND_TEN)) {
+                bluetoothController.sendCommand(COMMAND_TEN)//turn On
+                localDataStore.saveCommandState(COMMAND_TEN, true)
+            }
+
+            bluetoothController.sendCommand(COMMAND_IREM)//turn On
+            localDataStore.saveCommandState(COMMAND_IREM, true)
         }
     }
-
 }
