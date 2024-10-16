@@ -29,17 +29,18 @@ import com.zdravnica.uikit.ERROR_ICON_DESCRIPTION
 import com.zdravnica.uikit.ORDER_DESCRIPTION
 import com.zdravnica.uikit.components.buttons.ui.OrderBalmButton
 import com.zdravnica.uikit.resources.R
-import kotlin.math.roundToInt
 
 @Composable
 fun MenuBalms(
     modifier: Modifier = Modifier,
-    firstBalmCount: Float,
-    secondBalmCount: Float,
-    thirdBalmCount: Float
+    firstBalmCount: Int,
+    secondBalmCount: Int,
+    thirdBalmCount: Int,
+    onOrderClick: () -> Unit,
+    onBalmFilledClick: () -> Unit,
 ) {
     val zeroTextVisible = remember { mutableStateOf(false) }
-    zeroTextVisible.value = firstBalmCount == 0f || secondBalmCount == 0f || thirdBalmCount == 0f
+    zeroTextVisible.value = firstBalmCount == 0 || secondBalmCount == 0 || thirdBalmCount == 0
 
     Card(
         elevation = ZdravnicaAppTheme.dimens.size4,
@@ -60,8 +61,8 @@ fun MenuBalms(
             )
 
             Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size16))
-            BalmRow(stringResource(R.string.menu_screen_nut), firstBalmCount)
             BalmRow(stringResource(R.string.menu_screen_burdock), secondBalmCount)
+            BalmRow(stringResource(R.string.menu_screen_nut), firstBalmCount)
             BalmRow(stringResource(R.string.menu_screen_mint), thirdBalmCount)
 
             if (zeroTextVisible.value) {
@@ -82,7 +83,13 @@ fun MenuBalms(
                     stringResource(R.string.menu_screen_balm_filled)
                 else
                     stringResource(R.string.menu_screen_order_balm),
-                onClick = { }
+                onClick = {
+                    if (zeroTextVisible.value) {
+                        onBalmFilledClick()
+                    } else {
+                        onOrderClick()
+                    }
+                }
             )
 
             if (zeroTextVisible.value) {
@@ -100,7 +107,7 @@ fun MenuBalms(
 }
 
 @Composable
-fun BalmRow(label: String, balmValue: Float) {
+fun BalmRow(label: String, balmValue: Int) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -113,12 +120,12 @@ fun BalmRow(label: String, balmValue: Float) {
         Spacer(modifier = Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = stringResource(R.string.menu_screen_balm_count, balmValue.roundToInt()),
+                text = stringResource(R.string.menu_screen_balm_count, balmValue),
                 style = ZdravnicaAppTheme.typography.bodyNormalBold,
-                color = if (balmValue != 0f) ZdravnicaAppTheme.colors.baseAppColor.gray200
+                color = if (balmValue != 0) ZdravnicaAppTheme.colors.baseAppColor.gray200
                 else ZdravnicaAppTheme.colors.baseAppColor.gray500
             )
-            if (balmValue == 0f) {
+            if (balmValue == 0) {
                 Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size8))
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_error),
@@ -136,6 +143,12 @@ fun BalmRow(label: String, balmValue: Float) {
 @Composable
 fun PreviewMenuBalms() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        MenuBalms(firstBalmCount = 6f, secondBalmCount = 6f, thirdBalmCount = 6f)
+        MenuBalms(
+            firstBalmCount = 6,
+            secondBalmCount = 6,
+            thirdBalmCount = 6,
+            onOrderClick = {},
+            onBalmFilledClick = {},
+        )
     }
 }

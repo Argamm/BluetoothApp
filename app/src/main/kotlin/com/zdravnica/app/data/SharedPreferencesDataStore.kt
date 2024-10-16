@@ -34,7 +34,7 @@ class SharedPreferencesDataStore(
     override fun consumeBalm(balmName: String, consumption: Double) {
         val currentBalmCount = getBalmCount(balmName)
         val newBalmCount = (currentBalmCount - consumption).coerceAtLeast(0.0)
-        Log.i("adasdsa", "consumeBalm: cuurentBalm = ${currentBalmCount}, newBalm = ${newBalmCount}")
+        Log.i("adasdsa", "consumeBalm: balmName = ${balmName}, newBalm = ${newBalmCount}")
         sharedPreferences.edit().putFloat(balmName, newBalmCount.toFloat()).apply()
     }
 

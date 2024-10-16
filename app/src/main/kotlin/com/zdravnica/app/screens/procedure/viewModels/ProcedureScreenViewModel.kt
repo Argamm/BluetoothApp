@@ -9,6 +9,7 @@ import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.viewmodel.container
 
 class ProcedureScreenViewModel(
@@ -48,11 +49,25 @@ class ProcedureScreenViewModel(
         }
     }
 
-    fun getBalmCount(balmName: String) : Float {
+    fun getBalmCount(balmName: String): Float {
         return localDataStore.getBalmCount(balmName)
     }
 
-    fun balmFilled(balmName: String) {
+    fun balmFilled(balmName: String,  balmsName: List<String>) {
         localDataStore.resetBalmCount(balmName = balmName)
+        updateBalmCounts(balmsName)
+    }
+
+    fun updateBalmCounts(balmsName: List<String>) = intent {
+        val firstBalmCount = getBalmCount(balmsName[0])
+        val secondBalmCount = getBalmCount(balmsName[1])
+        val thirdBalmCount = getBalmCount(balmsName[2])
+        postViewState(
+            state.copy(
+                firstBalmCount = firstBalmCount,
+                secondBalmCount = secondBalmCount,
+                thirdBalmCount = thirdBalmCount
+            )
+        )
     }
 }

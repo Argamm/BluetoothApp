@@ -67,7 +67,26 @@ class MenuScreenViewModel(
         postSideEffect(MenuScreenSideEffect.OnCallClick)
     }
 
-    fun getBalmCount(balmName: String) : Float {
+    private fun getBalmCount(balmName: String) : Float {
         return localDataStore.getBalmCount(balmName)
+    }
+
+    fun balmFilled(balmName: String, balmsName: List<String>) {
+        localDataStore.resetBalmCount(balmName = balmName)
+        updateBalmCounts(balmsName)
+    }
+
+    fun updateBalmCounts(balmsName: List<String>) = intent {
+        val firstBalmCount = getBalmCount(balmsName[0])
+        val secondBalmCount = getBalmCount(balmsName[1])
+        val thirdBalmCount = getBalmCount(balmsName[2])
+
+        postViewState(
+            state.copy(
+                firstBalmCount = firstBalmCount,
+                secondBalmCount = secondBalmCount,
+                thirdBalmCount = thirdBalmCount
+            )
+        )
     }
 }

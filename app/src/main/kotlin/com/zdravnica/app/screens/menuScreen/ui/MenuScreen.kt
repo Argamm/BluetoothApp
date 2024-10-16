@@ -37,6 +37,7 @@ import com.zdravnica.uikit.extensions.compose.sendEmailActivity
 import com.zdravnica.uikit.resources.R
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
+import kotlin.math.roundToInt
 
 @Composable
 fun MenuScreen(
@@ -50,9 +51,15 @@ fun MenuScreen(
     val localUriHandler = LocalUriHandler.current
     val menuScreenViewState by menuScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.menu_screen_cancel_title)
-    val supportEmailAddress = stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
-    val supportPhoneNumber = stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
+    val supportEmailAddress =
+        stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
+    val supportPhoneNumber =
+        stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
     val faqInfoUriPath = stringResource(id = R.string.menu_screen_zdravnica_uri_path)
+    val stringBurdock = stringResource(R.string.menu_screen_burdock)
+    val stringNut = stringResource(R.string.menu_screen_nut)
+    val stringMint = stringResource(R.string.menu_screen_mint)
+    val balmNameList = listOf(stringBurdock, stringNut, stringMint)
 
     menuScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -92,6 +99,10 @@ fun MenuScreen(
         menuScreenViewModel.observeSensorData()
     }
 
+    LaunchedEffect(Unit) {
+        menuScreenViewModel.updateBalmCounts(balmNameList)
+    }
+
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -128,9 +139,26 @@ fun MenuScreen(
                 }
                 item {
                     MenuBalms(
-                        firstBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_nut)),
-                        secondBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_burdock)),
-                        thirdBalmCount = menuScreenViewModel.getBalmCount(stringResource(R.string.menu_screen_mint))
+                        firstBalmCount = menuScreenViewState.firstBalmCount.roundToInt(),
+                        secondBalmCount = menuScreenViewState.secondBalmCount.roundToInt(),
+                        thirdBalmCount = menuScreenViewState.thirdBalmCount.roundToInt(),
+                        onOrderClick = {
+                            // Handle order click
+                        },
+                        onBalmFilledClick = {
+                            menuScreenViewModel.balmFilled(
+                                balmName = context.getString(R.string.menu_screen_burdock),
+                                balmsName = balmNameList
+                            )
+                            menuScreenViewModel.balmFilled(
+                                balmName = context.getString(R.string.menu_screen_nut),
+                                balmsName = balmNameList
+                            )
+                            menuScreenViewModel.balmFilled(
+                                balmName = context.getString(R.string.menu_screen_mint),
+                                balmsName = balmNameList
+                            )
+                        }
                     )
                 }
                 item {

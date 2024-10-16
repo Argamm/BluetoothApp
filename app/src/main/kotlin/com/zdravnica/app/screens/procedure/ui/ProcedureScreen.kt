@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenSideEffect
 import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenViewModel
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
@@ -35,6 +37,7 @@ fun ProcedureScreen(
 ) {
     val context = LocalContext.current
     val allChipTitles = getAllChipTitles()
+    val procedureScreenViewState by procedureScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     var selectedOption: Int? by remember { mutableStateOf(chipTitle) }
     var chipData by remember {
         mutableStateOf(selectedOption?.let { selectedOption ->
@@ -44,6 +47,10 @@ fun ProcedureScreen(
         })
     }
     var balmInfo by remember { mutableStateOf(chipTitle?.let { getBalmInfoByTitle(it) }) }
+    val stringBurdock = stringResource(R.string.menu_screen_burdock)
+    val stringNut = stringResource(R.string.menu_screen_nut)
+    val stringMint = stringResource(R.string.menu_screen_mint)
+    val balmNameList = listOf(stringBurdock, stringNut, stringMint)
 
     procedureScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -54,6 +61,10 @@ fun ProcedureScreen(
                 balmInfo = getBalmInfoByTitle(sideEffect.selectedOption)
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        procedureScreenViewModel.updateBalmCounts(balmNameList)
     }
 
     Scaffold(
@@ -100,9 +111,12 @@ fun ProcedureScreen(
                             modifier,
                             balmInfo,
                             isBalmCountZero = { balmName ->
-                                procedureScreenViewModel.getBalmCount(
-                                    balmName
-                                ) == 0f
+                                when (balmName) {
+                                    stringBurdock -> procedureScreenViewState.firstBalmCount == 0f
+                                    stringMint -> procedureScreenViewState.thirdBalmCount == 0f
+                                    stringNut -> procedureScreenViewState.secondBalmCount == 0f
+                                    else -> false
+                                }
                             },
                             startProcedure = {
                                 if (chipTitle != null) {
@@ -113,9 +127,15 @@ fun ProcedureScreen(
 
                             }, balmFilled = {
                                 balmInfo.forEach { balm ->
-                                    procedureScreenViewModel.balmFilled(balmName = context.getString(balm.balmName)) // Assuming balm.balmName is an Int resource ID
+                                    procedureScreenViewModel.balmFilled(
+                                        balmName = context.getString(
+                                            balm.balmName
+                                        ),
+                                        balmsName = balmNameList
+                                    )
                                 }
-                            })
+                            }
+                        )
                     }
                 }
             }

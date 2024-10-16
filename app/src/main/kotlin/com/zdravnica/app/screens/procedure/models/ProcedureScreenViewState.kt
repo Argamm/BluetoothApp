@@ -11,4 +11,7 @@ data class ProcedureScreenViewState(
     val selectedOption: Int? = null,
     val chipData: BigChipType? = null,
     val balmInfo: List<ChipBalmInfoModel>? = null,
+    val firstBalmCount: Float = 0f,
+    val secondBalmCount: Float = 0f,
+    val thirdBalmCount: Float = 0f,
 ) : BaseViewState()

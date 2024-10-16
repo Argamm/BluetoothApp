@@ -7,5 +7,8 @@ import com.zdravnica.app.core.models.BaseViewState
 data class MenuScreenViewState(
     val idDialogVisible: Boolean = false,
     val temperature: Int = 0,
-    val isTemperatureDifferenceLarge: Boolean = false
+    val isTemperatureDifferenceLarge: Boolean = false,
+    val firstBalmCount: Float = 0f,
+    val secondBalmCount: Float = 0f,
+    val thirdBalmCount: Float = 0f,
 ) : BaseViewState()

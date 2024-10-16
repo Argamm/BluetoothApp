@@ -138,11 +138,10 @@ fun ProcedureProcessScreen(
                             onMinutesLeftWithCredits = {
                                 if (chipTitle != null) {
                                     BigChipType.getBalmInfoByTitle(chipTitle)
-                                        ?.let {
+                                        ?.let { chipBalmInfoList ->
                                             procedureProcessViewModel.startSTVCommandSequence(
-                                                it, BigChipType.getAllBalmNames(
-                                                    context
-                                                )
+                                                chipBalmInfoList,
+                                                BigChipType.getAllBalmNames(context)
                                             )
                                         }
                                 }
