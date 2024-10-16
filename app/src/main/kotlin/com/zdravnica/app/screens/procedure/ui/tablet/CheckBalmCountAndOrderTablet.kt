@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -43,9 +44,12 @@ fun CheckBalmCountAndOrderTablet(
     modifier: Modifier = Modifier,
     balmInfo: List<ChipBalmInfoModel>,
     startProcedure: () -> Unit,
+    isBalmCountZero: (String) -> Boolean,
     orderBalm: () -> Unit,
+    balmFilled: () -> Unit
 ) {
-    val isAnyBalmCountZero = balmInfo.any { it.isBalmCountZero }
+    val context = LocalContext.current
+    val isAnyBalmCountZero = balmInfo.any { isBalmCountZero(context.getString(it.balmName)) }
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
     val screenWidthPx = with(density) { configuration.screenWidthDp.dp.roundToPx() }
@@ -101,11 +105,13 @@ fun CheckBalmCountAndOrderTablet(
             verticalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4)
         ) {
             balmInfo.forEachIndexed { index, balm ->
+                val balmCountIsZero = isBalmCountZero(context.getString(balm.balmName))
+
                 BalmInfoText(
                     text = stringResource(id = balm.balmName),
-                    isBalmCountZero = balm.isBalmCountZero,
+                    isBalmCountZero = balmCountIsZero,
                     onClick = { clickedPosition ->
-                        if (balm.isBalmCountZero) selectedBalm = balm
+                        if (balmCountIsZero) selectedBalm = balm
                         firstIconClicked = index == 0
                         isBigButtonClick = false
                         showInfoMessage = !showInfoMessage
@@ -117,8 +123,12 @@ fun CheckBalmCountAndOrderTablet(
 
         if (isAnyBalmCountZero) {
             ZeroBalmContent(
-                onClickOrderBalmButton = { orderBalm.invoke() },
-                onClickBalmFilledButton = { /* Handle button click */ },
+                onClickOrderBalmButton = {
+                    orderBalm.invoke()
+                },
+                onClickBalmFilledButton = {
+                    balmFilled.invoke()
+                },
             )
         } else {
             NonZeroBalmContent(

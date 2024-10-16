@@ -55,7 +55,8 @@ fun PreparingTheCabinScreen(
 ) {
     val preparingTheCabinScreenViewState by preparingTheCabinScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val progress by preparingTheCabinScreenViewModel.progress.collectAsStateWithLifecycle()
-
+    val viewState by preparingTheCabinScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
+    val iconStates = viewState.iconStates
     val colors = ZdravnicaAppTheme.colors.baseAppColor
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var showAnimationCircle by remember { mutableStateOf(false) }
@@ -111,7 +112,7 @@ fun PreparingTheCabinScreen(
             ProcedureProcessTopAppBar(
                 modifier = Modifier.background(backgroundColor),
                 temperature = preparingTheCabinScreenViewState.sensorTemperature,
-                fourSwitchState = false,
+                iconStates = iconStates,
                 backgroundColor = backgroundColor
             )
         },

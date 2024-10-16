@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
@@ -27,6 +26,8 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideEffect
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
+import com.zdravnica.bluetooth.data.COMMAND_FAN
+import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.DELAY_DURATION_3000
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
@@ -61,20 +62,15 @@ fun SelectProcedureScreen(
     val coroutineScope = rememberCoroutineScope()
     val isButtonVisible by remember { derivedStateOf { listState.firstVisibleItemIndex <= COUNT_THREE } }
     val sampleChips = getChipDataList().map { it.chipData }
-    val iconStates = remember(viewState.ikSwitchState) {
-        mutableStateListOf(
-            IconState.ENABLED,//TODO this data must come from bluetooth, will moved to state soon
-            IconState.ENABLED,
-            IconState.ENABLED,
-            if (viewState.ikSwitchState) IconState.ENABLED else IconState.DISABLED
-        )
-    }
+    val iconStates = viewState.iconStates
+
     selectProcedureViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is SelectProcedureSideEffect.OnNavigateToMenuScreen -> {
                 selectProcedureViewModel.setSnackBarInvisible()
                 navigateToMenuScreen.invoke()
             }
+
             is SelectProcedureSideEffect.OnProcedureCardClick -> {
                 selectProcedureViewModel.setSnackBarInvisible()
                 navigateToProcedureScreen.invoke(sideEffect.chipData.title)
@@ -131,15 +127,20 @@ fun SelectProcedureScreen(
                     state = listState
                 ) {
                     item {
-                        val statusInfoState = when (IconState.DISABLED) {
-                            iconStates[0] -> StatusInfoState.THERMOSTAT_ACTIVATION
-                            iconStates[1] -> StatusInfoState.SENSOR_ERROR
+                        val isFanCommandFailed =
+                            selectProcedureViewModel.isFailedSendingCommand(COMMAND_FAN)
+                        val isTenCommandFailed =
+                            selectProcedureViewModel.isFailedSendingCommand(COMMAND_TEN)
+
+                        val statusInfoState = when {
+                            iconStates[0] == IconState.DISABLED && isFanCommandFailed -> StatusInfoState.THERMOSTAT_ACTIVATION
+                            iconStates[1] == IconState.DISABLED && isTenCommandFailed -> StatusInfoState.SENSOR_ERROR
                             else -> null
                         }
 
                         statusInfoState?.let { state ->
                             val statusInfoData = stateDataMap[state]
-                            IndicatorsStateInf(
+                            IndicatorsStateInfo(
                                 indicatorInfo = stringResource(id = statusInfoData?.stateInfo ?: 0),
                                 indicatorInstruction = stringResource(
                                     id = statusInfoData?.instruction ?: 0

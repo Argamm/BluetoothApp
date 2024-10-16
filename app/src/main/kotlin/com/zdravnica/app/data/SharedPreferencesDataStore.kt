@@ -57,9 +57,26 @@ class SharedPreferencesDataStore(
         return state
     }
 
+    override fun saveFailSendingCommand(command: String, failed: Boolean) {
+        sharedPreferences.edit().putBoolean(command, failed).apply()
+    }
+
+    override fun getIsFailedSendingCommand(command: String): Boolean {
+        return sharedPreferences.getBoolean(command, false)
+    }
+
+    override fun saveAllCommandsAreTurnedOff() {
+        sharedPreferences.edit().putBoolean(KEY_TURNED_OFF_COMMANDS, true).apply()
+    }
+
+    override fun getAllCommandsAreTurnedOff(): Boolean {
+        return sharedPreferences.getBoolean(KEY_TURNED_OFF_COMMANDS, false)
+    }
+
     companion object {
         private const val KEY_TEMPERATURE = "key_temperature"
         private const val KEY_DURATION = "key_duration"
+        private const val KEY_TURNED_OFF_COMMANDS = "key_turned_off_commands"
         private const val MAX_BALM_ML = 6f
     }
 }

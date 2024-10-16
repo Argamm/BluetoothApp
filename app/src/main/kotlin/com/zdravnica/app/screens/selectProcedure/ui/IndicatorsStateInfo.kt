@@ -24,7 +24,7 @@ import com.zdravnica.uikit.ERROR_ICON_DESCRIPTION
 import com.zdravnica.uikit.resources.R
 
 @Composable
-fun IndicatorsStateInf(
+fun IndicatorsStateInfo(
     modifier: Modifier = Modifier,
     indicatorInfo: String,
     indicatorInstruction: String,
@@ -77,7 +77,7 @@ fun IndicatorsStateInf(
 @Composable
 private fun IndicatorsStateInfPrev() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        IndicatorsStateInf(
+        IndicatorsStateInfo(
             indicatorInfo = "",
             indicatorInstruction = "",
         )

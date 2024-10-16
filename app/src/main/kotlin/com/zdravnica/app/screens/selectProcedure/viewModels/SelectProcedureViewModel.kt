@@ -6,8 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.screens.selectProcedure.models.SelectProcedureViewState
+import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_IREM
+import com.zdravnica.bluetooth.data.COMMAND_KMPR
+import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
+import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getChipDataList
 import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
 import kotlinx.coroutines.flow.collectLatest
@@ -35,6 +39,9 @@ class SelectProcedureViewModel(
 
     init {
         observeSensorData()
+        viewModelScope.launch {
+            loadCommandStates()
+        }
     }
 
     private fun observeSensorData() = intent {
@@ -55,7 +62,7 @@ class SelectProcedureViewModel(
         }
     }
 
-    fun navigateToMenuScreen(){
+    fun navigateToMenuScreen() {
         postSideEffect(SelectProcedureSideEffect.OnNavigateToMenuScreen)
     }
 
@@ -87,5 +94,27 @@ class SelectProcedureViewModel(
 
     fun setSnackBarInvisible() = intent {
         postViewState(state.copy(isShowingSnackBar = false))
+    }
+
+    private fun loadCommandStates() = intent {
+        val fanState = localDataStore.getCommandState(COMMAND_FAN)
+        val tenState = localDataStore.getCommandState(COMMAND_TEN)
+        val kmprState = localDataStore.getCommandState(COMMAND_KMPR)
+        val iremState = localDataStore.getCommandState(COMMAND_IREM)
+
+        val iconStates = listOf(
+            if (fanState) IconState.ENABLED else IconState.DISABLED,
+            if (tenState) IconState.ENABLED else IconState.DISABLED,
+            if (kmprState) IconState.ENABLED else IconState.DISABLED,
+            if (iremState) IconState.ENABLED else IconState.DISABLED
+        )
+
+        postViewState(
+            state.copy(iconStates = iconStates)
+        )
+    }
+
+    fun isFailedSendingCommand(command: String): Boolean {
+        return localDataStore.getIsFailedSendingCommand(command)
     }
 }

@@ -15,6 +15,9 @@ import com.zdravnica.bluetooth.data.COMMAND_STV2
 import com.zdravnica.bluetooth.data.COMMAND_STV3
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
+import com.zdravnica.uikit.COUNT_ONE
+import com.zdravnica.uikit.COUNT_THREE
+import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.DELAY_1000_ML
 import com.zdravnica.uikit.ONE_MINUTE_IN_SEC
 import com.zdravnica.uikit.components.chips.models.ChipBalmInfoModel
@@ -157,7 +160,7 @@ class ProcedureProcessViewModel(
                     val balmName = allBalmNames.getOrNull(index) ?: "Unknown Balm"
 
                     when (balmInfo.key) {
-                        1 -> {
+                        COUNT_ONE -> {
                             sendCommandUntilOn(
                                 COMMAND_STV1,
                                 balmName,
@@ -165,7 +168,7 @@ class ProcedureProcessViewModel(
                             )
                         }
 
-                        2 -> {
+                        COUNT_TWO -> {
                             sendCommandUntilOn(
                                 COMMAND_STV2,
                                 balmName,
@@ -173,7 +176,7 @@ class ProcedureProcessViewModel(
                             )
                         }
 
-                        3 -> {
+                        COUNT_THREE -> {
                             sendCommandUntilOn(
                                 COMMAND_STV3,
                                 balmName,
@@ -184,15 +187,15 @@ class ProcedureProcessViewModel(
                     delay(duration * DELAY_1000_ML)
 
                     when (balmInfo.key) {
-                        1 -> {
+                        COUNT_ONE -> {
                             sendCommandUntilOff(COMMAND_STV1)
                         }
 
-                        2 -> {
+                        COUNT_TWO -> {
                             sendCommandUntilOff(COMMAND_STV2)
                         }
 
-                        3 -> {
+                        COUNT_THREE -> {
                             sendCommandUntilOff(COMMAND_STV3)
                         }
                     }
@@ -206,7 +209,7 @@ class ProcedureProcessViewModel(
         while (!localDataStore.getCommandState(command)) {
             bluetoothController.sendCommand(command, onSuccess = {
                 localDataStore.saveCommandState(command, true)
-                localDataStore.consumeBalm(balmName, balmCount / 2)
+                localDataStore.consumeBalm(balmName, balmCount / COUNT_TWO)
             })
             delay(DELAY_1000_ML)
         }

@@ -51,10 +51,12 @@ fun ProcedureProcessScreen(
     navigateToMainScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
 ) {
-    val ctx = LocalContext.current
+    val context = LocalContext.current
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var isTimerFinished by remember { mutableStateOf(false) }
+    val viewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
+    val iconStates = viewState.iconStates
 
     procedureProcessViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -85,7 +87,7 @@ fun ProcedureProcessScreen(
 
     LaunchedEffect(isTimerFinished) {
         if (isTimerFinished) {
-            procedureProcessViewModel.updateTimerStatus(true) // Update the timer status
+            procedureProcessViewModel.updateTimerStatus(true)
             procedureProcessViewModel.sendEndingCommands()
         }
     }
@@ -102,7 +104,7 @@ fun ProcedureProcessScreen(
         topBar = {
             ProcedureProcessTopAppBar(
                 temperature = procedureProcessViewState.sensorTemperature,
-                fourSwitchState = false,
+                iconStates = iconStates,
                 backgroundColor = Color.White
             )
         },
@@ -139,7 +141,7 @@ fun ProcedureProcessScreen(
                                         ?.let {
                                             procedureProcessViewModel.startSTVCommandSequence(
                                                 it, BigChipType.getAllBalmNames(
-                                                    ctx
+                                                    context
                                                 )
                                             )
                                         }

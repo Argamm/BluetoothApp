@@ -15,4 +15,10 @@ interface LocalDataStore {
     // Command state methods
     fun saveCommandState(command: String, isOn: Boolean)
     fun getCommandState(command: String): Boolean
+
+    fun saveFailSendingCommand(command: String, failed: Boolean)
+    fun getIsFailedSendingCommand(command: String): Boolean
+
+    fun saveAllCommandsAreTurnedOff()
+    fun getAllCommandsAreTurnedOff(): Boolean
 }

@@ -9,8 +9,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,7 +29,7 @@ import com.zdravnica.uikit.resources.R
 fun ProcedureProcessTopAppBar(
     modifier: Modifier = Modifier,
     temperature: Int,
-    fourSwitchState: Boolean,
+    iconStates: List<IconState>,
     backgroundColor: Color
 ) {
     TopAppBar(
@@ -61,18 +59,8 @@ fun ProcedureProcessTopAppBar(
                 )
                 Spacer(modifier = Modifier.weight(1f))
 
-                val iconStates = remember(fourSwitchState) {//this data must get from bluetooth
-                    mutableStateListOf(
-                        IconState.ENABLED,
-                        IconState.ENABLED,
-                        IconState.ENABLED,
-                        IconState.ENABLED
-                    )
-                }
+                IndicatorFourIcons(iconStates)
 
-                IndicatorFourIcons(
-                    iconStates
-                )
                 Spacer(modifier = Modifier.padding(end = ZdravnicaAppTheme.dimens.size12))
 
             }
@@ -87,7 +75,7 @@ fun PreviewCustomTopAppBar() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         ProcedureProcessTopAppBar(
             temperature = 54,
-            fourSwitchState = true,
+            iconStates = emptyList(),
             backgroundColor = Color.White
         )
     }

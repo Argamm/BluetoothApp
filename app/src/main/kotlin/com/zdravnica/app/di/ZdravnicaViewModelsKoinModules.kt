@@ -11,7 +11,7 @@ import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
 val zdravnicaViewModelsKoinModules = module {
-    viewModelOf(::ConnectingPageViewModel)
+    viewModel { ConnectingPageViewModel(get(), get()) }
     viewModel { SelectProcedureViewModel(get(), get()) }
     viewModelOf(::MenuScreenViewModel)
     viewModel { ProcedureScreenViewModel(get(), get()) }

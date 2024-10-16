@@ -61,7 +61,9 @@ fun ProcedureProcessTabletScreen(
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var isTimerFinished by remember { mutableStateOf(false) }
-
+    val viewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
+    val iconStates = viewState.iconStates
+    
     procedureProcessViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is ProcedureProcessSideEffect.OnNavigateToMainScreen -> navigateToMainScreen.invoke()
@@ -103,7 +105,7 @@ fun ProcedureProcessTabletScreen(
         topBar = {
             ProcedureProcessTopAppBar(
                 temperature = procedureProcessViewState.sensorTemperature,
-                fourSwitchState = false,
+                iconStates = iconStates,
                 backgroundColor = Color.White
             )
         },

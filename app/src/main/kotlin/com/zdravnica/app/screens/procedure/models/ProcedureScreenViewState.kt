@@ -2,8 +2,13 @@ package com.zdravnica.app.screens.procedure.models
 
 import androidx.compose.runtime.Immutable
 import com.zdravnica.app.core.models.BaseViewState
+import com.zdravnica.uikit.components.chips.models.BigChipType
+import com.zdravnica.uikit.components.chips.models.ChipBalmInfoModel
 
 @Immutable
 data class ProcedureScreenViewState(
-    val balmCount: Int = 0,
+    val balmCounts: Map<String, Float> = emptyMap(),
+    val selectedOption: Int? = null,
+    val chipData: BigChipType? = null,
+    val balmInfo: List<ChipBalmInfoModel>? = null,
 ) : BaseViewState()

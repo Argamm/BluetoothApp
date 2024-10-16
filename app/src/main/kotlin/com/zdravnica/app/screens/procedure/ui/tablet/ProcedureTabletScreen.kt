@@ -121,13 +121,23 @@ fun ProcedureTabletScreen(
                                 descriptionRes = chipData?.description
                             )
                             balmInfo?.let { balmInfo ->
-                                CheckBalmCountAndOrderTablet(modifier, balmInfo, startProcedure = {
-                                    if (chipTitle != null) {
-                                        startProcedure.invoke(chipTitle)
-                                    }
-                                }, orderBalm = {
+                                CheckBalmCountAndOrderTablet(
+                                    modifier,
+                                    balmInfo,
+                                    isBalmCountZero = { balmName ->
+                                        procedureScreenViewModel.getBalmCount(
+                                            balmName
+                                        ) == 0f
+                                    },
+                                    startProcedure = {
+                                        if (chipTitle != null) {
+                                            startProcedure.invoke(chipTitle)
+                                        }
+                                    }, orderBalm = {
 //                                    procedureScreenViewModel.turnOff()//this is not correct,,, add right one
-                                })
+                                    }, balmFilled = {
+
+                                    })
                             }
                         }
                     }

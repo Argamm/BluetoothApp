@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenSideEffect
@@ -32,6 +33,7 @@ fun ProcedureScreen(
     onNavigateUp: (() -> Unit)? = null,
     startProcedure: (Int) -> Unit,
 ) {
+    val context = LocalContext.current
     val allChipTitles = getAllChipTitles()
     var selectedOption: Int? by remember { mutableStateOf(chipTitle) }
     var chipData by remember {
@@ -94,14 +96,26 @@ fun ProcedureScreen(
 
                 item {
                     balmInfo?.let { balmInfo ->
-                        CheckBalmCountAndOrder(modifier, balmInfo, startProcedure =  {
-                            if (chipTitle != null) {
-                                procedureScreenViewModel.startProcedureWithCommands()
-                                startProcedure.invoke(chipTitle)
-                            }
-                        }, orderBalm = {
-//                            procedureScreenViewModel.turnOff()//this is not correct,,, add right one
-                        })
+                        CheckBalmCountAndOrder(
+                            modifier,
+                            balmInfo,
+                            isBalmCountZero = { balmName ->
+                                procedureScreenViewModel.getBalmCount(
+                                    balmName
+                                ) == 0f
+                            },
+                            startProcedure = {
+                                if (chipTitle != null) {
+                                    procedureScreenViewModel.startProcedureWithCommands()
+                                    startProcedure.invoke(chipTitle)
+                                }
+                            }, orderBalm = {
+
+                            }, balmFilled = {
+                                balmInfo.forEach { balm ->
+                                    procedureScreenViewModel.balmFilled(balmName = context.getString(balm.balmName)) // Assuming balm.balmName is an Int resource ID
+                                }
+                            })
                     }
                 }
             }
@@ -113,6 +127,6 @@ fun ProcedureScreen(
 @Composable
 fun PreviewMenuScreen() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        ProcedureScreen(){}
+        ProcedureScreen() {}
     }
 }

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,7 +21,7 @@ import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.resources.R
 
 @Composable
-fun IndicatorFourIcons(iconStates: SnapshotStateList<IconState>) {
+fun IndicatorFourIcons(iconStates: List<IconState>) {
     Row(
         modifier = Modifier
             .background(

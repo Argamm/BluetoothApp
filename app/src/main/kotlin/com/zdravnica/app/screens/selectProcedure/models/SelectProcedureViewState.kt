@@ -2,6 +2,7 @@ package com.zdravnica.app.screens.selectProcedure.models
 
 import androidx.compose.runtime.Immutable
 import com.zdravnica.app.core.models.BaseViewState
+import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
 
 @Immutable
@@ -14,4 +15,10 @@ data class SelectProcedureViewState(
     val scrollToEnd: Boolean = false,
     val bigChipsList: List<BigChipsStateModel> = listOf(),
     val isShowingSnackBar: Boolean = true,
+    val iconStates: List<IconState> = listOf(
+        IconState.DISABLED,
+        IconState.DISABLED,
+        IconState.DISABLED,
+        IconState.DISABLED
+    )
 ) : BaseViewState()

@@ -161,6 +161,7 @@ fun RootNavigationGraph(
                         },
                         onYesClick = {
                             if (navigateToSelectProcedure == true) {
+                                connectivityViewModel.turnOffAllWorkingProcesses()
                                 navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}") {
                                     popUpTo(AppNavGraph.Connection.route) {
                                         inclusive = true
@@ -345,6 +346,7 @@ fun RootNavigationGraph(
                                 AppNavGraph.Connection.route
                             }
 
+                            connectivityViewModel.turnOffAllWorkingProcesses()
                             navHostController.navigate(route) {
                                 popUpTo(AppNavGraph.Connection.route) {
                                     inclusive = true

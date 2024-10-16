@@ -29,6 +29,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -57,10 +58,13 @@ import kotlinx.coroutines.delay
 fun CheckBalmCountAndOrder(
     modifier: Modifier = Modifier,
     balmInfo: List<ChipBalmInfoModel>,
+    isBalmCountZero: (String) -> Boolean,
     startProcedure: () -> Unit,
     orderBalm: () -> Unit,
+    balmFilled: () -> Unit,
 ) {
-    val isAnyBalmCountZero = balmInfo.any { it.isBalmCountZero }
+    val context = LocalContext.current
+    val isAnyBalmCountZero = balmInfo.any { isBalmCountZero(context.getString(it.balmName)) }
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
     val screenWidthPx = with(density) { configuration.screenWidthDp.dp.roundToPx() }
@@ -118,11 +122,13 @@ fun CheckBalmCountAndOrder(
             verticalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4)
         ) {
             balmInfo.forEachIndexed { index, balm ->
+                val balmCountIsZero = isBalmCountZero(context.getString(balm.balmName))
+
                 BalmInfoText(
                     text = stringResource(id = balm.balmName),
-                    isBalmCountZero = balm.isBalmCountZero,
+                    isBalmCountZero = balmCountIsZero,
                     onClick = { clickedPosition ->
-                        if (balm.isBalmCountZero) selectedBalm = balm
+                        if (balmCountIsZero) selectedBalm = balm
                         firstIconClicked = index == 0
                         isBigButtonClick = false
                         showInfoMessage = !showInfoMessage
@@ -145,7 +151,7 @@ fun CheckBalmCountAndOrder(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_success_outline),
                     text = stringResource(R.string.procedure_screen_balm_filled),
                     onClick = {
-
+                        balmFilled.invoke()
                     }
                 )
                 OrderBalmButton(
@@ -254,7 +260,10 @@ private fun CheckBalmCountAndOrderPrev() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         getBalmInfoByTitle(R.string.select_product_skin)?.let {
             CheckBalmCountAndOrder(
-                balmInfo = it, startProcedure = {}
+                balmInfo = it,
+                isBalmCountZero = { false },
+                startProcedure = {},
+                orderBalm = {}
             ) {}
         }
     }

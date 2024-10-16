@@ -31,16 +31,28 @@ class ProcedureScreenViewModel(
 
     fun startProcedureWithCommands() {
         viewModelScope.launch {
-            bluetoothController.sendCommand(COMMAND_FAN)//turn On
-            localDataStore.saveCommandState(COMMAND_FAN, true)
+            if (!localDataStore.getCommandState(COMMAND_FAN)) {
+                bluetoothController.sendCommand(COMMAND_FAN)//turn On
+                localDataStore.saveCommandState(COMMAND_FAN, true)
+            }
 
             if (!localDataStore.getCommandState(COMMAND_TEN)) {
                 bluetoothController.sendCommand(COMMAND_TEN)//turn On
                 localDataStore.saveCommandState(COMMAND_TEN, true)
             }
 
-            bluetoothController.sendCommand(COMMAND_IREM)//turn On
-            localDataStore.saveCommandState(COMMAND_IREM, true)
+            if (!localDataStore.getCommandState(COMMAND_IREM)) {
+                bluetoothController.sendCommand(COMMAND_IREM)//turn On
+                localDataStore.saveCommandState(COMMAND_IREM, true)
+            }
         }
+    }
+
+    fun getBalmCount(balmName: String) : Float {
+        return localDataStore.getBalmCount(balmName)
+    }
+
+    fun balmFilled(balmName: String) {
+        localDataStore.resetBalmCount(balmName = balmName)
     }
 }

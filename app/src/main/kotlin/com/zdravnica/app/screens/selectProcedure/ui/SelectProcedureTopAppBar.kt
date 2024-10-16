@@ -12,7 +12,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +33,7 @@ fun SelectProcedureTopAppBar(
     modifier: Modifier = Modifier,
     temperature: Int,
     onRightIconClick: () -> Unit,
-    iconStates: SnapshotStateList<IconState>? = null
+    iconStates: List<IconState>? = null
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 

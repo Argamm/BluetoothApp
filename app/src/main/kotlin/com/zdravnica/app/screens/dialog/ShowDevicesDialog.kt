@@ -51,8 +51,7 @@ fun ShowDevicesDialog(
     YTBaseDialog(
         modifier = modifier
             .fillMaxSize()
-            .requiredHeightIn(max = ZdravnicaAppTheme.dimens.size500)
-        ,
+            .requiredHeightIn(max = ZdravnicaAppTheme.dimens.size500),
         content = {
             LazyColumn(
                 modifier = Modifier

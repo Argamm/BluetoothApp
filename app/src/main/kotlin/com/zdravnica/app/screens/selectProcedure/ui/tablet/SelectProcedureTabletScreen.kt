@@ -14,7 +14,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,12 +23,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.selectProcedure.ui.ChooseProcedureGridLayout
-import com.zdravnica.app.screens.selectProcedure.ui.IndicatorsStateInf
+import com.zdravnica.app.screens.selectProcedure.ui.IndicatorsStateInfo
 import com.zdravnica.app.screens.selectProcedure.ui.SelectProcedureTopAppBar
 import com.zdravnica.app.screens.selectProcedure.ui.TemperatureOrDurationAdjuster
 import com.zdravnica.app.screens.selectProcedure.ui.TextWithSwitches
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideEffect
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
+import com.zdravnica.bluetooth.data.COMMAND_FAN
+import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.DELAY_DURATION_3000
 import com.zdravnica.uikit.base_type.IconState
@@ -52,14 +53,7 @@ fun SelectProcedureTabletScreen(
 ) {
     val viewState by selectProcedureViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
-    val iconStates = remember(viewState.ikSwitchState) {
-        mutableStateListOf(
-            IconState.ENABLED,//TODO this data must come from bluetooth, will moved to state soon
-            IconState.ENABLED,
-            IconState.ENABLED,
-            if (viewState.ikSwitchState) IconState.ENABLED else IconState.DISABLED
-        )
-    }
+    val iconStates = viewState.iconStates
     var currentSnackBarModel by remember { mutableStateOf<Boolean?>(null) }
 
     LaunchedEffect(viewState.isShowingSnackBar) {
@@ -99,15 +93,20 @@ fun SelectProcedureTabletScreen(
                     state = listState
                 ) {
                     item {
-                        val statusInfoState = when (IconState.DISABLED) {
-                            iconStates[0] -> StatusInfoState.THERMOSTAT_ACTIVATION
-                            iconStates[1] -> StatusInfoState.SENSOR_ERROR
+                        val isFanCommandFailed =
+                            selectProcedureViewModel.isFailedSendingCommand(COMMAND_FAN)
+                        val isTenCommandFailed =
+                            selectProcedureViewModel.isFailedSendingCommand(COMMAND_TEN)
+
+                        val statusInfoState = when {
+                            iconStates[0] == IconState.DISABLED && isFanCommandFailed -> StatusInfoState.THERMOSTAT_ACTIVATION
+                            iconStates[1] == IconState.DISABLED && isTenCommandFailed -> StatusInfoState.SENSOR_ERROR
                             else -> null
                         }
 
                         statusInfoState?.let { state ->
                             val statusInfoData = stateDataMap[state]
-                            IndicatorsStateInf(
+                            IndicatorsStateInfo(
                                 indicatorInfo = stringResource(id = statusInfoData?.stateInfo ?: 0),
                                 indicatorInstruction = stringResource(
                                     id = statusInfoData?.instruction ?: 0
