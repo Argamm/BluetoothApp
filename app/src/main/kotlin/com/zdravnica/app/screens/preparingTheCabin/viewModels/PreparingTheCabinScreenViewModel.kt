@@ -7,8 +7,12 @@ import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.domain.CalculateTemperatureProgressUseCase
 import com.zdravnica.app.screens.preparingTheCabin.models.PreparingTheCabinScreenViewState
+import com.zdravnica.bluetooth.data.COMMAND_FAN
+import com.zdravnica.bluetooth.data.COMMAND_IREM
+import com.zdravnica.bluetooth.data.COMMAND_KMPR
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
+import com.zdravnica.uikit.base_type.IconState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -77,6 +81,7 @@ class PreparingTheCabinScreenViewModel(
         viewModelScope.launch {
             if (localDataStore.getCommandState(COMMAND_TEN)) {
                 localDataStore.saveCommandState(COMMAND_TEN, false)
+                updateIconStates()
                 bluetoothController.sendCommand(COMMAND_TEN)
             }
         }
@@ -86,8 +91,26 @@ class PreparingTheCabinScreenViewModel(
         viewModelScope.launch {
             if (!localDataStore.getCommandState(COMMAND_TEN)) {
                 localDataStore.saveCommandState(COMMAND_TEN, true)
+                updateIconStates()
                 bluetoothController.sendCommand(COMMAND_TEN)
             }
         }
+    }
+
+    fun updateIconStates() = intent {
+        val fanState = localDataStore.getCommandState(COMMAND_FAN)
+        val tenState = localDataStore.getCommandState(COMMAND_TEN)
+        val kmprState = localDataStore.getCommandState(COMMAND_KMPR)
+        val iremState = localDataStore.getCommandState(COMMAND_IREM)
+
+        val newIconStates = listOf(
+            if (fanState) IconState.ENABLED else IconState.DISABLED,
+            if (tenState) IconState.ENABLED else IconState.DISABLED,
+            if (kmprState) IconState.ENABLED else IconState.DISABLED,
+            if (iremState) IconState.ENABLED else IconState.DISABLED,
+            IconState.DISABLED
+        )
+
+        postViewState(state.copy(iconStates = newIconStates))
     }
 }

@@ -20,6 +20,7 @@ import com.zdravnica.uikit.COUNT_THREE
 import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.DELAY_1000_ML
 import com.zdravnica.uikit.ONE_MINUTE_IN_SEC
+import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.chips.models.ChipBalmInfoModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -72,11 +73,13 @@ class ProcedureProcessViewModel(
                 if (!isTimerFinished && temperature.value - sensorTemperature >= 1) {
                     if (!localDataStore.getCommandState(COMMAND_TEN)) {
                         localDataStore.saveCommandState(COMMAND_TEN, true)
+                        updateIconStates()
                         bluetoothController.sendCommand(COMMAND_TEN)
                     }
                 } else {
                     if (localDataStore.getCommandState(COMMAND_TEN)) {
                         localDataStore.saveCommandState(COMMAND_TEN, false)
+                        updateIconStates()
                         bluetoothController.sendCommand(COMMAND_TEN)
                     }
                 }
@@ -112,10 +115,12 @@ class ProcedureProcessViewModel(
         viewModelScope.launch {
             if (localDataStore.getCommandState(COMMAND_TEN)) {
                 localDataStore.saveCommandState(COMMAND_TEN, false)
+                updateIconStates()
                 bluetoothController.sendCommand(COMMAND_TEN)//turn Off
             }
             if (localDataStore.getCommandState(COMMAND_IREM)) {
                 localDataStore.saveCommandState(COMMAND_IREM, false)
+                updateIconStates()
                 bluetoothController.sendCommand(COMMAND_IREM)//turn Off
             }
 
@@ -123,6 +128,7 @@ class ProcedureProcessViewModel(
                 delay(120000)
                 if (localDataStore.getCommandState(COMMAND_FAN)) {
                     localDataStore.saveCommandState(COMMAND_FAN, false)
+                    updateIconStates()
                     bluetoothController.sendCommand(COMMAND_FAN) // turn Off
                 }
             }
@@ -130,14 +136,16 @@ class ProcedureProcessViewModel(
     }
 
     fun turnOnKMPR() = intent {
-        bluetoothController.sendCommand(COMMAND_KMPR) // Turn On
         localDataStore.saveCommandState(COMMAND_KMPR, true)
+        updateIconStates()
+        bluetoothController.sendCommand(COMMAND_KMPR) // Turn On
     }
 
     fun turnOffKMPR() = intent {
         if (localDataStore.getCommandState(COMMAND_KMPR)) {
-            bluetoothController.sendCommand(COMMAND_KMPR) // Turn Off
             localDataStore.saveCommandState(COMMAND_KMPR, false)
+            updateIconStates()
+            bluetoothController.sendCommand(COMMAND_KMPR) // Turn Off
         }
     }
 
@@ -222,5 +230,22 @@ class ProcedureProcessViewModel(
             })
             delay(DELAY_1000_ML)
         }
+    }
+
+    fun updateIconStates() = intent {
+        val fanState = localDataStore.getCommandState(COMMAND_FAN)
+        val tenState = localDataStore.getCommandState(COMMAND_TEN)
+        val kmprState = localDataStore.getCommandState(COMMAND_KMPR)
+        val iremState = localDataStore.getCommandState(COMMAND_IREM)
+
+        val newIconStates = listOf(
+            if (fanState) IconState.ENABLED else IconState.DISABLED,
+            if (tenState) IconState.ENABLED else IconState.DISABLED,
+            if (kmprState) IconState.ENABLED else IconState.DISABLED,
+            if (iremState) IconState.ENABLED else IconState.DISABLED,
+            IconState.DISABLED
+        )
+
+        postViewState(state.copy(iconStates = newIconStates))
     }
 }

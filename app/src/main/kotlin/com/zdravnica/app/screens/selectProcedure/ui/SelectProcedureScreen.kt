@@ -78,6 +78,10 @@ fun SelectProcedureScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        selectProcedureViewModel.loadCommandStates()
+    }
+
     LaunchedEffect(viewState.scrollToEnd) {
         if (viewState.scrollToEnd) {
             coroutineScope.launch {
@@ -151,10 +155,9 @@ fun SelectProcedureScreen(
                     }
                     item {
                         TextWithSwitches(
-                            switchState = viewState.ikSwitchState,
+                            switchState = viewState.ikSwitchState && selectProcedureViewModel.getIkState(),
                             onSwitchChange = {
                                 selectProcedureViewModel.updateIkSwitchState(it)
-                                selectProcedureViewModel.switchIk()
                             }
                         )
                         YTHorizontalDivider()

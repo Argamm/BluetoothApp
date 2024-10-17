@@ -80,6 +80,10 @@ fun ProcedureProcessTabletScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        procedureProcessViewModel.updateIconStates()
+    }
+
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->

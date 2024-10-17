@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,8 +56,7 @@ fun PreparingTheCabinScreen(
 ) {
     val preparingTheCabinScreenViewState by preparingTheCabinScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val progress by preparingTheCabinScreenViewModel.progress.collectAsStateWithLifecycle()
-    val viewState by preparingTheCabinScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
-    val iconStates = viewState.iconStates
+    val iconStates = preparingTheCabinScreenViewState.iconStates
     val colors = ZdravnicaAppTheme.colors.baseAppColor
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var showAnimationCircle by remember { mutableStateOf(false) }
@@ -97,6 +97,10 @@ fun PreparingTheCabinScreen(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
+    }
+
+    LaunchedEffect(Unit) {
+        preparingTheCabinScreenViewModel.updateIconStates()
     }
 
     Scaffold(

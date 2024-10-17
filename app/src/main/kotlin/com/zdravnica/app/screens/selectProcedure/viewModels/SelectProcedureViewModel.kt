@@ -39,9 +39,6 @@ class SelectProcedureViewModel(
 
     init {
         observeSensorData()
-        viewModelScope.launch {
-            loadCommandStates()
-        }
     }
 
     private fun observeSensorData() = intent {
@@ -56,8 +53,10 @@ class SelectProcedureViewModel(
         }
     }
 
-    fun switchIk() {
+    private fun switchIk(newState: Boolean) {
         viewModelScope.launch {
+            localDataStore.saveCommandState(COMMAND_IREM, newState)
+            loadCommandStates()
             bluetoothController.sendCommand(COMMAND_IREM)
         }
     }
@@ -82,6 +81,7 @@ class SelectProcedureViewModel(
 
     fun updateIkSwitchState(newState: Boolean) = intent {
         postViewState(state.copy(ikSwitchState = newState))
+        switchIk(newState)
     }
 
     fun updateIsButtonVisible(newState: Boolean) = intent {
@@ -96,7 +96,11 @@ class SelectProcedureViewModel(
         postViewState(state.copy(isShowingSnackBar = false))
     }
 
-    private fun loadCommandStates() = intent {
+    fun getIkState(): Boolean {
+        return localDataStore.getCommandState(COMMAND_IREM)
+    }
+
+    fun loadCommandStates() = intent {
         val fanState = localDataStore.getCommandState(COMMAND_FAN)
         val tenState = localDataStore.getCommandState(COMMAND_TEN)
         val kmprState = localDataStore.getCommandState(COMMAND_KMPR)
@@ -110,7 +114,7 @@ class SelectProcedureViewModel(
         )
 
         postViewState(
-            state.copy(iconStates = iconStates)
+            state.copy(iconStates = iconStates, ikSwitchState = iremState)
         )
     }
 

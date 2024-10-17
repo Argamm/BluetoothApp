@@ -85,6 +85,10 @@ fun ProcedureProcessScreen(
         procedureProcessViewModel.observeSensorData()
     }
 
+    LaunchedEffect(Unit) {
+        procedureProcessViewModel.updateIconStates()
+    }
+
     LaunchedEffect(isTimerFinished) {
         if (isTimerFinished) {
             procedureProcessViewModel.updateTimerStatus(true)
