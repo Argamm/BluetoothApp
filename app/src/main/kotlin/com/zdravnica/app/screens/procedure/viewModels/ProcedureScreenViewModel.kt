@@ -32,19 +32,22 @@ class ProcedureScreenViewModel(
 
     fun startProcedureWithCommands() {
         viewModelScope.launch {
-            if (!localDataStore.getCommandState(COMMAND_FAN)) {
-                bluetoothController.sendCommand(COMMAND_FAN)//turn On
-                localDataStore.saveCommandState(COMMAND_FAN, true)
+            while (!localDataStore.getCommandState(COMMAND_FAN)) {
+                bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_FAN, true)
+                })//turn On
             }
 
             if (!localDataStore.getCommandState(COMMAND_TEN)) {
-                bluetoothController.sendCommand(COMMAND_TEN)//turn On
-                localDataStore.saveCommandState(COMMAND_TEN, true)
+                bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_TEN, true)
+                })//turn On
             }
 
-            if (!localDataStore.getCommandState(COMMAND_IREM)) {
-                bluetoothController.sendCommand(COMMAND_IREM)//turn On
-                localDataStore.saveCommandState(COMMAND_IREM, true)
+            while (!localDataStore.getCommandState(COMMAND_IREM)) {
+                bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_IREM, true)
+                })//turn On
             }
         }
     }

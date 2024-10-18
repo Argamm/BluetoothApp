@@ -8,6 +8,7 @@ import com.zdravnica.uikit.base_type.IconState
 data class ProcedureProcessViewState(
     val isDialogVisible: Boolean = false,
     val sensorTemperature: Int = 0,
+    val isTemperatureDifferenceLarge: Boolean = false,
     val calorieValue: Int = 0,
     val pulse: Int = 0,
     val iconStates: List<IconState> = listOf(

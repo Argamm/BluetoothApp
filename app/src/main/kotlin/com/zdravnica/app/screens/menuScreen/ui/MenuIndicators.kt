@@ -1,6 +1,5 @@
 package com.zdravnica.app.screens.menuScreen.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,51 +8,31 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.COUNT_THREE
 import com.zdravnica.uikit.ERROR_ICON_DESCRIPTION
-import com.zdravnica.uikit.HEIGHT_OF_TOOLTIP
 import com.zdravnica.uikit.INDICATOR_ICON_DESCRIPTION
-import com.zdravnica.uikit.TOOLTIP_SHOWING_DURATION_2500
-import com.zdravnica.uikit.WIDTH_OF_TOOLTIP
-import com.zdravnica.uikit.components.tooltip.TooltipInfoMessage
 import com.zdravnica.uikit.resources.R
-import kotlinx.coroutines.delay
 
 @Composable
 fun MenuIndicators(
     modifier: Modifier = Modifier,
 ) {
-    var position by remember { mutableStateOf(IntOffset.Zero) }
-    var showInfoMessage by remember { mutableStateOf(false) }
-
-    LaunchedEffect(showInfoMessage) {
-        if (showInfoMessage) {
-            delay(TOOLTIP_SHOWING_DURATION_2500)
-            showInfoMessage = false
-        }
-    }
-
     Card(
         elevation = ZdravnicaAppTheme.dimens.size4,
         shape = RoundedCornerShape(ZdravnicaAppTheme.dimens.size24),
@@ -78,59 +57,26 @@ fun MenuIndicators(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_fan),
                 indicatorText = stringResource(R.string.menu_screen_fan),
                 errorIconVisible = true,
-                onClick = { clickedPosition ->
-                    showInfoMessage = !showInfoMessage
-                    position = clickedPosition
-                }
             )
 
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_ten),
                 indicatorText = stringResource(R.string.menu_screen_ten),
                 errorIconVisible = true,
-                onClick = { clickedPosition ->
-                    showInfoMessage = !showInfoMessage
-                    position = clickedPosition
-                }
             )
 
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_compressor),
                 indicatorText = stringResource(R.string.menu_screen_compressor),
                 errorIconVisible = true,
-                onClick = { clickedPosition ->
-                    showInfoMessage = !showInfoMessage
-                    position = clickedPosition
-                }
             )
 
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_ik),
                 indicatorText = stringResource(R.string.menu_screen_ik),
                 errorIconVisible = false,
-                onClick = { clickedPosition ->
-                    showInfoMessage = !showInfoMessage
-                    position = clickedPosition
-                }
             )
         }
-    }
-
-    if (showInfoMessage) {
-        TooltipInfoMessage(
-            message = stringResource(R.string.procedure_screen_tooltip_message),
-            offset = position.copy(
-                x = position.x - WIDTH_OF_TOOLTIP,
-                y = position.y - HEIGHT_OF_TOOLTIP
-            ),
-            modifier = Modifier.padding(
-                top = ZdravnicaAppTheme.dimens.size8,
-                start = ZdravnicaAppTheme.dimens.size24,
-                end = ZdravnicaAppTheme.dimens.size10,
-            ),
-            isFirstItem = false,
-            isLastItem = true
-        )
     }
 }
 
@@ -140,10 +86,7 @@ fun IndicatorRowLine(
     indicatorIcon: ImageVector,
     indicatorText: String,
     errorIconVisible: Boolean,
-    onClick: (IntOffset) -> Unit = {}
 ) {
-    var offset by remember { mutableStateOf(IntOffset.Zero) }
-
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -162,22 +105,30 @@ fun IndicatorRowLine(
         )
         Spacer(modifier = Modifier.weight(1f))
         if (errorIconVisible) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_error),
-                contentDescription = ERROR_ICON_DESCRIPTION,
-                tint = ZdravnicaAppTheme.colors.baseAppColor.gray500,
+            TooltipPopup(
                 modifier = Modifier
-                    .size(ZdravnicaAppTheme.dimens.size18)
-                    .onGloballyPositioned { coordinates ->
-                        offset = coordinates
-                            .positionInRoot()
-                            .let {
-                                IntOffset(it.x.toInt(), it.y.toInt())
-                            }
-                    }
-                    .clickable {
-                        onClick(offset)
-                    }
+                    .padding(start = ZdravnicaAppTheme.dimens.size8),
+                requesterView = { modifier ->
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_error),
+                        contentDescription = ERROR_ICON_DESCRIPTION,
+                        tint = ZdravnicaAppTheme.colors.baseAppColor.gray500,
+                        modifier = modifier
+                    )
+                },
+                tooltipContent = {
+                    Text(
+                        maxLines = COUNT_THREE,
+                        minLines = COUNT_THREE,
+                        modifier = Modifier.padding(
+                            horizontal = ZdravnicaAppTheme.dimens.size8,
+                            vertical = ZdravnicaAppTheme.dimens.size4
+                        ).widthIn(max = ZdravnicaAppTheme.dimens.size152),
+                        text = stringResource(R.string.procedure_screen_tooltip_message),
+                        style = ZdravnicaAppTheme.typography.bodyXSMedium,
+                        color = Color.Black,
+                    )
+                }
             )
         }
     }

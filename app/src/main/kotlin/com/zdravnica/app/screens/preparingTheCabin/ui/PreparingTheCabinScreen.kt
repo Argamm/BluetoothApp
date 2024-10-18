@@ -117,7 +117,8 @@ fun PreparingTheCabinScreen(
                 modifier = Modifier.background(backgroundColor),
                 temperature = preparingTheCabinScreenViewState.sensorTemperature,
                 iconStates = iconStates,
-                backgroundColor = backgroundColor
+                backgroundColor = backgroundColor,
+                isTemperatureDifferenceLarge = false,
             )
         },
 

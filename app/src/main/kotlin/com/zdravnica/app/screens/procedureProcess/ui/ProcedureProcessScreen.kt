@@ -109,7 +109,8 @@ fun ProcedureProcessScreen(
             ProcedureProcessTopAppBar(
                 temperature = procedureProcessViewState.sensorTemperature,
                 iconStates = iconStates,
-                backgroundColor = Color.White
+                backgroundColor = Color.White,
+                isTemperatureDifferenceLarge = procedureProcessViewState.isTemperatureDifferenceLarge
             )
         },
         content = { paddingValues ->

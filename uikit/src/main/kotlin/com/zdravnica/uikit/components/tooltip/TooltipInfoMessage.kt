@@ -1,11 +1,8 @@
 package com.zdravnica.uikit.components.tooltip
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material3.Text
@@ -13,8 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 
@@ -22,11 +17,10 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 fun TooltipInfoMessage(
     modifier: Modifier = Modifier,
     message: String,
-    offset: IntOffset,
     isFirstItem: Boolean = false,
     isLastItem: Boolean = false
 ) {
-    Popup(alignment = Alignment.Center, offset = offset) {
+    Popup(alignment = Alignment.Center) {
         Column(
             horizontalAlignment = when {
                 isFirstItem -> Alignment.Start
@@ -56,23 +50,23 @@ fun TooltipInfoMessage(
                 )
             }
 
-            Box(
-                modifier = Modifier
-                    .padding(
-                        PaddingValues(
-                            start = if (isFirstItem) ZdravnicaAppTheme.dimens.size20 else 0.dp,
-                            end = if (isLastItem) ZdravnicaAppTheme.dimens.size20 else 0.dp,
-                        )
-                    )
-                    .size(
-                        width = ZdravnicaAppTheme.dimens.size12,
-                        height = ZdravnicaAppTheme.dimens.size6
-                    )
-                    .background(
-                        color = Color.White,
-                        shape = TriangleShape()
-                    )
-            )
+//            Box(
+//                modifier = Modifier
+//                    .padding(
+//                        PaddingValues(
+//                            start = if (isFirstItem) ZdravnicaAppTheme.dimens.size20 else 0.dp,
+//                            end = if (isLastItem) ZdravnicaAppTheme.dimens.size20 else 0.dp,
+//                        )
+//                    )
+//                    .size(
+//                        width = ZdravnicaAppTheme.dimens.size12,
+//                        height = ZdravnicaAppTheme.dimens.size6
+//                    )
+//                    .background(
+//                        color = Color.White,
+//                        shape = TriangleShape()
+//                    )
+//            )
         }
     }
 }

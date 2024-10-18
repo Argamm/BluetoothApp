@@ -234,13 +234,7 @@ fun CheckBalmCountAndOrder(
         val isRightIcon = position.x > screenWidthPx / COUNT_THREE || !firstIconClicked
         TooltipInfoMessage(
             message = stringResource(R.string.procedure_screen_tooltip_message),
-            offset = position.copy(
-                x = position.x - if (isBigButtonClick)
-                    position.x
-                else
-                    WIDTH_OF_TOOLTIP,
-                y = position.y - HEIGHT_OF_TOOLTIP
-            ),
+
             modifier = Modifier.padding(
                 top = ZdravnicaAppTheme.dimens.size8,
                 start = if (isRightIcon)

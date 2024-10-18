@@ -49,15 +49,17 @@ class SelectProcedureViewModel(
                         temperature = sensorData?.temrTmpr1 ?: 0
                     )
                 )
+                loadCommandStates()
             }
         }
     }
 
     private fun switchIk(newState: Boolean) {
         viewModelScope.launch {
-            localDataStore.saveCommandState(COMMAND_IREM, newState)
-            loadCommandStates()
-            bluetoothController.sendCommand(COMMAND_IREM)
+            bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
+                localDataStore.saveCommandState(COMMAND_IREM, newState)
+                loadCommandStates()
+            })
         }
     }
 

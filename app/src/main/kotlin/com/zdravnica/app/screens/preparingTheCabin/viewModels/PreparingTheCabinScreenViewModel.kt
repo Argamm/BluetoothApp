@@ -56,6 +56,7 @@ class PreparingTheCabinScreenViewModel(
                         sensorTemperature = sensorTemperature
                     )
                 )
+                updateIconStates()
 
                 calculateTemperatureProgressUseCase.execute(
                     bluetoothController.sensorDataFlow.map { it?.temrTmpr1 ?: 0 },
@@ -80,9 +81,10 @@ class PreparingTheCabinScreenViewModel(
     fun turnOffTenCommand() {
         viewModelScope.launch {
             if (localDataStore.getCommandState(COMMAND_TEN)) {
-                localDataStore.saveCommandState(COMMAND_TEN, false)
-                updateIconStates()
-                bluetoothController.sendCommand(COMMAND_TEN)
+                bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_TEN, false)
+                    updateIconStates()
+                })
             }
         }
     }
@@ -90,9 +92,10 @@ class PreparingTheCabinScreenViewModel(
     fun turnOnTenCommand() {
         viewModelScope.launch {
             if (!localDataStore.getCommandState(COMMAND_TEN)) {
-                localDataStore.saveCommandState(COMMAND_TEN, true)
-                updateIconStates()
-                bluetoothController.sendCommand(COMMAND_TEN)
+                bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_TEN, true)
+                    updateIconStates()
+                })
             }
         }
     }

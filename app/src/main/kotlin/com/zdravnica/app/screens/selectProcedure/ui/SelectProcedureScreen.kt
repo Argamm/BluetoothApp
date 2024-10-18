@@ -137,8 +137,12 @@ fun SelectProcedureScreen(
                             selectProcedureViewModel.isFailedSendingCommand(COMMAND_TEN)
 
                         val statusInfoState = when {
-                            iconStates[0] == IconState.DISABLED && isFanCommandFailed -> StatusInfoState.THERMOSTAT_ACTIVATION
-                            iconStates[1] == IconState.DISABLED && isTenCommandFailed -> StatusInfoState.SENSOR_ERROR
+                            iconStates[0] == IconState.DISABLED && isFanCommandFailed ->
+                                StatusInfoState.THERMOSTAT_ACTIVATION
+
+                            iconStates[1] == IconState.DISABLED && isTenCommandFailed ->
+                                StatusInfoState.SENSOR_ERROR
+
                             else -> null
                         }
 
@@ -155,7 +159,7 @@ fun SelectProcedureScreen(
                     }
                     item {
                         TextWithSwitches(
-                            switchState = viewState.ikSwitchState && selectProcedureViewModel.getIkState(),
+                            switchState = viewState.ikSwitchState,
                             onSwitchChange = {
                                 selectProcedureViewModel.updateIkSwitchState(it)
                             }

@@ -61,26 +61,30 @@ class ProcedureProcessViewModel(
                 val currentCalorieValue =
                     calculateCaloriesUseCase.calculateCalories(sensorData?.snsrHC ?: 0)
                 val sensorTemperature = sensorData?.temrTmpr1 ?: 0
+                val isDifferenceLarge = (sensorTemperature - temperature.value) > 6
 
                 postViewState(
                     state.copy(
                         sensorTemperature = sensorData?.temrTmpr1 ?: 0,
                         calorieValue = currentCalorieValue,
-                        pulse = sensorData?.snsrHC ?: 0
+                        pulse = sensorData?.snsrHC ?: 0,
+                        isTemperatureDifferenceLarge = isDifferenceLarge,
                     )
                 )
 
                 if (!isTimerFinished && temperature.value - sensorTemperature >= 1) {
                     if (!localDataStore.getCommandState(COMMAND_TEN)) {
-                        localDataStore.saveCommandState(COMMAND_TEN, true)
-                        updateIconStates()
-                        bluetoothController.sendCommand(COMMAND_TEN)
+                        bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
+                            localDataStore.saveCommandState(COMMAND_TEN, true)
+                            updateIconStates()
+                        })
                     }
                 } else {
                     if (localDataStore.getCommandState(COMMAND_TEN)) {
-                        localDataStore.saveCommandState(COMMAND_TEN, false)
-                        updateIconStates()
-                        bluetoothController.sendCommand(COMMAND_TEN)
+                        bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
+                            localDataStore.saveCommandState(COMMAND_TEN, false)
+                            updateIconStates()
+                        })
                     }
                 }
             }
@@ -114,38 +118,45 @@ class ProcedureProcessViewModel(
     fun sendEndingCommands() {
         viewModelScope.launch {
             if (localDataStore.getCommandState(COMMAND_TEN)) {
-                localDataStore.saveCommandState(COMMAND_TEN, false)
-                updateIconStates()
-                bluetoothController.sendCommand(COMMAND_TEN)//turn Off
+                bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_TEN, false)
+                    updateIconStates()
+                })//turn Off
             }
-            if (localDataStore.getCommandState(COMMAND_IREM)) {
-                localDataStore.saveCommandState(COMMAND_IREM, false)
-                updateIconStates()
-                bluetoothController.sendCommand(COMMAND_IREM)//turn Off
+            while (localDataStore.getCommandState(COMMAND_IREM)) {
+                bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_IREM, false)
+                    updateIconStates()
+                })//turn Off
             }
 
             GlobalScope.launch {
                 delay(120000)
-                if (localDataStore.getCommandState(COMMAND_FAN)) {
-                    localDataStore.saveCommandState(COMMAND_FAN, false)
-                    updateIconStates()
-                    bluetoothController.sendCommand(COMMAND_FAN) // turn Off
+                while (localDataStore.getCommandState(COMMAND_FAN)) {
+                    bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
+                        localDataStore.saveCommandState(COMMAND_FAN, false)
+                        updateIconStates()
+                    }) // turn Off
                 }
             }
         }
     }
 
     fun turnOnKMPR() = intent {
-        localDataStore.saveCommandState(COMMAND_KMPR, true)
-        updateIconStates()
-        bluetoothController.sendCommand(COMMAND_KMPR) // Turn On
+        while (!localDataStore.getCommandState(COMMAND_KMPR)) {
+            bluetoothController.sendCommand(COMMAND_KMPR, onSuccess = {
+                localDataStore.saveCommandState(COMMAND_KMPR, true)
+                updateIconStates()
+            }) // Turn On
+        }
     }
 
     fun turnOffKMPR() = intent {
-        if (localDataStore.getCommandState(COMMAND_KMPR)) {
-            localDataStore.saveCommandState(COMMAND_KMPR, false)
-            updateIconStates()
-            bluetoothController.sendCommand(COMMAND_KMPR) // Turn Off
+        while (localDataStore.getCommandState(COMMAND_KMPR)) {
+            bluetoothController.sendCommand(COMMAND_KMPR, onSuccess = {
+                localDataStore.saveCommandState(COMMAND_KMPR, false)
+                updateIconStates()
+            })  // Turn Off
         }
     }
 
@@ -171,28 +182,23 @@ class ProcedureProcessViewModel(
                         COUNT_ONE -> {
                             sendCommandUntilOn(
                                 COMMAND_STV1,
-                                balmName,
-                                balmInfo.balmCount
                             )
                         }
 
                         COUNT_TWO -> {
                             sendCommandUntilOn(
                                 COMMAND_STV2,
-                                balmName,
-                                balmInfo.balmCount
                             )
                         }
 
                         COUNT_THREE -> {
                             sendCommandUntilOn(
                                 COMMAND_STV3,
-                                balmName,
-                                balmInfo.balmCount
                             )
                         }
                     }
                     delay(duration * DELAY_1000_ML)
+                    localDataStore.consumeBalm(balmName, balmInfo.balmCount / COUNT_TWO)
 
                     when (balmInfo.key) {
                         COUNT_ONE -> {
@@ -213,13 +219,11 @@ class ProcedureProcessViewModel(
         }
     }
 
-    private suspend fun sendCommandUntilOn(command: String, balmName: String, balmCount: Double) {
+    private suspend fun sendCommandUntilOn(command: String) {
         while (!localDataStore.getCommandState(command)) {
             bluetoothController.sendCommand(command, onSuccess = {
                 localDataStore.saveCommandState(command, true)
-                localDataStore.consumeBalm(balmName, balmCount / COUNT_TWO)
             })
-            delay(DELAY_1000_ML)
         }
     }
 
@@ -228,7 +232,6 @@ class ProcedureProcessViewModel(
             bluetoothController.sendCommand(command, onSuccess = {
                 localDataStore.saveCommandState(command, false)
             })
-            delay(DELAY_1000_ML)
         }
     }
 

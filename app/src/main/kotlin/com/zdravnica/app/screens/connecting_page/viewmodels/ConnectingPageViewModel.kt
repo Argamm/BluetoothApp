@@ -151,8 +151,9 @@ class ConnectingPageViewModel(
 
         for (command in commands) {
             if (localDataStore.getCommandState(command)) {
-                localDataStore.saveCommandState(command, false)
-                bluetoothController.sendCommand(command)
+                bluetoothController.sendCommand(command, onSuccess = {
+                    localDataStore.saveCommandState(command, false)
+                })
             }
         }
     }

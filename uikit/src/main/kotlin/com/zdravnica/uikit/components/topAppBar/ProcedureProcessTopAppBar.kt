@@ -30,7 +30,8 @@ fun ProcedureProcessTopAppBar(
     modifier: Modifier = Modifier,
     temperature: Int,
     iconStates: List<IconState>,
-    backgroundColor: Color
+    backgroundColor: Color,
+    isTemperatureDifferenceLarge: Boolean
 ) {
     TopAppBar(
         backgroundColor = backgroundColor,
@@ -45,7 +46,10 @@ fun ProcedureProcessTopAppBar(
                         .size(ZdravnicaAppTheme.dimens.size60),
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_temp),
                     contentDescription = TOP_APP_BAR_TEMPERATURE_DESCRIPTION,
-                    tint = ZdravnicaAppTheme.colors.baseAppColor.primary500
+                    tint = if (isTemperatureDifferenceLarge)
+                        ZdravnicaAppTheme.colors.baseAppColor.error500
+                    else
+                        ZdravnicaAppTheme.colors.baseAppColor.primary500
                 )
                 Text(
                     modifier = Modifier.padding(top = ZdravnicaAppTheme.dimens.size12),
@@ -53,7 +57,10 @@ fun ProcedureProcessTopAppBar(
                         R.string.select_product_temperature_value,
                         temperature
                     ),
-                    color = ZdravnicaAppTheme.colors.baseAppColor.primary500,
+                    color = if (isTemperatureDifferenceLarge)
+                        ZdravnicaAppTheme.colors.baseAppColor.error500
+                    else
+                        ZdravnicaAppTheme.colors.baseAppColor.primary500,
                     style = ZdravnicaAppTheme.typography.headH2,
                     textAlign = TextAlign.Center
                 )
@@ -76,7 +83,8 @@ fun PreviewCustomTopAppBar() {
         ProcedureProcessTopAppBar(
             temperature = 54,
             iconStates = emptyList(),
-            backgroundColor = Color.White
+            backgroundColor = Color.White,
+            isTemperatureDifferenceLarge = true
         )
     }
 }

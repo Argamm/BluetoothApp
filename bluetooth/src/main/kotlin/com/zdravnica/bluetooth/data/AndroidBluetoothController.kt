@@ -274,7 +274,7 @@ internal class AndroidBluetoothController(
                                     break
                                 } else {
                                     attempt++
-                                    delay(DELAY_DURATION_1000)
+                                    delay(DELAY_DURATION_500)
                                     Log.e("Bluetooth", "Failed to send command: $cmd")
                                 }
                             } else {
@@ -288,7 +288,7 @@ internal class AndroidBluetoothController(
                                     break
                                 } else {
                                     attempt++
-                                    delay(DELAY_DURATION_1000)
+                                    delay(DELAY_DURATION_500)
                                     Log.e("Bluetooth", "Failed to send command: $cmd")
                                 }
                             }
@@ -360,6 +360,7 @@ internal class AndroidBluetoothController(
     }
 }
 
+const val DELAY_DURATION_500 = 500L
 const val DELAY_DURATION_1000 = 1000L
 const val DELAY_DURATION_2000 = 2000L
 const val DELAY_DURATION_3000 = 3000L

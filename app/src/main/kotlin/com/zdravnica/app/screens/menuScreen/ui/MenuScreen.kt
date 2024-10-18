@@ -51,10 +51,8 @@ fun MenuScreen(
     val localUriHandler = LocalUriHandler.current
     val menuScreenViewState by menuScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.menu_screen_cancel_title)
-    val supportEmailAddress =
-        stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
-    val supportPhoneNumber =
-        stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
+    val supportEmailAddress = stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
+    val supportPhoneNumber = stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
     val faqInfoUriPath = stringResource(id = R.string.menu_screen_zdravnica_uri_path)
     val stringBurdock = stringResource(R.string.menu_screen_burdock)
     val stringNut = stringResource(R.string.menu_screen_nut)
