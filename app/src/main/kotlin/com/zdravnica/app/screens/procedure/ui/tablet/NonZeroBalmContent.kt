@@ -13,8 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
@@ -29,7 +27,6 @@ import com.zdravnica.uikit.resources.R
 fun NonZeroBalmContent(
     onClickOrderBalmButton: () -> Unit,
     onClickBigButton: () -> Unit,
-    onGloballyPositioned: (LayoutCoordinates) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -53,8 +50,7 @@ fun NonZeroBalmContent(
             BigButton(
                 modifier = Modifier
                     .padding(vertical = ZdravnicaAppTheme.dimens.size18)
-                    .wrapContentSize()
-                    .onGloballyPositioned(onGloballyPositioned),
+                    .wrapContentSize(),
                 bigButtonModel = BigButtonModel(
                     buttonText = stringResource(R.string.procedure_screen_start_procedure),
                     textModifier = Modifier

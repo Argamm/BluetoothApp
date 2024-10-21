@@ -1,4 +1,4 @@
-package com.zdravnica.app.screens.menuScreen.ui
+package com.zdravnica.uikit.components.tooltip
 
 import android.annotation.SuppressLint
 import android.view.View
@@ -45,6 +45,7 @@ import kotlin.math.roundToInt
 @Composable
 fun TooltipPopup(
     modifier: Modifier = Modifier,
+    isEnableToClick: Boolean = true,
     requesterView: @Composable (Modifier) -> Unit,
     tooltipContent: @Composable () -> Unit,
 ) {
@@ -59,7 +60,7 @@ fun TooltipPopup(
         }
     }
 
-    if (isShowTooltip) {
+    if (isShowTooltip && isEnableToClick) {
         TooltipPopup(
             onDismissRequest = {
                 isShowTooltip = isShowTooltip.not()
@@ -102,7 +103,7 @@ fun TooltipPopup(
     with(LocalDensity.current) {
         val arrowPaddingPx = arrowHeight.toPx().roundToInt() * 3
 
-        when (TooltipAlignment.BottomCenter) {
+        when (position.alignment) {
             TooltipAlignment.TopCenter -> {
                 alignment = Alignment.TopCenter
                 offset = offset.copy(
@@ -339,15 +340,23 @@ fun calculateTooltipPopupPosition(
     val offsetX = centerPositionX - visibleWindowBounds.centerX()
 
     return if (heightAbove > heightBelow) {
-        val offset = IntOffset(
-            y = coordinates.size.height,
-            x = offsetX.toInt()
-        )
         TooltipPopupPosition(
-            offset = offset,
-            alignment = TooltipAlignment.TopCenter,
+            offset = IntOffset(
+                y = -coordinates.size.height + 20,
+                x = offsetX.toInt()
+            ),
+            alignment = TooltipAlignment.BottomCenter,
             centerPositionX = centerPositionX,
         )
+//        val offset = IntOffset(
+//            y = coordinates.size.height,
+//            x = offsetX.toInt()
+//        )
+//        TooltipPopupPosition(
+//            offset = offset,
+//            alignment = TooltipAlignment.TopCenter,
+//            centerPositionX = centerPositionX,
+//        )
     } else {
         TooltipPopupPosition(
             offset = IntOffset(

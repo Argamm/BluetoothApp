@@ -1,7 +1,6 @@
 package com.zdravnica.app.screens.procedure.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,47 +10,32 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.COUNT_THREE
-import com.zdravnica.uikit.HEIGHT_OF_TOOLTIP
 import com.zdravnica.uikit.ORDER_DESCRIPTION
-import com.zdravnica.uikit.TOOLTIP_SHOWING_DURATION_2500
-import com.zdravnica.uikit.WIDTH_OF_TOOLTIP
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
 import com.zdravnica.uikit.components.buttons.ui.BigButton
 import com.zdravnica.uikit.components.buttons.ui.OrderBalmButton
 import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getBalmInfoByTitle
 import com.zdravnica.uikit.components.chips.models.ChipBalmInfoModel
-import com.zdravnica.uikit.components.tooltip.TooltipInfoMessage
+import com.zdravnica.uikit.components.tooltip.TooltipPopup
 import com.zdravnica.uikit.resources.R
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -65,32 +49,9 @@ fun CheckBalmCountAndOrder(
 ) {
     val context = LocalContext.current
     val isAnyBalmCountZero = balmInfo.any { isBalmCountZero(context.getString(it.balmName)) }
-    val configuration = LocalConfiguration.current
-    val density = LocalDensity.current
-    val screenWidthPx = with(density) { configuration.screenWidthDp.dp.roundToPx() }
-    var selectedBalm by remember { mutableStateOf<ChipBalmInfoModel?>(null) }
-    var showInfoMessage by remember { mutableStateOf(false) }
-    var isBigButtonClick by remember { mutableStateOf(false) }
-    var firstIconClicked by remember { mutableStateOf(false) }
-    var position by remember { mutableStateOf(IntOffset.Zero) }
-    var bigButtonPosition by remember { mutableStateOf(IntOffset.Zero) }
-
-    LaunchedEffect(showInfoMessage) {
-        if (showInfoMessage) {
-            delay(TOOLTIP_SHOWING_DURATION_2500)
-            showInfoMessage = false
-        }
-    }
 
     Column(
         modifier = modifier
-            .pointerInput(Unit) {
-                detectTapGestures {
-                    if (showInfoMessage) {
-                        showInfoMessage = false
-                    }
-                }
-            }
             .background(color = Color.White)
             .padding(PaddingValues(ZdravnicaAppTheme.dimens.size8))
             .wrapContentHeight()
@@ -110,30 +71,16 @@ fun CheckBalmCountAndOrder(
 
         FlowRow(
             modifier = Modifier
-                .padding(top = ZdravnicaAppTheme.dimens.size12)
-                .pointerInput(Unit) {
-                    detectTapGestures {
-                        if (showInfoMessage) {
-                            showInfoMessage = false
-                        }
-                    }
-                },
+                .padding(top = ZdravnicaAppTheme.dimens.size12),
             horizontalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4),
             verticalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4)
         ) {
-            balmInfo.forEachIndexed { index, balm ->
+            balmInfo.forEachIndexed { _, balm ->
                 val balmCountIsZero = isBalmCountZero(context.getString(balm.balmName))
 
                 BalmInfoText(
                     text = stringResource(id = balm.balmName),
                     isBalmCountZero = balmCountIsZero,
-                    onClick = { clickedPosition ->
-                        if (balmCountIsZero) selectedBalm = balm
-                        firstIconClicked = index == 0
-                        isBigButtonClick = false
-                        showInfoMessage = !showInfoMessage
-                        position = clickedPosition
-                    }
                 )
             }
         }
@@ -200,51 +147,48 @@ fun CheckBalmCountAndOrder(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            BigButton(
+
+            TooltipPopup(
                 modifier = Modifier
-                    .wrapContentSize()
-                    .onGloballyPositioned { coordinates ->
-                        bigButtonPosition = coordinates
-                            .positionInRoot()
-                            .let {
-                                IntOffset(it.x.toInt(), it.y.toInt())
+                    .padding(start = ZdravnicaAppTheme.dimens.size8),
+                isEnableToClick = true,
+                requesterView = { modifier ->
+                    BigButton(
+                        modifier = modifier
+                            .wrapContentSize(),
+                        bigButtonModel = BigButtonModel(
+                            buttonText = stringResource(R.string.procedure_screen_start_procedure),
+                            textModifier = Modifier
+                                .wrapContentSize()
+                                .padding(horizontal = ZdravnicaAppTheme.dimens.size19),
+                            isEnabled = !isAnyBalmCountZero,
+                            onClick = {
+                                if (isAnyBalmCountZero) {
+//                            isBigButtonClick = true
+//                            showInfoMessage = true
+//                            position = bigButtonPosition
+                                } else {
+                                    startProcedure.invoke()
+                                }
                             }
-                    },
-                bigButtonModel = BigButtonModel(
-                    buttonText = stringResource(R.string.procedure_screen_start_procedure),
-                    textModifier = Modifier
-                        .wrapContentSize()
-                        .padding(horizontal = ZdravnicaAppTheme.dimens.size19),
-                    isEnabled = !isAnyBalmCountZero,
-                    onClick = {
-                        if (isAnyBalmCountZero) {
-                            isBigButtonClick = true
-                            showInfoMessage = true
-                            position = bigButtonPosition
-                        } else {
-                            startProcedure.invoke()
-                        }
-                    }
-                ),
+                        ),
+                    )
+                },
+                tooltipContent = {
+                    Text(
+                        maxLines = COUNT_THREE,
+                        minLines = COUNT_THREE,
+                        modifier = Modifier.padding(
+                            horizontal = ZdravnicaAppTheme.dimens.size8,
+                            vertical = ZdravnicaAppTheme.dimens.size4
+                        ).widthIn(max = ZdravnicaAppTheme.dimens.size152),
+                        text = stringResource(R.string.procedure_screen_tooltip_message),
+                        style = ZdravnicaAppTheme.typography.bodyXSMedium,
+                        color = Color.Black,
+                    )
+                }
             )
         }
-    }
-
-    if (showInfoMessage) {
-        val isRightIcon = position.x > screenWidthPx / COUNT_THREE || !firstIconClicked
-        TooltipInfoMessage(
-            message = stringResource(R.string.procedure_screen_tooltip_message),
-
-            modifier = Modifier.padding(
-                top = ZdravnicaAppTheme.dimens.size8,
-                start = if (isRightIcon)
-                    ZdravnicaAppTheme.dimens.size24
-                else
-                    ZdravnicaAppTheme.dimens.size12
-            ),
-            isFirstItem = firstIconClicked && position.x <= screenWidthPx / COUNT_THREE,
-            isLastItem = !firstIconClicked && position.x > screenWidthPx / (COUNT_THREE / 2)
-        )
     }
 }
 

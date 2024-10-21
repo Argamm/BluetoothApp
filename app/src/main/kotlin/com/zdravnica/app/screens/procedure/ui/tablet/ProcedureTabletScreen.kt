@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.zdravnica.app.screens.procedure.ui.ChooseProcedureChipGroup
@@ -39,6 +40,11 @@ fun ProcedureTabletScreen(
     onNavigateUp: (() -> Unit)? = null,
     startProcedure: (Int) -> Unit,
 ) {
+    val context = LocalContext.current
+    val stringBurdock = stringResource(R.string.menu_screen_burdock)
+    val stringNut = stringResource(R.string.menu_screen_nut)
+    val stringMint = stringResource(R.string.menu_screen_mint)
+    val balmNameList = listOf(stringBurdock, stringNut, stringMint)
     val allChipTitles = getAllChipTitles()
     var selectedOption: Int? by remember { mutableStateOf(chipTitle) }
     var chipData by remember {
@@ -129,15 +135,23 @@ fun ProcedureTabletScreen(
                                             balmName
                                         ) == 0f
                                     },
-                                    startProcedure = {
-                                        if (chipTitle != null) {
+                                    startProcedure = { canStart ->
+                                        if (chipTitle != null && canStart) {
                                             startProcedure.invoke(chipTitle)
                                         }
                                     }, orderBalm = {
-//                                    procedureScreenViewModel.turnOff()//this is not correct,,, add right one
-                                    }, balmFilled = {
 
-                                    })
+                                    }, balmFilled = {
+                                        balmInfo.forEach { balm ->
+                                            procedureScreenViewModel.balmFilled(
+                                                balmName = context.getString(
+                                                    balm.balmName
+                                                ),
+                                                balmsName = balmNameList
+                                            )
+                                        }
+                                    }
+                                )
                             }
                         }
                     }
