@@ -63,6 +63,10 @@
     <string name="menu_screen_cancel">Отмена</string>
     <string name="menu_screen_yes">Да</string>
     <string name="menu_screen_cancel_title">Вы уверены что хотите отключиться?</string>
+    <string name="menu_screen_tooltip_ten">Рекомендации по поводу неработающего ТЭНа</string>
+    <string name="menu_screen_tooltip_fan">Рекомендации по поводу неработающего Вентилятор</string>
+    <string name="menu_screen_tooltip_compressor">Рекомендации по поводу неработающего Компрессор</string>
+    <string name="menu_screen_tooltip_ik">Рекомендации по поводу неработающего Инфракрасный излучатель</string>
     <!--    MenuScreen Page end-->
 
     <!--    ProcedureScreen Page start-->

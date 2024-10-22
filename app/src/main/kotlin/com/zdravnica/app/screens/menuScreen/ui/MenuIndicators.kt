@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,7 +24,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.COUNT_THREE
+import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.ERROR_ICON_DESCRIPTION
 import com.zdravnica.uikit.INDICATOR_ICON_DESCRIPTION
 import com.zdravnica.uikit.components.tooltip.TooltipPopup
@@ -118,13 +119,30 @@ fun IndicatorRowLine(
                 },
                 tooltipContent = {
                     Text(
-                        maxLines = COUNT_THREE,
-                        minLines = COUNT_THREE,
-                        modifier = Modifier.padding(
-                            horizontal = ZdravnicaAppTheme.dimens.size8,
-                            vertical = ZdravnicaAppTheme.dimens.size4
-                        ).widthIn(max = ZdravnicaAppTheme.dimens.size152),
-                        text = stringResource(R.string.procedure_screen_tooltip_message),
+                        maxLines = COUNT_TWO,
+                        minLines = COUNT_TWO,
+                        modifier = Modifier
+                            .padding(
+                                horizontal = ZdravnicaAppTheme.dimens.size8,
+                                vertical = ZdravnicaAppTheme.dimens.size4
+                            )
+                            .widthIn(max = ZdravnicaAppTheme.dimens.size152)
+                            .heightIn(max = ZdravnicaAppTheme.dimens.size100),
+                        text = when (indicatorText) {
+                            stringResource(R.string.menu_screen_fan) ->
+                                stringResource(R.string.menu_screen_tooltip_fan)
+
+                            stringResource(R.string.menu_screen_ten) ->
+                                stringResource(R.string.menu_screen_tooltip_ten)
+
+                            stringResource(R.string.menu_screen_compressor) ->
+                                stringResource(R.string.menu_screen_tooltip_compressor)
+
+                            stringResource(R.string.menu_screen_ik) ->
+                                stringResource(R.string.menu_screen_tooltip_ik)
+
+                            else -> ""
+                        },
                         style = ZdravnicaAppTheme.typography.bodyXSMedium,
                         color = Color.Black,
                     )

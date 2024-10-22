@@ -12,6 +12,7 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,6 +47,7 @@ import kotlin.math.roundToInt
 fun TooltipPopup(
     modifier: Modifier = Modifier,
     isEnableToClick: Boolean = true,
+    viewHeight: Int = 20,
     requesterView: @Composable (Modifier) -> Unit,
     tooltipContent: @Composable () -> Unit,
 ) {
@@ -76,7 +78,7 @@ fun TooltipPopup(
                 isShowTooltip = isShowTooltip.not()
             }
             .onGloballyPositioned { coordinates ->
-                position = calculateTooltipPopupPosition(view, coordinates)
+                position = calculateTooltipPopupPosition(view, coordinates, viewHeight)
             }
     )
 }
@@ -98,7 +100,7 @@ fun TooltipPopup(
         horizontalPadding.toPx()
     }
 
-    var arrowPositionX by remember { mutableStateOf(position.centerPositionX) }
+    var arrowPositionX by remember { mutableFloatStateOf(position.centerPositionX) }
 
     with(LocalDensity.current) {
         val arrowPaddingPx = arrowHeight.toPx().roundToInt() * 3
@@ -149,7 +151,7 @@ fun TooltipPopup(
         ) {
             Card(
                 shape = RoundedCornerShape(size = ZdravnicaAppTheme.dimens.size6),
-                elevation = ZdravnicaAppTheme.dimens.size10,
+                elevation = ZdravnicaAppTheme.dimens.size5,
                 backgroundColor = Color.White,
                 modifier = Modifier.background(
                     color = Color.White,
@@ -324,6 +326,7 @@ data class TooltipPopupPosition(
 fun calculateTooltipPopupPosition(
     view: View,
     coordinates: LayoutCoordinates?,
+    viewHeight: Int = 20,
 ): TooltipPopupPosition {
     coordinates ?: return TooltipPopupPosition()
 
@@ -342,7 +345,7 @@ fun calculateTooltipPopupPosition(
     return if (heightAbove > heightBelow) {
         TooltipPopupPosition(
             offset = IntOffset(
-                y = -coordinates.size.height + 20,
+                y = -coordinates.size.height + viewHeight,
                 x = offsetX.toInt()
             ),
             alignment = TooltipAlignment.BottomCenter,

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -27,14 +26,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.COUNT_THREE
 import com.zdravnica.uikit.ORDER_DESCRIPTION
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
 import com.zdravnica.uikit.components.buttons.ui.BigButton
+import com.zdravnica.uikit.components.buttons.ui.BigButtonWithTooltip
 import com.zdravnica.uikit.components.buttons.ui.OrderBalmButton
 import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getBalmInfoByTitle
 import com.zdravnica.uikit.components.chips.models.ChipBalmInfoModel
-import com.zdravnica.uikit.components.tooltip.TooltipPopup
 import com.zdravnica.uikit.resources.R
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -72,7 +70,6 @@ fun CheckBalmCountAndOrder(
         FlowRow(
             modifier = Modifier
                 .padding(top = ZdravnicaAppTheme.dimens.size12),
-            horizontalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4),
             verticalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4)
         ) {
             balmInfo.forEachIndexed { _, balm ->
@@ -147,47 +144,35 @@ fun CheckBalmCountAndOrder(
                 ),
             contentAlignment = Alignment.Center
         ) {
-
-            TooltipPopup(
-                modifier = Modifier
-                    .padding(start = ZdravnicaAppTheme.dimens.size8),
-                isEnableToClick = true,
-                requesterView = { modifier ->
-                    BigButton(
-                        modifier = modifier
-                            .wrapContentSize(),
-                        bigButtonModel = BigButtonModel(
-                            buttonText = stringResource(R.string.procedure_screen_start_procedure),
-                            textModifier = Modifier
-                                .wrapContentSize()
-                                .padding(horizontal = ZdravnicaAppTheme.dimens.size19),
-                            isEnabled = !isAnyBalmCountZero,
-                            onClick = {
-                                if (isAnyBalmCountZero) {
-//                            isBigButtonClick = true
-//                            showInfoMessage = true
-//                            position = bigButtonPosition
-                                } else {
-                                    startProcedure.invoke()
-                                }
-                            }
-                        ),
-                    )
-                },
-                tooltipContent = {
-                    Text(
-                        maxLines = COUNT_THREE,
-                        minLines = COUNT_THREE,
-                        modifier = Modifier.padding(
-                            horizontal = ZdravnicaAppTheme.dimens.size8,
-                            vertical = ZdravnicaAppTheme.dimens.size4
-                        ).widthIn(max = ZdravnicaAppTheme.dimens.size152),
-                        text = stringResource(R.string.procedure_screen_tooltip_message),
-                        style = ZdravnicaAppTheme.typography.bodyXSMedium,
-                        color = Color.Black,
-                    )
-                }
-            )
+            if (isAnyBalmCountZero) {
+                BigButtonWithTooltip(
+                    modifier = modifier
+                        .wrapContentSize(),
+                    showTooltip = true,
+                    bigButtonModel = BigButtonModel(
+                        buttonText = stringResource(R.string.procedure_screen_start_procedure),
+                        textModifier = Modifier
+                            .wrapContentSize()
+                            .padding(horizontal = ZdravnicaAppTheme.dimens.size19),
+                        isEnabled = !isAnyBalmCountZero,
+                    ),
+                )
+            } else {
+                BigButton(
+                    modifier = modifier
+                        .wrapContentSize(),
+                    bigButtonModel = BigButtonModel(
+                        buttonText = stringResource(R.string.procedure_screen_start_procedure),
+                        textModifier = Modifier
+                            .wrapContentSize()
+                            .padding(horizontal = ZdravnicaAppTheme.dimens.size19),
+                        isEnabled = !isAnyBalmCountZero,
+                        onClick = {
+                            startProcedure.invoke()
+                        }
+                    ),
+                )
+            }
         }
     }
 }

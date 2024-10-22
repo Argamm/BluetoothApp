@@ -3,6 +3,7 @@ package com.zdravnica.app.screens.procedure.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -20,7 +21,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.COUNT_THREE
+import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.components.tooltip.TooltipPopup
 import com.zdravnica.uikit.resources.R
 
@@ -31,7 +32,7 @@ fun BalmInfoText(
     isBalmCountZero: Boolean,
 ) {
     TooltipPopup(
-        modifier = modifier,
+        modifier = modifier.padding(start = ZdravnicaAppTheme.dimens.size4),
         isEnableToClick = isBalmCountZero,
         requesterView = { boxModifier ->
             Box(
@@ -77,14 +78,15 @@ fun BalmInfoText(
         },
         tooltipContent = {
             Text(
-                maxLines = COUNT_THREE,
-                minLines = COUNT_THREE,
+                maxLines = COUNT_TWO,
+                minLines = COUNT_TWO,
                 modifier = Modifier
                     .padding(
                         horizontal = ZdravnicaAppTheme.dimens.size8,
                         vertical = ZdravnicaAppTheme.dimens.size4
                     )
-                    .widthIn(max = ZdravnicaAppTheme.dimens.size152),
+                    .widthIn(max = ZdravnicaAppTheme.dimens.size152)
+                    .heightIn(max = ZdravnicaAppTheme.dimens.size100),
                 text = stringResource(R.string.procedure_screen_tooltip_message),
                 style = ZdravnicaAppTheme.typography.bodyXSMedium,
                 color = Color.Black,

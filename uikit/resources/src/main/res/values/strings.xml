@@ -67,6 +67,10 @@
     <string name="menu_screen_zdravnica_support_email_address" translatable="false">info@sibkedr.ru</string>
     <string name="menu_screen_zdravnica_support_phone_number" translatable="false">+88007759552</string>
     <string name="menu_screen_zdravnica_uri_path" translatable="false">https://www.zdrav.sibkedr.ru/</string>
+    <string name="menu_screen_tooltip_ten">Recommendations regarding the malfunctioning heating element</string>
+    <string name="menu_screen_tooltip_fan">Recommendations regarding the malfunctioning fan</string>
+    <string name="menu_screen_tooltip_compressor">Recommendations regarding the malfunctioning compressor</string>
+    <string name="menu_screen_tooltip_ik">Recommendations regarding the malfunctioning infrared emitter</string>
     <!--    MenuScreen Page end -->
 
     <!--    ProcedureScreen Page start -->

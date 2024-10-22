@@ -57,7 +57,6 @@ fun CheckBalmCountAndOrderTablet(
         FlowRow(
             modifier = Modifier
                 .padding(top = ZdravnicaAppTheme.dimens.size12),
-            horizontalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4),
             verticalArrangement = Arrangement.spacedBy(ZdravnicaAppTheme.dimens.size4)
         ) {
             balmInfo.forEachIndexed { _, balm ->
