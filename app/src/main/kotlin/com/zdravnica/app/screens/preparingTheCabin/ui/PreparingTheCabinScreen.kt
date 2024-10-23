@@ -30,6 +30,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.preparingTheCabin.models.rememberProcedureProgressCircleState
 import com.zdravnica.app.screens.preparingTheCabin.viewModels.PreparingTheCabinScreenSideEffect
 import com.zdravnica.app.screens.preparingTheCabin.viewModels.PreparingTheCabinScreenViewModel
+import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenSideEffect
+import com.zdravnica.app.screens.statusScreen.StatusScreen
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.ANIMATION_DURATION_3000
@@ -40,6 +42,7 @@ import com.zdravnica.uikit.PINK_BACK_PROGRESS_UNTIL
 import com.zdravnica.uikit.RED_BACK_PROGRESS_FROM
 import com.zdravnica.uikit.RED_BACK_PROGRESS_UNTIL
 import com.zdravnica.uikit.WHITE_BACK_PROGRESS
+import com.zdravnica.uikit.components.statusDetails.StatusInfoState
 import com.zdravnica.uikit.components.topAppBar.ProcedureProcessTopAppBar
 import com.zdravnica.uikit.resources.R
 import org.koin.androidx.compose.koinViewModel
@@ -61,6 +64,8 @@ fun PreparingTheCabinScreen(
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     var showAnimationCircle by remember { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
+    var showFailedScreen by remember { mutableStateOf(false) }
+    var statusInfoState by remember { mutableStateOf(StatusInfoState.THERMOSTAT_ACTIVATION) }
 
     val targetBackgroundColor = when {
         progress <= WHITE_BACK_PROGRESS -> Color.White
@@ -77,13 +82,24 @@ fun PreparingTheCabinScreen(
 
     preparingTheCabinScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is PreparingTheCabinScreenSideEffect.OnNavigateToSelectProcedureScreen ->
+            is PreparingTheCabinScreenSideEffect.OnNavigateToSelectProcedureScreen -> {
+                preparingTheCabinScreenViewModel.stopObservingSensorData()
                 navigateToSelectProcedureScreen.invoke()
+            }
 
             is PreparingTheCabinScreenSideEffect.OnNavigateToCancelDialogPage ->
                 navigateToCancelDialogPage.invoke(
                     true, cancelDialog
                 )
+
+            is PreparingTheCabinScreenSideEffect.OnNavigateToFailedTenCommandScreen -> {
+                showFailedScreen = true
+                statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
+            }
+            is PreparingTheCabinScreenSideEffect.OnBluetoothConnectionLost -> {
+                showFailedScreen = true
+                statusInfoState = StatusInfoState.CONNECTION_LOST
+            }
         }
     }
 
@@ -151,10 +167,8 @@ fun PreparingTheCabinScreen(
 
                         ControlProcedure(
                             procedureState = if (progress < COUNT_TO_100) {
-                                preparingTheCabinScreenViewModel.turnOnTenCommand()
                                 stringResource(R.string.preparing_the_cabin_waiting)
                             } else {
-                                preparingTheCabinScreenViewModel.turnOffTenCommand()
                                 stringResource(R.string.preparing_the_cabin_ready)
                             },
                             progress = progress,
@@ -180,12 +194,22 @@ fun PreparingTheCabinScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     AnimationCircle(animationEnd = {
+                        preparingTheCabinScreenViewModel.stopObservingSensorData()
                         navigateToProcedureProcessScreen.invoke()
                     })
                 }
             }
         }
     )
+
+    if (showFailedScreen) {
+        StatusScreen(
+            state = statusInfoState,
+            onCloseClick = { showFailedScreen = false },
+            onSupportClick = {},
+            onYesClick = { showFailedScreen = false },
+        )
+    }
 }
 
 @Preview
@@ -195,7 +219,7 @@ private fun PreparingTheCabinScreenPrev() {
         PreparingTheCabinScreen(
             navigateToSelectProcedureScreen = {},
             navigateToCancelDialogPage = { _, _ -> },
-            navigateToProcedureProcessScreen = {}
+            navigateToProcedureProcessScreen = {},
         )
     }
 }

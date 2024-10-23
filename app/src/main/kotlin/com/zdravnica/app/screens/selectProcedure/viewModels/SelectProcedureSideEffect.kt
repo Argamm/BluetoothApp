@@ -8,4 +8,6 @@ sealed interface SelectProcedureSideEffect {
     data class OnProcedureCardClick(
         val chipData: BigChipsStateModel
     ) : SelectProcedureSideEffect
+
+    data object OnBluetoothConnectionLost: SelectProcedureSideEffect
 }

@@ -14,6 +14,7 @@ import com.zdravnica.bluetooth.data.COMMAND_STV1
 import com.zdravnica.bluetooth.data.COMMAND_STV2
 import com.zdravnica.bluetooth.data.COMMAND_STV3
 import com.zdravnica.bluetooth.data.COMMAND_TEN
+import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import com.zdravnica.uikit.COUNT_ONE
 import com.zdravnica.uikit.COUNT_THREE
@@ -38,6 +39,8 @@ class ProcedureProcessViewModel(
     private val calculateCaloriesUseCase: CalculateCaloriesUseCase
 ) : BaseViewModel<ProcedureProcessViewState, ProcedureProcessSideEffect>() {
 
+    private var hasTemperatureDifferenceWarningBeenShown = false
+
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
 
@@ -56,12 +59,26 @@ class ProcedureProcessViewModel(
     fun observeSensorData() = intent {
         sensorDataJob?.cancel()
 
+        viewModelScope.launch {
+            bluetoothController.bluetoothConnectionStatus.collect { status ->
+                when (status) {
+                    is BluetoothConnectionStatus.Connected -> {}
+                    is BluetoothConnectionStatus.Disconnected -> {
+                        postSideEffect(ProcedureProcessSideEffect.OnBluetoothConnectionLost)
+                    }
+                    is BluetoothConnectionStatus.Error -> {
+                        postSideEffect(ProcedureProcessSideEffect.OnBluetoothConnectionLost)
+                    }
+                }
+            }
+        }
+
         sensorDataJob = viewModelScope.launch {
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 val currentCalorieValue =
                     calculateCaloriesUseCase.calculateCalories(sensorData?.snsrHC ?: 0)
                 val sensorTemperature = sensorData?.temrTmpr1 ?: 0
-                val isDifferenceLarge = (sensorTemperature - temperature.value) > 6
+                val isDifferenceLarge = (sensorTemperature - temperature.value) >= 5
 
                 postViewState(
                     state.copy(
@@ -72,12 +89,23 @@ class ProcedureProcessViewModel(
                     )
                 )
 
+                if (isDifferenceLarge && !hasTemperatureDifferenceWarningBeenShown) {
+                    hasTemperatureDifferenceWarningBeenShown = true
+                    postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTemperatureCommandScreen)
+                }
+
                 if (!isTimerFinished && temperature.value - sensorTemperature >= 1) {
                     if (!localDataStore.getCommandState(COMMAND_TEN)) {
-                        bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
-                            localDataStore.saveCommandState(COMMAND_TEN, true)
-                            updateIconStates()
-                        })
+                        bluetoothController.sendCommand(
+                            COMMAND_TEN,
+                            onSuccess = {
+                                localDataStore.saveCommandState(COMMAND_TEN, true)
+                                updateIconStates()
+                            },
+                            onFailed = {
+                                postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen)
+                            }
+                        )
                     }
                 } else {
                     if (localDataStore.getCommandState(COMMAND_TEN)) {

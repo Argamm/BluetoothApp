@@ -29,6 +29,7 @@ import com.zdravnica.app.screens.selectProcedure.ui.TemperatureOrDurationAdjuste
 import com.zdravnica.app.screens.selectProcedure.ui.TextWithSwitches
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideEffect
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
+import com.zdravnica.app.screens.statusScreen.StatusScreen
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
@@ -47,26 +48,23 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SelectProcedureTabletScreen(
     modifier: Modifier = Modifier,
     selectProcedureViewModel: SelectProcedureViewModel = koinViewModel(),
+    isShowingSnackBar: Boolean = false,
     navigateToMenuScreen: () -> Unit,
     navigateToProcedureScreen: (Int) -> Unit,
-    isShowingSnackBar: Boolean = false,
 ) {
     val viewState by selectProcedureViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
     val iconStates = viewState.iconStates
-    var currentSnackBarModel by remember { mutableStateOf<Boolean?>(null) }
-
-    LaunchedEffect(viewState.isShowingSnackBar) {
-        if (viewState.isShowingSnackBar) {
-            currentSnackBarModel = true
-        }
-    }
+    var showFailedScreen by remember { mutableStateOf(false) }
 
     selectProcedureViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is SelectProcedureSideEffect.OnNavigateToMenuScreen -> navigateToMenuScreen.invoke()
             is SelectProcedureSideEffect.OnProcedureCardClick -> {
                 navigateToProcedureScreen.invoke(sideEffect.chipData.title)
+            }
+            is SelectProcedureSideEffect.OnBluetoothConnectionLost -> {
+                showFailedScreen = true
             }
         }
     }
@@ -158,7 +156,7 @@ fun SelectProcedureTabletScreen(
         if (viewState.isShowingSnackBar && isShowingSnackBar) {
             LaunchedEffect(Unit) {
                 delay(DELAY_DURATION_3000)
-                currentSnackBarModel = null
+                selectProcedureViewModel.setSnackBarInvisible()
             }
 
             Box(
@@ -175,5 +173,14 @@ fun SelectProcedureTabletScreen(
                 )
             }
         }
+    }
+
+    if (showFailedScreen) {
+        StatusScreen(
+            state = StatusInfoState.CONNECTION_LOST,
+            onCloseClick = { showFailedScreen = false },
+            onSupportClick = {},
+            onYesClick = { showFailedScreen = false },
+        )
     }
 }

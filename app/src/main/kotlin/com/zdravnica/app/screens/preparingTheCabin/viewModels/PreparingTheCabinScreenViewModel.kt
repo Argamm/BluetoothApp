@@ -11,8 +11,10 @@ import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.COMMAND_KMPR
 import com.zdravnica.bluetooth.data.COMMAND_TEN
+import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import com.zdravnica.uikit.base_type.IconState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -27,6 +29,8 @@ class PreparingTheCabinScreenViewModel(
     private val bluetoothController: BluetoothController,
     private val calculateTemperatureProgressUseCase: CalculateTemperatureProgressUseCase
 ) : BaseViewModel<PreparingTheCabinScreenViewState, PreparingTheCabinScreenSideEffect>() {
+
+    private var sensorDataJob: Job? = null
 
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
@@ -47,7 +51,24 @@ class PreparingTheCabinScreenViewModel(
     }
 
     private fun observeSensorData() = intent {
+        sensorDataJob?.cancel()
+        sensorDataJob = null
+
         viewModelScope.launch {
+            bluetoothController.bluetoothConnectionStatus.collect { status ->
+                when (status) {
+                    is BluetoothConnectionStatus.Connected -> {}
+                    is BluetoothConnectionStatus.Disconnected -> {
+                        postSideEffect(PreparingTheCabinScreenSideEffect.OnBluetoothConnectionLost)
+                    }
+                    is BluetoothConnectionStatus.Error -> {
+                        postSideEffect(PreparingTheCabinScreenSideEffect.OnBluetoothConnectionLost)
+                    }
+                }
+            }
+        }
+
+        sensorDataJob = viewModelScope.launch {
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 val sensorTemperature = sensorData?.temrTmpr1 ?: 0
 
@@ -56,6 +77,29 @@ class PreparingTheCabinScreenViewModel(
                         sensorTemperature = sensorTemperature
                     )
                 )
+
+                if (temperature.value - sensorTemperature >= 1) {
+                    if (!localDataStore.getCommandState(COMMAND_TEN)) {
+                        bluetoothController.sendCommand(
+                            COMMAND_TEN,
+                            onSuccess = {
+                                localDataStore.saveCommandState(COMMAND_TEN, true)
+                                updateIconStates()
+                            },
+                            onFailed = {
+                                postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToFailedTenCommandScreen)
+                            }
+                        )
+                    }
+                } else {
+                    if (localDataStore.getCommandState(COMMAND_TEN)) {
+                        bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
+                            localDataStore.saveCommandState(COMMAND_TEN, false)
+                            updateIconStates()
+                        })
+                    }
+                }
+
                 updateIconStates()
 
                 calculateTemperatureProgressUseCase.execute(
@@ -68,6 +112,11 @@ class PreparingTheCabinScreenViewModel(
         }
     }
 
+    fun stopObservingSensorData() {
+        sensorDataJob?.cancel()
+        sensorDataJob = null
+    }
+
     fun onChangeCancelDialogPageVisibility(isVisible: Boolean) = intent {
         reduce {
             state.copy(isDialogVisible = isVisible)
@@ -76,28 +125,6 @@ class PreparingTheCabinScreenViewModel(
 
     fun navigateToCancelDialogPage() {
         postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToCancelDialogPage)
-    }
-
-    fun turnOffTenCommand() {
-        viewModelScope.launch {
-            if (localDataStore.getCommandState(COMMAND_TEN)) {
-                bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_TEN, false)
-                    updateIconStates()
-                })
-            }
-        }
-    }
-
-    fun turnOnTenCommand() {
-        viewModelScope.launch {
-            if (!localDataStore.getCommandState(COMMAND_TEN)) {
-                bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_TEN, true)
-                    updateIconStates()
-                })
-            }
-        }
     }
 
     fun updateIconStates() = intent {

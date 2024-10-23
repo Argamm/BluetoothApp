@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.screens.menuScreen.models.MenuScreenViewState
+import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -26,6 +27,20 @@ class MenuScreenViewModel(
         )
 
     fun observeSensorData() = intent {
+        viewModelScope.launch {
+            bluetoothController.bluetoothConnectionStatus.collect { status ->
+                when (status) {
+                    is BluetoothConnectionStatus.Connected -> {}
+                    is BluetoothConnectionStatus.Disconnected -> {
+                        postSideEffect(MenuScreenSideEffect.OnBluetoothConnectionLost)
+                    }
+                    is BluetoothConnectionStatus.Error -> {
+                        postSideEffect(MenuScreenSideEffect.OnBluetoothConnectionLost)
+                    }
+                }
+            }
+        }
+
         viewModelScope.launch {
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 val sensorTemperature = sensorData?.temrTmpr1 ?: 0

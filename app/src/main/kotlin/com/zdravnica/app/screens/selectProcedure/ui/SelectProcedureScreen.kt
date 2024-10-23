@@ -15,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +28,7 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideEffect
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
+import com.zdravnica.app.screens.statusScreen.StatusScreen
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.DELAY_DURATION_3000
@@ -53,9 +56,9 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SelectProcedureScreen(
     modifier: Modifier = Modifier,
     selectProcedureViewModel: SelectProcedureViewModel = koinViewModel(),
+    isShowingSnackBar: Boolean = false,
     navigateToMenuScreen: () -> Unit,
-    navigateToProcedureScreen: (Int) -> Unit,
-    isShowingSnackBar: Boolean = false
+    navigateToProcedureScreen: (Int) -> Unit
 ) {
     val viewState by selectProcedureViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
@@ -63,6 +66,7 @@ fun SelectProcedureScreen(
     val isButtonVisible by remember { derivedStateOf { listState.firstVisibleItemIndex <= COUNT_THREE } }
     val sampleChips = getChipDataList().map { it.chipData }
     val iconStates = viewState.iconStates
+    var showFailedScreen by remember { mutableStateOf(false) }
 
     selectProcedureViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -74,6 +78,10 @@ fun SelectProcedureScreen(
             is SelectProcedureSideEffect.OnProcedureCardClick -> {
                 selectProcedureViewModel.setSnackBarInvisible()
                 navigateToProcedureScreen.invoke(sideEffect.chipData.title)
+            }
+
+            is SelectProcedureSideEffect.OnBluetoothConnectionLost -> {
+                showFailedScreen = true
             }
         }
     }
@@ -231,6 +239,15 @@ fun SelectProcedureScreen(
                 )
             }
         }
+    }
+
+    if (showFailedScreen) {
+        StatusScreen(
+            state = StatusInfoState.CONNECTION_LOST,
+            onCloseClick = { showFailedScreen = false },
+            onSupportClick = {},
+            onYesClick = { showFailedScreen = false },
+        )
     }
 }
 

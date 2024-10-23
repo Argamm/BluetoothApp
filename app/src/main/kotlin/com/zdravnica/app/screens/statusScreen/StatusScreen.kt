@@ -33,7 +33,7 @@ import com.zdravnica.uikit.components.statusDetails.stateDataMap
 @Composable
 fun StatusScreen(
     modifier: Modifier = Modifier,
-    state: StatusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION,
+    state: StatusInfoState = StatusInfoState.CONNECTION_LOST,
     onCloseClick: () -> Unit,
     onSupportClick: () -> Unit,
     onYesClick: () -> Unit,

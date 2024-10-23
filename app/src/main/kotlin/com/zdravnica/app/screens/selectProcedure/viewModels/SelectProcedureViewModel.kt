@@ -10,6 +10,7 @@ import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.COMMAND_KMPR
 import com.zdravnica.bluetooth.data.COMMAND_TEN
+import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getChipDataList
@@ -42,6 +43,20 @@ class SelectProcedureViewModel(
     }
 
     private fun observeSensorData() = intent {
+        viewModelScope.launch {
+            bluetoothController.bluetoothConnectionStatus.collect { status ->
+                when (status) {
+                    is BluetoothConnectionStatus.Connected -> {}
+                    is BluetoothConnectionStatus.Disconnected -> {
+                        postSideEffect(SelectProcedureSideEffect.OnBluetoothConnectionLost)
+                    }
+                    is BluetoothConnectionStatus.Error -> {
+                        postSideEffect(SelectProcedureSideEffect.OnBluetoothConnectionLost)
+                    }
+                }
+            }
+        }
+
         viewModelScope.launch {
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 postViewState(
@@ -96,10 +111,6 @@ class SelectProcedureViewModel(
 
     fun setSnackBarInvisible() = intent {
         postViewState(state.copy(isShowingSnackBar = false))
-    }
-
-    fun getIkState(): Boolean {
-        return localDataStore.getCommandState(COMMAND_IREM)
     }
 
     fun loadCommandStates() = intent {

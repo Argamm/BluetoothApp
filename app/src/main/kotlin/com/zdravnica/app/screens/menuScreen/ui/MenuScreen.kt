@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalContext
@@ -28,9 +30,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenSideEffect
 import com.zdravnica.app.screens.menuScreen.viewModels.MenuScreenViewModel
+import com.zdravnica.app.screens.statusScreen.StatusScreen
 import com.zdravnica.app.utils.isTablet
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.components.statusDetails.StatusInfoState
 import com.zdravnica.uikit.components.topAppBar.SimpleTopAppBar
 import com.zdravnica.uikit.extensions.compose.callPhoneActivity
 import com.zdravnica.uikit.extensions.compose.sendEmailActivity
@@ -58,6 +62,7 @@ fun MenuScreen(
     val stringNut = stringResource(R.string.menu_screen_nut)
     val stringMint = stringResource(R.string.menu_screen_mint)
     val balmNameList = listOf(stringBurdock, stringNut, stringMint)
+    var showFailedScreen by remember { mutableStateOf(false) }
 
     menuScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -75,8 +80,12 @@ fun MenuScreen(
                 context.callPhoneActivity(supportPhoneNumber)
             }
 
-            is MenuScreenSideEffect.OnNavigateToCancelDialogPage ->
+            is MenuScreenSideEffect.OnNavigateToCancelDialogPage -> {
                 navigateToCancelDialogPage.invoke(false, cancelDialog)
+            }
+            is MenuScreenSideEffect.OnBluetoothConnectionLost -> {
+                showFailedScreen = true
+            }
         }
     }
 
@@ -210,6 +219,15 @@ fun MenuScreen(
             }
         }
     )
+
+    if (showFailedScreen) {
+        StatusScreen(
+            state = StatusInfoState.CONNECTION_LOST,
+            onCloseClick = { showFailedScreen = false },
+            onSupportClick = {},
+            onYesClick = { showFailedScreen = false },
+        )
+    }
 }
 
 @Preview

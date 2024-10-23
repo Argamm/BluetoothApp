@@ -6,7 +6,7 @@ import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.screens.procedure.models.ProcedureScreenViewState
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_IREM
-import com.zdravnica.bluetooth.data.COMMAND_TEN
+import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -32,16 +32,30 @@ class ProcedureScreenViewModel(
 
     fun startProcedureWithCommands() {
         viewModelScope.launch {
-            while (!localDataStore.getCommandState(COMMAND_FAN)) {
-                bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_FAN, true)
-                })//turn On
+            bluetoothController.bluetoothConnectionStatus.collect { status ->
+                when (status) {
+                    is BluetoothConnectionStatus.Connected -> {}
+                    is BluetoothConnectionStatus.Disconnected -> {
+                        postSideEffect(ProcedureScreenSideEffect.OnBluetoothConnectionLost)
+                    }
+                    is BluetoothConnectionStatus.Error -> {
+                        postSideEffect(ProcedureScreenSideEffect.OnBluetoothConnectionLost)
+                    }
+                }
             }
+        }
 
-            if (!localDataStore.getCommandState(COMMAND_TEN)) {
-                bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_TEN, true)
-                })//turn On
+        viewModelScope.launch {
+            if (!localDataStore.getCommandState(COMMAND_FAN)) {
+                bluetoothController.sendCommand(
+                    COMMAND_FAN,
+                    onSuccess = {
+                        localDataStore.saveCommandState(COMMAND_FAN, true)
+                    },
+                    onFailed = {
+                        postSideEffect(ProcedureScreenSideEffect.OnNavigateToFailedTenCommandScreen)
+                    }
+                )//turn On
             }
 
             while (!localDataStore.getCommandState(COMMAND_IREM)) {
@@ -56,7 +70,7 @@ class ProcedureScreenViewModel(
         return localDataStore.getBalmCount(balmName)
     }
 
-    fun balmFilled(balmName: String,  balmsName: List<String>) {
+    fun balmFilled(balmName: String, balmsName: List<String>) {
         localDataStore.resetBalmCount(balmName = balmName)
         updateBalmCounts(balmsName)
     }

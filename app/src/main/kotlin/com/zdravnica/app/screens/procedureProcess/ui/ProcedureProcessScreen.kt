@@ -32,12 +32,14 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.procedureProcess.viewModels.ProcedureProcessSideEffect
 import com.zdravnica.app.screens.procedureProcess.viewModels.ProcedureProcessViewModel
+import com.zdravnica.app.screens.statusScreen.StatusScreen
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
 import com.zdravnica.uikit.components.buttons.ui.BigButton
 import com.zdravnica.uikit.components.chips.models.BigChipType
 import com.zdravnica.uikit.components.push.ProcedureStateInfo
+import com.zdravnica.uikit.components.statusDetails.StatusInfoState
 import com.zdravnica.uikit.components.topAppBar.ProcedureProcessTopAppBar
 import com.zdravnica.uikit.resources.R
 import org.koin.androidx.compose.koinViewModel
@@ -57,6 +59,8 @@ fun ProcedureProcessScreen(
     var isTimerFinished by remember { mutableStateOf(false) }
     val viewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val iconStates = viewState.iconStates
+    var showFailedScreen by remember { mutableStateOf(false) }
+    var statusInfoState by remember { mutableStateOf(StatusInfoState.THERMOSTAT_ACTIVATION) }
 
     procedureProcessViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -65,6 +69,18 @@ fun ProcedureProcessScreen(
                 true,
                 cancelDialog
             )
+            is ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen -> {
+                showFailedScreen = true
+                statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
+            }
+            is ProcedureProcessSideEffect.OnNavigateToFailedTemperatureCommandScreen -> {
+                showFailedScreen = true
+                statusInfoState = StatusInfoState.SENSOR_ERROR
+            }
+            is ProcedureProcessSideEffect.OnBluetoothConnectionLost -> {
+                showFailedScreen = true
+                statusInfoState = StatusInfoState.CONNECTION_LOST
+            }
         }
     }
 
@@ -220,6 +236,14 @@ fun ProcedureProcessScreen(
             }
         }
     )
+    if (showFailedScreen) {
+        StatusScreen(
+            state = statusInfoState,
+            onCloseClick = { showFailedScreen = false },
+            onSupportClick = {},
+            onYesClick = { showFailedScreen = false },
+        )
+    }
 }
 
 @Preview

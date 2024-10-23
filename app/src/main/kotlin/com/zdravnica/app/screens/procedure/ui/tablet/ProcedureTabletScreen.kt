@@ -23,10 +23,12 @@ import androidx.compose.ui.res.stringResource
 import com.zdravnica.app.screens.procedure.ui.ChooseProcedureChipGroup
 import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenSideEffect
 import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenViewModel
+import com.zdravnica.app.screens.statusScreen.StatusScreen
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.components.chips.models.BigChipType
 import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getAllChipTitles
 import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getBalmInfoByTitle
+import com.zdravnica.uikit.components.statusDetails.StatusInfoState
 import com.zdravnica.uikit.components.topAppBar.SimpleTopAppBar
 import com.zdravnica.uikit.resources.R
 import org.koin.androidx.compose.koinViewModel
@@ -55,6 +57,8 @@ fun ProcedureTabletScreen(
         })
     }
     var balmInfo by remember { mutableStateOf(chipTitle?.let { getBalmInfoByTitle(it) }) }
+    var showFailedScreen by remember { mutableStateOf(false) }
+    var statusInfoState by remember { mutableStateOf(StatusInfoState.THERMOSTAT_ACTIVATION) }
 
     procedureScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -63,6 +67,18 @@ fun ProcedureTabletScreen(
                 selectedOption = sideEffect.selectedOption
                 chipData = BigChipType.getChipDataByTitle(sideEffect.selectedOption)
                 balmInfo = getBalmInfoByTitle(sideEffect.selectedOption)
+            }
+            is ProcedureScreenSideEffect.OnNavigateToFailedTenCommandScreen -> {
+                showFailedScreen = true
+                statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
+            }
+            is ProcedureScreenSideEffect.OnNavigateToFailedFanCommandScreen -> {
+                showFailedScreen = true
+                statusInfoState = StatusInfoState.TEMPERATURE_EXCEEDED
+            }
+            is ProcedureScreenSideEffect.OnBluetoothConnectionLost -> {
+                showFailedScreen = true
+                statusInfoState = StatusInfoState.CONNECTION_LOST
             }
         }
     }
@@ -159,4 +175,13 @@ fun ProcedureTabletScreen(
             }
         }
     )
+
+    if (showFailedScreen) {
+        StatusScreen(
+            state = statusInfoState,
+            onCloseClick = { showFailedScreen = false },
+            onSupportClick = {},
+            onYesClick = { showFailedScreen = false },
+        )
+    }
 }

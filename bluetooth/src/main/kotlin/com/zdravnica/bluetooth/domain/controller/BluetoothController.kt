@@ -1,5 +1,6 @@
 package com.zdravnica.bluetooth.domain.controller
 
+import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.data.models.ConnectionResult
 import com.zdravnica.bluetooth.data.models.SensorData
 import com.zdravnica.bluetooth.domain.models.BluetoothDeviceDomainModel
@@ -13,6 +14,7 @@ interface BluetoothController {
     val connectionResultFlow: SharedFlow<ConnectionResult>
     val showLoading: SharedFlow<Boolean>
     val sensorDataFlow: StateFlow<SensorData?>
+    val bluetoothConnectionStatus: StateFlow<BluetoothConnectionStatus>
 
     fun bluetoothIsEnabled(): Boolean
     fun refreshPairedDevices()
@@ -20,5 +22,9 @@ interface BluetoothController {
     fun close()
     fun startScanning()
     fun stopScanning()
-    suspend fun sendCommand(cmd: String, onSuccess: (() -> Unit)? = null)
+    suspend fun sendCommand(
+        cmd: String,
+        onSuccess: (() -> Unit)? = null,
+        onFailed: (() -> Unit)? = null
+    )
 }
