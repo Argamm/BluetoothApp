@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.procedureProcess.ui.tablet
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -58,6 +59,7 @@ fun ProcedureProcessTabletScreen(
     chipTitle: Int?,
     navigateToMainScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
+    navigateToTheConnectionScreen: () -> Unit,
 ) {
     val ctx = LocalContext.current
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
@@ -67,6 +69,7 @@ fun ProcedureProcessTabletScreen(
     val iconStates = viewState.iconStates
     var showFailedScreen by remember { mutableStateOf(false) }
     var statusInfoState by remember { mutableStateOf(StatusInfoState.THERMOSTAT_ACTIVATION) }
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     procedureProcessViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -75,18 +78,48 @@ fun ProcedureProcessTabletScreen(
                 true,
                 cancelDialog
             )
+
             is ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
             }
+
             is ProcedureProcessSideEffect.OnNavigateToFailedTemperatureCommandScreen -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.SENSOR_ERROR
             }
+
             is ProcedureProcessSideEffect.OnBluetoothConnectionLost -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.CONNECTION_LOST
             }
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val lifecycleObserver = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_CREATE -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_CREATE")
+                Lifecycle.Event.ON_START -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_START")
+                Lifecycle.Event.ON_RESUME -> {
+                    procedureProcessViewModel.onChangeCancelDialogPageVisibility(false)
+                    procedureProcessViewModel.observeSensorData()
+                    Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_RESUME")
+                }
+                Lifecycle.Event.ON_PAUSE -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_PAUSE")
+                Lifecycle.Event.ON_STOP -> {
+                    procedureProcessViewModel.stopObservingSensorData()
+                    Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_STOP")
+                }
+                Lifecycle.Event.ON_DESTROY -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_DESTROY")
+                else -> Log.d("LifecycleLogger", "Unknown event")
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
         }
     }
 
@@ -98,19 +131,6 @@ fun ProcedureProcessTabletScreen(
 
     LaunchedEffect(Unit) {
         procedureProcessViewModel.updateIconStates()
-    }
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                procedureProcessViewModel.onChangeCancelDialogPageVisibility(false)
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
     }
 
     Scaffold(
@@ -271,7 +291,12 @@ fun ProcedureProcessTabletScreen(
             state = statusInfoState,
             onCloseClick = { showFailedScreen = false },
             onSupportClick = {},
-            onYesClick = { showFailedScreen = false },
+            onYesClick = {
+                showFailedScreen = false
+                if (statusInfoState == StatusInfoState.CONNECTION_LOST) {
+                    navigateToTheConnectionScreen.invoke()
+                }
+            },
         )
     }
 }
@@ -283,6 +308,8 @@ private fun ProcedureProcessScreenPrevT() {
         ProcedureProcessTabletScreen(
             chipTitle = null,
             navigateToMainScreen = {},
-            navigateToCancelDialogPage = { _, _ -> })
+            navigateToCancelDialogPage = { _, _ -> },
+            navigateToTheConnectionScreen = {},
+        )
     }
 }

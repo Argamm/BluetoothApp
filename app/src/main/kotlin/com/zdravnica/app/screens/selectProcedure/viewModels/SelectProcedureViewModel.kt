@@ -43,6 +43,24 @@ class SelectProcedureViewModel(
     }
 
     private fun observeSensorData() = intent {
+       /* viewModelScope.launch {
+            bluetoothController.getCommandsState.collect { state ->
+                Log.i("asdasdsa", "observeSensorData in state: $state")
+                Log.i("asdasdsa", "observeSensorData in state 0: ${state[0]}")
+                Log.i("asdasdsa", "observeSensorData in state 1: ${state[1]}")
+                Log.i("asdasdsa", "observeSensorData in state 2: ${state[2]}")
+//                localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
+//                localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
+//                localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')
+//                localDataStore.saveCommandState(COMMAND_IREM, state[3] == '1')
+//
+//                localDataStore.saveCommandState(COMMAND_STV1, state[5] == '1')
+//                localDataStore.saveCommandState(COMMAND_STV2, state[6] == '1')
+//                localDataStore.saveCommandState(COMMAND_STV3, state[7] == '1')
+//                localDataStore.saveCommandState(COMMAND_STV4, state[8] == '1')
+            }
+        }*/
+
         viewModelScope.launch {
             bluetoothController.bluetoothConnectionStatus.collect { status ->
                 when (status) {
@@ -50,6 +68,7 @@ class SelectProcedureViewModel(
                     is BluetoothConnectionStatus.Disconnected -> {
                         postSideEffect(SelectProcedureSideEffect.OnBluetoothConnectionLost)
                     }
+
                     is BluetoothConnectionStatus.Error -> {
                         postSideEffect(SelectProcedureSideEffect.OnBluetoothConnectionLost)
                     }

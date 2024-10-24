@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.preparingTheCabin.ui
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -56,6 +57,7 @@ fun PreparingTheCabinScreen(
     navigateToSelectProcedureScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
     navigateToProcedureProcessScreen: () -> Unit,
+    navigateToTheConnectionScreen: () -> Unit,
 ) {
     val preparingTheCabinScreenViewState by preparingTheCabinScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val progress by preparingTheCabinScreenViewModel.progress.collectAsStateWithLifecycle()
@@ -87,15 +89,15 @@ fun PreparingTheCabinScreen(
                 navigateToSelectProcedureScreen.invoke()
             }
 
-            is PreparingTheCabinScreenSideEffect.OnNavigateToCancelDialogPage ->
-                navigateToCancelDialogPage.invoke(
-                    true, cancelDialog
-                )
+            is PreparingTheCabinScreenSideEffect.OnNavigateToCancelDialogPage -> {
+                navigateToCancelDialogPage.invoke(true, cancelDialog)
+            }
 
             is PreparingTheCabinScreenSideEffect.OnNavigateToFailedTenCommandScreen -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
             }
+
             is PreparingTheCabinScreenSideEffect.OnBluetoothConnectionLost -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.CONNECTION_LOST
@@ -104,14 +106,34 @@ fun PreparingTheCabinScreen(
     }
 
     DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                preparingTheCabinScreenViewModel.onChangeCancelDialogPageVisibility(false)
+        val lifecycleObserver = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_CREATE -> Log.d("LifecycleLogger", "ON_CREATE")
+                Lifecycle.Event.ON_START -> {
+                    preparingTheCabinScreenViewModel.observeSensorData()
+                    Log.d("LifecycleLogger", "ON_START")
+                }
+
+                Lifecycle.Event.ON_RESUME -> {
+                    preparingTheCabinScreenViewModel.onChangeCancelDialogPageVisibility(false)
+                    Log.d("LifecycleLogger", "ON_RESUME")
+                }
+
+                Lifecycle.Event.ON_PAUSE -> Log.d("LifecycleLogger", "ON_PAUSE")
+                Lifecycle.Event.ON_STOP -> {
+                    preparingTheCabinScreenViewModel.stopObservingSensorData()
+                    Log.d("LifecycleLogger", "ON_STOP")
+                }
+
+                Lifecycle.Event.ON_DESTROY -> Log.d("LifecycleLogger", "ON_DESTROY")
+                else -> Log.d("LifecycleLogger", "Unknown event")
             }
         }
-        lifecycleOwner.lifecycle.addObserver(observer)
+
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+
         onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
+            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
         }
     }
 
@@ -207,7 +229,12 @@ fun PreparingTheCabinScreen(
             state = statusInfoState,
             onCloseClick = { showFailedScreen = false },
             onSupportClick = {},
-            onYesClick = { showFailedScreen = false },
+            onYesClick = {
+                showFailedScreen = false
+                if (statusInfoState == StatusInfoState.CONNECTION_LOST) {
+                    navigateToTheConnectionScreen.invoke()
+                }
+            },
         )
     }
 }
@@ -220,6 +247,7 @@ private fun PreparingTheCabinScreenPrev() {
             navigateToSelectProcedureScreen = {},
             navigateToCancelDialogPage = { _, _ -> },
             navigateToProcedureProcessScreen = {},
+            navigateToTheConnectionScreen = {}
         )
     }
 }

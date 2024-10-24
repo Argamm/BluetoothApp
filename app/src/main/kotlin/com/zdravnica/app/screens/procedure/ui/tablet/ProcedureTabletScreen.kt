@@ -41,6 +41,7 @@ fun ProcedureTabletScreen(
     chipTitle: Int? = null,
     onNavigateUp: (() -> Unit)? = null,
     startProcedure: (Int) -> Unit,
+    navigateToTheConnectionScreen: () -> Unit,
 ) {
     val context = LocalContext.current
     val stringBurdock = stringResource(R.string.menu_screen_burdock)
@@ -68,14 +69,17 @@ fun ProcedureTabletScreen(
                 chipData = BigChipType.getChipDataByTitle(sideEffect.selectedOption)
                 balmInfo = getBalmInfoByTitle(sideEffect.selectedOption)
             }
+
             is ProcedureScreenSideEffect.OnNavigateToFailedTenCommandScreen -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
             }
+
             is ProcedureScreenSideEffect.OnNavigateToFailedFanCommandScreen -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.TEMPERATURE_EXCEEDED
             }
+
             is ProcedureScreenSideEffect.OnBluetoothConnectionLost -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.CONNECTION_LOST
@@ -181,7 +185,12 @@ fun ProcedureTabletScreen(
             state = statusInfoState,
             onCloseClick = { showFailedScreen = false },
             onSupportClick = {},
-            onYesClick = { showFailedScreen = false },
+            onYesClick = {
+                showFailedScreen = false
+                if (statusInfoState == StatusInfoState.CONNECTION_LOST) {
+                    navigateToTheConnectionScreen.invoke()
+                }
+            },
         )
     }
 }

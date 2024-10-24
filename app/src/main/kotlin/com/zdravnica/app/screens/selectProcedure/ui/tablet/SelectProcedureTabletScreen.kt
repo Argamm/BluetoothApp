@@ -51,6 +51,7 @@ fun SelectProcedureTabletScreen(
     isShowingSnackBar: Boolean = false,
     navigateToMenuScreen: () -> Unit,
     navigateToProcedureScreen: (Int) -> Unit,
+    navigateToTheConnectionScreen: () -> Unit,
 ) {
     val viewState by selectProcedureViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
@@ -63,6 +64,7 @@ fun SelectProcedureTabletScreen(
             is SelectProcedureSideEffect.OnProcedureCardClick -> {
                 navigateToProcedureScreen.invoke(sideEffect.chipData.title)
             }
+
             is SelectProcedureSideEffect.OnBluetoothConnectionLost -> {
                 showFailedScreen = true
             }
@@ -180,7 +182,10 @@ fun SelectProcedureTabletScreen(
             state = StatusInfoState.CONNECTION_LOST,
             onCloseClick = { showFailedScreen = false },
             onSupportClick = {},
-            onYesClick = { showFailedScreen = false },
+            onYesClick = {
+                showFailedScreen = false
+                navigateToTheConnectionScreen.invoke()
+            },
         )
     }
 }

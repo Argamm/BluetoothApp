@@ -58,7 +58,8 @@ fun SelectProcedureScreen(
     selectProcedureViewModel: SelectProcedureViewModel = koinViewModel(),
     isShowingSnackBar: Boolean = false,
     navigateToMenuScreen: () -> Unit,
-    navigateToProcedureScreen: (Int) -> Unit
+    navigateToProcedureScreen: (Int) -> Unit,
+    navigateToTheConnectionScreen: () -> Unit,
 ) {
     val viewState by selectProcedureViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
@@ -246,7 +247,10 @@ fun SelectProcedureScreen(
             state = StatusInfoState.CONNECTION_LOST,
             onCloseClick = { showFailedScreen = false },
             onSupportClick = {},
-            onYesClick = { showFailedScreen = false },
+            onYesClick = {
+                showFailedScreen = false
+                navigateToTheConnectionScreen.invoke()
+            },
         )
     }
 }
@@ -255,6 +259,10 @@ fun SelectProcedureScreen(
 @Composable
 fun PreviewSelectProcedureScreen() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        SelectProcedureScreen(navigateToMenuScreen = {}, navigateToProcedureScreen = {})
+        SelectProcedureScreen(
+            navigateToMenuScreen = {},
+            navigateToProcedureScreen = {},
+            navigateToTheConnectionScreen = {}
+        )
     }
 }

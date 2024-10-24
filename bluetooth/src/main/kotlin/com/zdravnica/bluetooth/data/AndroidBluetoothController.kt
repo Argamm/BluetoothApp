@@ -70,8 +70,13 @@ internal class AndroidBluetoothController(
     private val _sensorDataFlow = MutableStateFlow<SensorData?>(null)
     override val sensorDataFlow: StateFlow<SensorData?> = _sensorDataFlow.asStateFlow()
 
-    private val _bluetoothConnectionStatus = MutableStateFlow<BluetoothConnectionStatus>(BluetoothConnectionStatus.Disconnected)
-    override val bluetoothConnectionStatus: StateFlow<BluetoothConnectionStatus> = _bluetoothConnectionStatus
+    private val _bluetoothConnectionStatus =
+        MutableStateFlow<BluetoothConnectionStatus>(BluetoothConnectionStatus.Disconnected)
+    override val bluetoothConnectionStatus: StateFlow<BluetoothConnectionStatus> =
+        _bluetoothConnectionStatus
+
+//    private val _getCommandsState = MutableSharedFlow<String>()
+//    override val getCommandsState: SharedFlow<String> = _getCommandsState
 
     override fun bluetoothIsEnabled(): Boolean = adapter?.isEnabled ?: false
 
@@ -161,6 +166,8 @@ internal class AndroidBluetoothController(
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     bluetoothGatt?.setCharacteristicNotification(characteristic, true)
                     frmtSnsrData(value)
+//                    val stateResult = String(value)
+//                    setStateButtons(stateResult)
                 }
             }
         })
@@ -263,8 +270,19 @@ internal class AndroidBluetoothController(
             return
         }
 
-        val gatt = bluetoothGatt ?: return
-        val characteristic = findCharacteristic(gatt) ?: return
+        var gatt = bluetoothGatt
+        var characteristic = gatt?.let { findCharacteristic(it) }
+
+        if (gatt == null || characteristic == null) {
+            Log.w("Bluetooth", "Reinitializing BluetoothGatt and characteristic")
+            gatt = bluetoothGatt
+            characteristic = gatt?.let { findCharacteristic(it) }
+            if (gatt == null || characteristic == null) {
+                Log.e("Bluetooth", "Failed to reinitialize BluetoothGatt or characteristic")
+                onFailed?.invoke()
+                return
+            }
+        }
 
         if (cmd.isNotEmpty()) {
             val binCmd = cmd.toByteArray(Charsets.UTF_8)
@@ -273,12 +291,12 @@ internal class AndroidBluetoothController(
                 var attempt = 0
                 var success = false
 
-                if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE != 0) {
+                if (characteristic?.properties?.and(BluetoothGattCharacteristic.PROPERTY_WRITE) != 0) {
                     try {
                         while (attempt < 3 && !success) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                val result = gatt.writeCharacteristic(
-                                    characteristic,
+                                val result = gatt?.writeCharacteristic(
+                                    characteristic!!,
                                     binCmd,
                                     BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                                 )
@@ -288,31 +306,48 @@ internal class AndroidBluetoothController(
                                     success = true
                                     break
                                 } else {
-                                    Log.e("Bluetooth", "Failed to send command: $cmd (attempt $attempt)")
+                                    Log.e(
+                                        "Bluetooth",
+                                        "Failed to send command: $cmd (attempt $attempt)"
+                                    )
                                     attempt++
-                                    delay(DELAY_DURATION_500)
+                                    delay(DELAY_DURATION_1000)
                                 }
                             } else {
                                 @Suppress("DEPRECATION")
-                                characteristic.value = binCmd
+                                characteristic?.value = binCmd
                                 @Suppress("DEPRECATION")
-                                val result = gatt.writeCharacteristic(characteristic)
-                                if (result) {
+                                val result = gatt?.writeCharacteristic(characteristic)
+                                if (result == true) {
                                     Log.d("Bluetooth", "Command sent: $cmd")
                                     onSuccess?.invoke()
                                     success = true
                                     break
                                 } else {
-                                    Log.e("Bluetooth", "Failed to send command: $cmd (attempt $attempt)")
+                                    Log.e(
+                                        "Bluetooth",
+                                        "Failed to send command: $cmd (attempt $attempt)"
+                                    )
                                     attempt++
-                                    delay(DELAY_DURATION_500)
+                                    delay(DELAY_DURATION_1000)
                                 }
                             }
                         }
                         if (!success) {
-                            Log.e("Bluetooth", "Command failed after 3 attempts")
-                            onFailed?.invoke() // Call onFailed if all attempts fail
-                        } else { }
+                            Log.e("Bluetooth", "Command failed after 3 attempts, reinitializing...")
+                            gatt = bluetoothGatt
+                            characteristic = gatt?.let { findCharacteristic(it) }
+                            if (gatt != null && characteristic != null) {
+                                sendCommand(cmd, onSuccess, onFailed)
+                            } else {
+                                Log.e(
+                                    "Bluetooth",
+                                    "Failed to reinitialize BluetoothGatt or characteristic after retry"
+                                )
+                                onFailed?.invoke()
+                            }
+                        } else {
+                        }
                     } catch (e: Exception) {
                         Log.e("Bluetooth", "Error sending command: ${e.message}")
                     }
@@ -337,18 +372,18 @@ internal class AndroidBluetoothController(
             val snsrHC = data[6].toInt()
             val thermostat = data[8].toInt() == 1
             val stateDevice = data[10].toInt()
-
-            Log.d(
-                "log snsr", """
-            |data ${data.joinToString(", ")}
-            |temrTmpr1 $temrTmpr1
-            |tempIR1 $temrIR1
-            |tempIR2 $temrIR2
-            |HeartCounter $snsrHC
-            |thermostat $thermostat
-            |statedevice ${data[9].toInt()}, $stateDevice
-        """.trimMargin()
-            )
+//
+//            Log.d(
+//                "log snsr", """
+//            |data ${data.joinToString(", ")}
+//            |temrTmpr1 $temrTmpr1
+//            |tempIR1 $temrIR1
+//            |tempIR2 $temrIR2
+//            |HeartCounter $snsrHC
+//            |thermostat $thermostat
+//            |statedevice ${data[9].toInt()}, $stateDevice
+//        """.trimMargin()
+//            )
 
             val sensorData = SensorData(
                 temrTmpr1 = temrTmpr1,
@@ -376,6 +411,16 @@ internal class AndroidBluetoothController(
         val devices =
             adapter?.bondedDevices?.map { it.toBluetoothDevice().toBluetoothDeviceDomain() }
         if (devices != null) _pairedDevices.emit(devices)
+    }
+
+    private fun setStateButtons(ss: String) {
+        Log.e("Bluetooth", "setStateButtons: ${ss.length}")
+        Log.e("Bluetooth", "setState: ${ss[0]}")
+        Log.e("Bluetooth", "setState: ${ss[1]}")
+        Log.e("Bluetooth", "setState: ${ss[2]}")
+        scope.launch {
+//            _getCommandsState.emit(ss)
+        }
     }
 }
 

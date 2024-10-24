@@ -114,7 +114,10 @@ fun RootNavigationGraph(
                     navigateToProcedureScreen = { chipTitle ->
                         navHostController.navigate("${AppNavGraph.ProcedureScreen.route}/${chipTitle}")
                     },
-                    isShowingSnackBar = showSnackBar ?: false
+                    isShowingSnackBar = showSnackBar ?: false,
+                    navigateToTheConnectionScreen = {
+                        navHostController.navigate(AppNavGraph.Connection.route)
+                    }
                 )
             }
 
@@ -134,6 +137,9 @@ fun RootNavigationGraph(
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         navHostController.navigate("${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}")
+                    },
+                    navigateToTheConnectionScreen = {
+                        navHostController.navigate(AppNavGraph.Connection.route)
                     }
                 )
             }
@@ -197,6 +203,9 @@ fun RootNavigationGraph(
                     onNavigateUp = { navHostController.navigateUp() },
                     startProcedure = { chipTitle ->
                         navHostController.navigate("${AppNavGraph.PreparingTheCabinScreen.route}/${chipTitle}")
+                    },
+                    navigateToTheConnectionScreen = {
+                        navHostController.navigate(AppNavGraph.Connection.route)
                     }
                 )
             }
@@ -229,6 +238,9 @@ fun RootNavigationGraph(
                         } else {
                             navHostController.navigate("${AppNavGraph.ProcedureProcessScreen.route}/${chipTitle}")
                         }
+                    },
+                    navigateToTheConnectionScreen = {
+                        navHostController.navigate(AppNavGraph.Connection.route)
                     }
                 )
             }
@@ -249,6 +261,9 @@ fun RootNavigationGraph(
                             "${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}"
                         )
                     },
+                    navigateToTheConnectionScreen = {
+                        navHostController.navigate(AppNavGraph.Connection.route)
+                    }
                 )
             }
 
@@ -283,6 +298,9 @@ fun RootNavigationGraph(
                         navHostController.navigate("${AppNavGraph.ProcedureTabletScreen.route}/${chipTitle}")
                     },
                     isShowingSnackBar = showSnackBar ?: false,
+                    navigateToTheConnectionScreen = {
+                        navHostController.navigate(AppNavGraph.Connection.route)
+                    }
                 )
             }
             composable(
@@ -296,6 +314,9 @@ fun RootNavigationGraph(
                     onNavigateUp = { navHostController.navigateUp() },
                     startProcedure = { chipTitle ->
                         navHostController.navigate("${AppNavGraph.PreparingTheCabinScreen.route}/${chipTitle}")
+                    },
+                    navigateToTheConnectionScreen = {
+                        navHostController.navigate(AppNavGraph.Connection.route)
                     }
                 )
             }
@@ -315,6 +336,9 @@ fun RootNavigationGraph(
                             "${AppNavGraph.CancelProcedureTabletDialog.route}/${navigateToSelectProcedure}/${cancelDialog}"
                         )
                     },
+                    navigateToTheConnectionScreen = {
+                        navHostController.navigate(AppNavGraph.Connection.route)
+                    }
                 )
             }
 
@@ -370,6 +394,9 @@ fun RootNavigationGraph(
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         navHostController.navigate("${AppNavGraph.CancelProcedureTabletDialog.route}/${navigateToSelectProcedure}/${cancelDialog}")
+                    },
+                    navigateToTheConnectionScreen = {
+                        navHostController.navigate(AppNavGraph.Connection.route)
                     }
                 )
             }

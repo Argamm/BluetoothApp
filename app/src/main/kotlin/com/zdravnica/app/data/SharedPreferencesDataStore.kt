@@ -53,7 +53,6 @@ class SharedPreferencesDataStore(
 
     override fun getCommandState(command: String): Boolean {
         val state = sharedPreferences.getBoolean(command, false)
-        Log.d("LocalDataStore", "Command: $command, State: $state")
         return state
     }
 

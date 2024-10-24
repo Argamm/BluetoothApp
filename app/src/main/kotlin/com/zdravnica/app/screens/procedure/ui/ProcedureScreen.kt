@@ -36,6 +36,7 @@ fun ProcedureScreen(
     chipTitle: Int? = null,
     onNavigateUp: (() -> Unit)? = null,
     startProcedure: (Int) -> Unit,
+    navigateToTheConnectionScreen: () -> Unit,
 ) {
     val context = LocalContext.current
     val allChipTitles = getAllChipTitles()
@@ -74,6 +75,7 @@ fun ProcedureScreen(
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.TEMPERATURE_EXCEEDED
             }
+
             is ProcedureScreenSideEffect.OnBluetoothConnectionLost -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.CONNECTION_LOST
@@ -165,7 +167,12 @@ fun ProcedureScreen(
             state = statusInfoState,
             onCloseClick = { showFailedScreen = false },
             onSupportClick = {},
-            onYesClick = { showFailedScreen = false },
+            onYesClick = {
+                showFailedScreen = false
+                if (statusInfoState == StatusInfoState.CONNECTION_LOST) {
+                    navigateToTheConnectionScreen.invoke()
+                }
+            },
         )
     }
 }
@@ -174,6 +181,6 @@ fun ProcedureScreen(
 @Composable
 fun PreviewMenuScreen() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        ProcedureScreen() {}
+        ProcedureScreen(startProcedure = {}, navigateToTheConnectionScreen = {})
     }
 }

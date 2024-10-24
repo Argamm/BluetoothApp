@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.preparingTheCabin.viewModels
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.viewModelScope
@@ -46,27 +47,19 @@ class PreparingTheCabinScreenViewModel(
             PreparingTheCabinScreenViewState()
         )
 
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("asdasdasd", "onCleared in ProcedureTheCabin: onCleared")
+        stopObservingSensorData()
+    }
+
     init {
         observeSensorData()
     }
 
-    private fun observeSensorData() = intent {
+    fun observeSensorData() = intent {
         sensorDataJob?.cancel()
         sensorDataJob = null
-
-        viewModelScope.launch {
-            bluetoothController.bluetoothConnectionStatus.collect { status ->
-                when (status) {
-                    is BluetoothConnectionStatus.Connected -> {}
-                    is BluetoothConnectionStatus.Disconnected -> {
-                        postSideEffect(PreparingTheCabinScreenSideEffect.OnBluetoothConnectionLost)
-                    }
-                    is BluetoothConnectionStatus.Error -> {
-                        postSideEffect(PreparingTheCabinScreenSideEffect.OnBluetoothConnectionLost)
-                    }
-                }
-            }
-        }
 
         sensorDataJob = viewModelScope.launch {
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
@@ -80,6 +73,8 @@ class PreparingTheCabinScreenViewModel(
 
                 if (temperature.value - sensorTemperature >= 1) {
                     if (!localDataStore.getCommandState(COMMAND_TEN)) {
+                        Log.i("COMMAND_TEN", "PreparingCabin: ON COMMAND_TEN")
+
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {
@@ -93,6 +88,8 @@ class PreparingTheCabinScreenViewModel(
                     }
                 } else {
                     if (localDataStore.getCommandState(COMMAND_TEN)) {
+                        Log.i("COMMAND_TEN", "PreparingCabin: OFF COMMAND_TEN")
+
                         bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
                             localDataStore.saveCommandState(COMMAND_TEN, false)
                             updateIconStates()
@@ -107,6 +104,18 @@ class PreparingTheCabinScreenViewModel(
                     temperature.value
                 ).collect { progress ->
                     _progress.value = progress
+                }
+            }
+
+            bluetoothController.bluetoothConnectionStatus.collect { status ->
+                when (status) {
+                    is BluetoothConnectionStatus.Connected -> {}
+                    is BluetoothConnectionStatus.Disconnected -> {
+                        postSideEffect(PreparingTheCabinScreenSideEffect.OnBluetoothConnectionLost)
+                    }
+                    is BluetoothConnectionStatus.Error -> {
+                        postSideEffect(PreparingTheCabinScreenSideEffect.OnBluetoothConnectionLost)
+                    }
                 }
             }
         }

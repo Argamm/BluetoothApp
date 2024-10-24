@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.procedure.viewModels
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
@@ -47,6 +48,8 @@ class ProcedureScreenViewModel(
 
         viewModelScope.launch {
             if (!localDataStore.getCommandState(COMMAND_FAN)) {
+                Log.i("COMMAND_FAN", "ProcedureScreen: ON COMMAND_FAN")
+
                 bluetoothController.sendCommand(
                     COMMAND_FAN,
                     onSuccess = {

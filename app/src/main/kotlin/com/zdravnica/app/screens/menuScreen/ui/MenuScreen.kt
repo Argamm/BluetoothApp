@@ -50,13 +50,16 @@ fun MenuScreen(
     onNavigateUp: (() -> Unit)? = null,
     navigateGToConnectionScreen: (() -> Unit)? = null,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
+    navigateToTheConnectionScreen: () -> Unit,
 ) {
     val context = LocalContext.current
     val localUriHandler = LocalUriHandler.current
     val menuScreenViewState by menuScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.menu_screen_cancel_title)
-    val supportEmailAddress = stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
-    val supportPhoneNumber = stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
+    val supportEmailAddress =
+        stringResource(id = R.string.menu_screen_zdravnica_support_email_address)
+    val supportPhoneNumber =
+        stringResource(id = R.string.menu_screen_zdravnica_support_phone_number)
     val faqInfoUriPath = stringResource(id = R.string.menu_screen_zdravnica_uri_path)
     val stringBurdock = stringResource(R.string.menu_screen_burdock)
     val stringNut = stringResource(R.string.menu_screen_nut)
@@ -83,6 +86,7 @@ fun MenuScreen(
             is MenuScreenSideEffect.OnNavigateToCancelDialogPage -> {
                 navigateToCancelDialogPage.invoke(false, cancelDialog)
             }
+
             is MenuScreenSideEffect.OnBluetoothConnectionLost -> {
                 showFailedScreen = true
             }
@@ -225,7 +229,10 @@ fun MenuScreen(
             state = StatusInfoState.CONNECTION_LOST,
             onCloseClick = { showFailedScreen = false },
             onSupportClick = {},
-            onYesClick = { showFailedScreen = false },
+            onYesClick = {
+                showFailedScreen = false
+                navigateToTheConnectionScreen.invoke()
+            },
         )
     }
 }
@@ -234,6 +241,6 @@ fun MenuScreen(
 @Composable
 fun PreviewMenuScreen() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        MenuScreen(navigateToCancelDialogPage = { a, b -> })
+        MenuScreen(navigateToCancelDialogPage = { a, b -> }, navigateToTheConnectionScreen = {})
     }
 }

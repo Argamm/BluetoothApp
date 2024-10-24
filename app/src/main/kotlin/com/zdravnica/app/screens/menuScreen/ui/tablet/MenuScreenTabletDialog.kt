@@ -21,6 +21,7 @@ fun MenuScreenTabletDialog(
     onNavigateUp: (() -> Unit)? = null,
     navigateGToConnectionScreen: (() -> Unit)? = null,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
+    navigateToTheConnectionScreen: () -> Unit,
 ) {
     Dialog(
         properties = DialogProperties(
@@ -40,7 +41,8 @@ fun MenuScreenTabletDialog(
                     menuScreenViewModel = menuScreenViewModel,
                     onNavigateUp = onNavigateUp,
                     navigateGToConnectionScreen = navigateGToConnectionScreen,
-                    navigateToCancelDialogPage = navigateToCancelDialogPage
+                    navigateToCancelDialogPage = navigateToCancelDialogPage,
+                    navigateToTheConnectionScreen = navigateToTheConnectionScreen
                 )
             }
         }

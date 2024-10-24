@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.connecting_page.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
@@ -136,9 +137,21 @@ class ConnectingPageViewModel(
     }
 
     fun turnOffAllWorkingProcesses() = intent {
+        viewModelScope.launch {
+            delay(120000)
+
+            if (localDataStore.getCommandState(COMMAND_FAN)) {
+                Log.i("COMMAND_FAN", "turnOffAllWorkingProcesses: OFF COMMAND_FAN")
+
+                bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_FAN, false)
+                })
+            }
+        }
+        Log.i("COMMAND_TEN", "turnOffAllWorkingProcesses: OFF COMMAND_TEN")
+
         val commands = listOf(
             COMMAND_TEN,
-            COMMAND_FAN,
             COMMAND_KMPR,
             COMMAND_IREM,
             COMMAND_STV1,

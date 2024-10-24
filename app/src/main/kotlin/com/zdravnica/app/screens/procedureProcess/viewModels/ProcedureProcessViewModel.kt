@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.procedureProcess.viewModels
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.viewModelScope
@@ -38,8 +39,9 @@ class ProcedureProcessViewModel(
     private val bluetoothController: BluetoothController,
     private val calculateCaloriesUseCase: CalculateCaloriesUseCase
 ) : BaseViewModel<ProcedureProcessViewState, ProcedureProcessSideEffect>() {
-
+    private var sensorDataJob: Job? = null
     private var hasTemperatureDifferenceWarningBeenShown = false
+    private var isTimerFinished: Boolean = false
 
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
@@ -47,14 +49,17 @@ class ProcedureProcessViewModel(
     private val _duration = mutableIntStateOf(localDataStore.getDuration())
     val duration: State<Int> get() = _duration
 
-    private var isTimerFinished: Boolean = false
 
     override val container =
         container<ProcedureProcessViewState, ProcedureProcessSideEffect>(
             ProcedureProcessViewState()
         )
 
-    private var sensorDataJob: Job? = null
+    override fun onCleared() {
+        super.onCleared()
+        stopObservingSensorData()
+        Log.d("asdasdasd", "onCleared in ProcedureProcess: onCleared")
+    }
 
     fun observeSensorData() = intent {
         sensorDataJob?.cancel()
@@ -96,6 +101,8 @@ class ProcedureProcessViewModel(
 
                 if (!isTimerFinished && temperature.value - sensorTemperature >= 1) {
                     if (!localDataStore.getCommandState(COMMAND_TEN)) {
+                        Log.i("COMMAND_TEN", "ProcedureProcess: ON COMMAND_TEN")
+
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {
@@ -109,6 +116,8 @@ class ProcedureProcessViewModel(
                     }
                 } else {
                     if (localDataStore.getCommandState(COMMAND_TEN)) {
+                        Log.i("COMMAND_TEN", "ProcedureProcess: OFF COMMAND_TEN")
+
                         bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
                             localDataStore.saveCommandState(COMMAND_TEN, false)
                             updateIconStates()
@@ -123,7 +132,7 @@ class ProcedureProcessViewModel(
         isTimerFinished = isFinished
     }
 
-    private fun stopObservingSensorData() {
+    fun stopObservingSensorData() {
         sensorDataJob?.cancel()
     }
 
@@ -146,6 +155,8 @@ class ProcedureProcessViewModel(
     fun sendEndingCommands() {
         viewModelScope.launch {
             if (localDataStore.getCommandState(COMMAND_TEN)) {
+                Log.i("COMMAND_TEN", "ProcedureProcess endingCommands: OFF COMMAND_TEN")
+
                 bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
                     localDataStore.saveCommandState(COMMAND_TEN, false)
                     updateIconStates()
@@ -161,6 +172,8 @@ class ProcedureProcessViewModel(
             GlobalScope.launch {
                 delay(120000)
                 while (localDataStore.getCommandState(COMMAND_FAN)) {
+                    Log.i("COMMAND_FAN", "PROCEDURE Process finish: OFF COMMAND_FAN")
+
                     bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
                         localDataStore.saveCommandState(COMMAND_FAN, false)
                         updateIconStates()
