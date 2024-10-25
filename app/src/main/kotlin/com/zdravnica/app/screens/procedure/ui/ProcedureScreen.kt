@@ -132,9 +132,9 @@ fun ProcedureScreen(
                             balmInfo,
                             isBalmCountZero = { balmName ->
                                 when (balmName) {
-                                    stringBurdock -> procedureScreenViewState.firstBalmCount == 0f
-                                    stringMint -> procedureScreenViewState.thirdBalmCount == 0f
-                                    stringNut -> procedureScreenViewState.secondBalmCount == 0f
+                                    stringBurdock -> procedureScreenViewState.firstBalmCount == 2f
+                                    stringNut -> procedureScreenViewState.secondBalmCount == 2f
+                                    stringMint -> procedureScreenViewState.thirdBalmCount == 2f
                                     else -> false
                                 }
                             },

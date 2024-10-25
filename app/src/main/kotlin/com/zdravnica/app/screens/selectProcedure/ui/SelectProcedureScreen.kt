@@ -146,11 +146,13 @@ fun SelectProcedureScreen(
                             selectProcedureViewModel.isFailedSendingCommand(COMMAND_TEN)
 
                         val statusInfoState = when {
-                            iconStates[0] == IconState.DISABLED && isFanCommandFailed ->
+                            iconStates[0] == IconState.DISABLED && isFanCommandFailed -> {
                                 StatusInfoState.THERMOSTAT_ACTIVATION
+                            }
 
-                            iconStates[1] == IconState.DISABLED && isTenCommandFailed ->
+                            iconStates[1] == IconState.DISABLED && isTenCommandFailed -> {
                                 StatusInfoState.SENSOR_ERROR
+                            }
 
                             else -> null
                         }

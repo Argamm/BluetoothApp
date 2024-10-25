@@ -127,7 +127,9 @@ sealed class BigChipType {
             description = R.string.select_product_custom_mix_description,
             iconRes = null
         )
-        override val chipBalmInfoList = null
+        override val chipBalmInfoList = listOf(
+            ChipBalmInfoModel(R.string.select_product_custom_mix, 20, 4, 1.0),
+        )
     }
 
     data object WithoutBalm : BigChipType() {
@@ -137,7 +139,9 @@ sealed class BigChipType {
             description = R.string.select_product_without_balm_description,
             iconRes = null
         )
-        override val chipBalmInfoList = null
+        override val chipBalmInfoList = listOf(
+            ChipBalmInfoModel(R.string.select_product_without_balm, 0, 5, 0.0),
+        )
     }
 
     companion object {

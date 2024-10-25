@@ -153,7 +153,7 @@ fun ProcedureTabletScreen(
                                     isBalmCountZero = { balmName ->
                                         procedureScreenViewModel.getBalmCount(
                                             balmName
-                                        ) == 0f
+                                        ) == 2f
                                     },
                                     startProcedure = { canStart ->
                                         if (chipTitle != null && canStart) {

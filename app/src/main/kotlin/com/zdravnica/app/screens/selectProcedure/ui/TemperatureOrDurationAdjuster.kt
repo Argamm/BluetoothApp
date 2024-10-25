@@ -20,7 +20,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import com.zdravnica.app.utils.isLandscape
 import com.zdravnica.app.utils.isTablet
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
@@ -67,15 +66,12 @@ fun TemperatureOrDurationAdjuster(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
                         horizontal = if (isTablet()) {
-                            if (isLandscape())
-                                ZdravnicaAppTheme.dimens.size140
-                            else
-                                ZdravnicaAppTheme.dimens.size48
+                            ZdravnicaAppTheme.dimens.size1
                         } else
                             ZdravnicaAppTheme.dimens.size48
                     )
@@ -108,7 +104,7 @@ fun TemperatureOrDurationAdjuster(
                             append(value.formatAsValue(isMinutes))
                         }
                     },
-                    style = ZdravnicaAppTheme.typography.headH2,
+                    style = if (isTablet()) ZdravnicaAppTheme.typography.headH3 else ZdravnicaAppTheme.typography.headH2,
                     modifier = Modifier.padding(horizontal = ZdravnicaAppTheme.dimens.size16),
                 )
 

@@ -87,7 +87,7 @@ fun ConnectingPageContentScreen(
     Column(
         modifier = modifier.padding(
             horizontal = if (isTablet())
-                ZdravnicaAppTheme.dimens.size280
+                ZdravnicaAppTheme.dimens.size100
             else
                 ZdravnicaAppTheme.dimens.size48
         ),

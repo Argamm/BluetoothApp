@@ -75,10 +75,12 @@ fun CheckBalmCountAndOrder(
             balmInfo.forEachIndexed { _, balm ->
                 val balmCountIsZero = isBalmCountZero(context.getString(balm.balmName))
 
-                BalmInfoText(
-                    text = stringResource(id = balm.balmName),
-                    isBalmCountZero = balmCountIsZero,
-                )
+                if (balm.key != 4 && balm.key != 5) {
+                    BalmInfoText(
+                        text = stringResource(id = balm.balmName),
+                        isBalmCountZero = balmCountIsZero,
+                    )
+                }
             }
         }
 

@@ -14,9 +14,11 @@ import com.zdravnica.bluetooth.data.COMMAND_KMPR
 import com.zdravnica.bluetooth.data.COMMAND_STV1
 import com.zdravnica.bluetooth.data.COMMAND_STV2
 import com.zdravnica.bluetooth.data.COMMAND_STV3
+import com.zdravnica.bluetooth.data.COMMAND_STV4
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
+import com.zdravnica.uikit.COUNT_FOUR
 import com.zdravnica.uikit.COUNT_ONE
 import com.zdravnica.uikit.COUNT_THREE
 import com.zdravnica.uikit.COUNT_TWO
@@ -237,6 +239,12 @@ class ProcedureProcessViewModel(
                                 COMMAND_STV3,
                             )
                         }
+
+                        COUNT_FOUR -> {
+                            sendCommandUntilOn(
+                                COMMAND_STV4,
+                            )
+                        }
                     }
                     delay(duration * DELAY_1000_ML)
                     localDataStore.consumeBalm(balmName, balmInfo.balmCount / COUNT_TWO)
@@ -252,6 +260,10 @@ class ProcedureProcessViewModel(
 
                         COUNT_THREE -> {
                             sendCommandUntilOff(COMMAND_STV3)
+                        }
+
+                        COUNT_FOUR -> {
+                            sendCommandUntilOff(COMMAND_STV4)
                         }
                     }
                     delay(DELAY_1000_ML)

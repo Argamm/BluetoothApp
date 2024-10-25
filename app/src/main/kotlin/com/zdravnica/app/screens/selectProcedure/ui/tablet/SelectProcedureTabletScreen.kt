@@ -60,8 +60,13 @@ fun SelectProcedureTabletScreen(
 
     selectProcedureViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is SelectProcedureSideEffect.OnNavigateToMenuScreen -> navigateToMenuScreen.invoke()
+            is SelectProcedureSideEffect.OnNavigateToMenuScreen -> {
+                selectProcedureViewModel.setSnackBarInvisible()
+                navigateToMenuScreen.invoke()
+            }
+
             is SelectProcedureSideEffect.OnProcedureCardClick -> {
+                selectProcedureViewModel.setSnackBarInvisible()
                 navigateToProcedureScreen.invoke(sideEffect.chipData.title)
             }
 
@@ -69,6 +74,10 @@ fun SelectProcedureTabletScreen(
                 showFailedScreen = true
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        selectProcedureViewModel.loadCommandStates()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -99,8 +108,12 @@ fun SelectProcedureTabletScreen(
                             selectProcedureViewModel.isFailedSendingCommand(COMMAND_TEN)
 
                         val statusInfoState = when {
-                            iconStates[0] == IconState.DISABLED && isFanCommandFailed -> StatusInfoState.THERMOSTAT_ACTIVATION
-                            iconStates[1] == IconState.DISABLED && isTenCommandFailed -> StatusInfoState.SENSOR_ERROR
+                            iconStates[0] == IconState.DISABLED && isFanCommandFailed -> {
+                                StatusInfoState.THERMOSTAT_ACTIVATION
+                            }
+                            iconStates[1] == IconState.DISABLED && isTenCommandFailed -> {
+                                StatusInfoState.SENSOR_ERROR
+                            }
                             else -> null
                         }
 
