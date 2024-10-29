@@ -1,7 +1,6 @@
 package com.zdravnica.app.data
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.zdravnica.uikit.MIN_MINUTES
 import com.zdravnica.uikit.MIN_TEMPERATURE
 
@@ -25,16 +24,13 @@ class SharedPreferencesDataStore(
         return sharedPreferences.getInt(KEY_DURATION, MIN_MINUTES)
     }
 
-    // Balm related methods
     override fun getBalmCount(balmName: String): Float {
-        Log.i("adasdsa", "balmCount:  = ${sharedPreferences.getFloat(balmName, MAX_BALM_ML)},")
         return sharedPreferences.getFloat(balmName, MAX_BALM_ML)
     }
 
     override fun consumeBalm(balmName: String, consumption: Double) {
         val currentBalmCount = getBalmCount(balmName)
         val newBalmCount = (currentBalmCount - consumption).coerceAtLeast(0.0)
-        Log.i("adasdsa", "consumeBalm: balmName = ${balmName}, newBalm = ${newBalmCount}")
         sharedPreferences.edit().putFloat(balmName, newBalmCount.toFloat()).apply()
     }
 
@@ -46,7 +42,6 @@ class SharedPreferencesDataStore(
         resetBalmCount(balmName)
     }
 
-    // Command state methods
     override fun saveCommandState(command: String, isOn: Boolean) {
         sharedPreferences.edit().putBoolean(command, isOn).apply()
     }

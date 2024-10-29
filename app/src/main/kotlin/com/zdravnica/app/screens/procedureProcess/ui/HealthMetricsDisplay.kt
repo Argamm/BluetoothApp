@@ -112,8 +112,7 @@ fun MetricCard(
                 style = ZdravnicaAppTheme.typography.headH3,
                 textAlign = TextAlign.Center,
                 maxLines = COUNT_ONE,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size4))
             Text(

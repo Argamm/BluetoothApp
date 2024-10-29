@@ -1,6 +1,5 @@
 package com.zdravnica.app.screens.preparingTheCabin.ui
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -31,7 +30,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.preparingTheCabin.models.rememberProcedureProgressCircleState
 import com.zdravnica.app.screens.preparingTheCabin.viewModels.PreparingTheCabinScreenSideEffect
 import com.zdravnica.app.screens.preparingTheCabin.viewModels.PreparingTheCabinScreenViewModel
-import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenSideEffect
 import com.zdravnica.app.screens.statusScreen.StatusScreen
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
@@ -108,25 +106,19 @@ fun PreparingTheCabinScreen(
     DisposableEffect(lifecycleOwner) {
         val lifecycleObserver = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_CREATE -> Log.d("LifecycleLogger", "ON_CREATE")
                 Lifecycle.Event.ON_START -> {
                     preparingTheCabinScreenViewModel.observeSensorData()
-                    Log.d("LifecycleLogger", "ON_START")
                 }
 
                 Lifecycle.Event.ON_RESUME -> {
                     preparingTheCabinScreenViewModel.onChangeCancelDialogPageVisibility(false)
-                    Log.d("LifecycleLogger", "ON_RESUME")
                 }
 
-                Lifecycle.Event.ON_PAUSE -> Log.d("LifecycleLogger", "ON_PAUSE")
                 Lifecycle.Event.ON_STOP -> {
                     preparingTheCabinScreenViewModel.stopObservingSensorData()
-                    Log.d("LifecycleLogger", "ON_STOP")
                 }
 
-                Lifecycle.Event.ON_DESTROY -> Log.d("LifecycleLogger", "ON_DESTROY")
-                else -> Log.d("LifecycleLogger", "Unknown event")
+                else -> {}
             }
         }
 

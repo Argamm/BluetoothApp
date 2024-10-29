@@ -1,6 +1,5 @@
 package com.zdravnica.app.screens.connecting_page.viewmodels
 
-import android.util.Log
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
@@ -19,6 +18,7 @@ import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.ConnectionResult
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import com.zdravnica.bluetooth.domain.models.BluetoothDeviceDomainModel
+import com.zdravnica.uikit.DELAY_DURATION_12000
 import com.zdravnica.uikit.DELAY_DURATION_1500
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -138,17 +138,14 @@ class ConnectingPageViewModel(
 
     fun turnOffAllWorkingProcesses() = intent {
         viewModelScope.launch {
-            delay(120000)
+            delay(DELAY_DURATION_12000)
 
             if (localDataStore.getCommandState(COMMAND_FAN)) {
-                Log.i("COMMAND_FAN", "turnOffAllWorkingProcesses: OFF COMMAND_FAN")
-
                 bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
                     localDataStore.saveCommandState(COMMAND_FAN, false)
                 })
             }
         }
-        Log.i("COMMAND_TEN", "turnOffAllWorkingProcesses: OFF COMMAND_TEN")
 
         val commands = listOf(
             COMMAND_TEN,

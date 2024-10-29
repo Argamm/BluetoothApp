@@ -31,6 +31,13 @@ import com.zdravnica.uikit.DELAY_1000_ML
 import com.zdravnica.uikit.extensions.compose.calculateTimeText
 import kotlinx.coroutines.delay
 
+private const val NINE_MINUTES_IN_SECONDS = 540
+private const val FOUR_MINUTES_IN_SECONDS = 240
+private const val TURN_OFF_THRESHOLD_NINE_MINUTES = 480
+private const val TURN_OFF_THRESHOLD_FOUR_MINUTES = 180
+private const val MINUTES_LEFT_CREDITS_NINE_MINUTES = 544
+private const val MINUTES_LEFT_CREDITS_FOUR_MINUTES = 244
+
 @Composable
 fun TimerProcess(
     modifier: Modifier = Modifier,
@@ -51,29 +58,29 @@ fun TimerProcess(
             delay(DELAY_1000_ML)
             remainingSeconds.intValue -= COUNT_ONE
 
-            if (remainingSeconds.intValue == 540 && !hasNineMinutesBeenCalled) {
+            if (remainingSeconds.intValue == NINE_MINUTES_IN_SECONDS && !hasNineMinutesBeenCalled) {
                 onNineMinutesLeft()
                 hasNineMinutesBeenCalled = true
             }
 
-            if (remainingSeconds.intValue == 544 && !hasNineMinutesBeenCalled) {
+            if (remainingSeconds.intValue == MINUTES_LEFT_CREDITS_NINE_MINUTES && !hasNineMinutesBeenCalled) {
                 onMinutesLeftWithCredits()
             }
 
-            if (remainingSeconds.intValue == 480 && hasNineMinutesBeenCalled) {
+            if (remainingSeconds.intValue == TURN_OFF_THRESHOLD_NINE_MINUTES && hasNineMinutesBeenCalled) {
                 onTurnOffCommand()
             }
 
-            if (remainingSeconds.intValue == 240 && !hasFourMinutesBeenCalled) {
+            if (remainingSeconds.intValue == FOUR_MINUTES_IN_SECONDS && !hasFourMinutesBeenCalled) {
                 onFourMinutesLeft()
                 hasFourMinutesBeenCalled = true
             }
 
-            if (remainingSeconds.intValue == 244 && !hasFourMinutesBeenCalled) {
+            if (remainingSeconds.intValue == MINUTES_LEFT_CREDITS_FOUR_MINUTES && !hasFourMinutesBeenCalled) {
                 onMinutesLeftWithCredits()
             }
 
-            if (remainingSeconds.intValue == 180 && hasFourMinutesBeenCalled) {
+            if (remainingSeconds.intValue == TURN_OFF_THRESHOLD_FOUR_MINUTES && hasFourMinutesBeenCalled) {
                 onTurnOffCommandAfterFour()
             }
         } else {

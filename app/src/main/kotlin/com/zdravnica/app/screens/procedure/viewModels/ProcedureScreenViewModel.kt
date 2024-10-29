@@ -1,6 +1,5 @@
 package com.zdravnica.app.screens.procedure.viewModels
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
@@ -39,6 +38,7 @@ class ProcedureScreenViewModel(
                     is BluetoothConnectionStatus.Disconnected -> {
                         postSideEffect(ProcedureScreenSideEffect.OnBluetoothConnectionLost)
                     }
+
                     is BluetoothConnectionStatus.Error -> {
                         postSideEffect(ProcedureScreenSideEffect.OnBluetoothConnectionLost)
                     }
@@ -48,8 +48,6 @@ class ProcedureScreenViewModel(
 
         viewModelScope.launch {
             if (!localDataStore.getCommandState(COMMAND_FAN)) {
-                Log.i("COMMAND_FAN", "ProcedureScreen: ON COMMAND_FAN")
-
                 bluetoothController.sendCommand(
                     COMMAND_FAN,
                     onSuccess = {
@@ -58,18 +56,18 @@ class ProcedureScreenViewModel(
                     onFailed = {
                         postSideEffect(ProcedureScreenSideEffect.OnNavigateToFailedTenCommandScreen)
                     }
-                )//turn On
+                )
             }
 
-            while (!localDataStore.getCommandState(COMMAND_IREM)) {
+            if (!localDataStore.getCommandState(COMMAND_IREM)) {
                 bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
                     localDataStore.saveCommandState(COMMAND_IREM, true)
-                })//turn On
+                })
             }
         }
     }
 
-    fun getBalmCount(balmName: String): Float {
+    private fun getBalmCount(balmName: String): Float {
         return localDataStore.getBalmCount(balmName)
     }
 

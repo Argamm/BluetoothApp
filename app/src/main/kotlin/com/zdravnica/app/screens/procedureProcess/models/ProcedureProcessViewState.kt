@@ -11,6 +11,7 @@ data class ProcedureProcessViewState(
     val isTemperatureDifferenceLarge: Boolean = false,
     val calorieValue: Int = 0,
     val pulse: Int = 0,
+    val skinTemperature: Int = 0,
     val iconStates: List<IconState> = listOf(
         IconState.DISABLED,
         IconState.DISABLED,

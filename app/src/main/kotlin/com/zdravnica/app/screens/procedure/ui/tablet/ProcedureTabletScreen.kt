@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.procedure.ui.ChooseProcedureChipGroup
 import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenSideEffect
 import com.zdravnica.app.screens.procedure.viewModels.ProcedureScreenViewModel
@@ -60,6 +61,7 @@ fun ProcedureTabletScreen(
     var balmInfo by remember { mutableStateOf(chipTitle?.let { getBalmInfoByTitle(it) }) }
     var showFailedScreen by remember { mutableStateOf(false) }
     var statusInfoState by remember { mutableStateOf(StatusInfoState.THERMOSTAT_ACTIVATION) }
+    val procedureTabletScreenViewState by procedureScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
 
     procedureScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -151,12 +153,16 @@ fun ProcedureTabletScreen(
                                     modifier,
                                     balmInfo,
                                     isBalmCountZero = { balmName ->
-                                        procedureScreenViewModel.getBalmCount(
-                                            balmName
-                                        ) == 2f
+                                        when (balmName) {
+                                            stringBurdock -> procedureTabletScreenViewState.firstBalmCount == 2f
+                                            stringNut -> procedureTabletScreenViewState.secondBalmCount == 2f
+                                            stringMint -> procedureTabletScreenViewState.thirdBalmCount == 2f
+                                            else -> false
+                                        }
                                     },
-                                    startProcedure = { canStart ->
-                                        if (chipTitle != null && canStart) {
+                                    startProcedure = {
+                                        if (chipTitle != null) {
+                                            procedureScreenViewModel.startProcedureWithCommands()
                                             startProcedure.invoke(chipTitle)
                                         }
                                     }, orderBalm = {

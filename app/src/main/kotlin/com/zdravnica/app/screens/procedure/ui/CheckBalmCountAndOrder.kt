@@ -26,6 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.COUNT_FIVE
+import com.zdravnica.uikit.COUNT_FOUR
 import com.zdravnica.uikit.ORDER_DESCRIPTION
 import com.zdravnica.uikit.components.buttons.models.BigButtonModel
 import com.zdravnica.uikit.components.buttons.ui.BigButton
@@ -75,7 +77,7 @@ fun CheckBalmCountAndOrder(
             balmInfo.forEachIndexed { _, balm ->
                 val balmCountIsZero = isBalmCountZero(context.getString(balm.balmName))
 
-                if (balm.key != 4 && balm.key != 5) {
+                if (balm.key != COUNT_FOUR && balm.key != COUNT_FIVE) {
                     BalmInfoText(
                         text = stringResource(id = balm.balmName),
                         isBalmCountZero = balmCountIsZero,
@@ -156,7 +158,7 @@ fun CheckBalmCountAndOrder(
                         textModifier = Modifier
                             .wrapContentSize()
                             .padding(horizontal = ZdravnicaAppTheme.dimens.size19),
-                        isEnabled = !isAnyBalmCountZero,
+                        isEnabled = false,
                     ),
                 )
             } else {
@@ -168,11 +170,11 @@ fun CheckBalmCountAndOrder(
                         textModifier = Modifier
                             .wrapContentSize()
                             .padding(horizontal = ZdravnicaAppTheme.dimens.size19),
-                        isEnabled = !isAnyBalmCountZero,
+                        isEnabled = true,
                         onClick = {
                             startProcedure.invoke()
                         }
-                    ),
+                    )
                 )
             }
         }

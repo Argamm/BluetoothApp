@@ -1,6 +1,5 @@
 package com.zdravnica.app.screens.procedureProcess.ui.tablet
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -99,20 +98,14 @@ fun ProcedureProcessTabletScreen(
     DisposableEffect(lifecycleOwner) {
         val lifecycleObserver = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_CREATE -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_CREATE")
-                Lifecycle.Event.ON_START -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_START")
                 Lifecycle.Event.ON_RESUME -> {
                     procedureProcessViewModel.onChangeCancelDialogPageVisibility(false)
                     procedureProcessViewModel.observeSensorData()
-                    Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_RESUME")
                 }
-                Lifecycle.Event.ON_PAUSE -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_PAUSE")
                 Lifecycle.Event.ON_STOP -> {
                     procedureProcessViewModel.stopObservingSensorData()
-                    Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_STOP")
                 }
-                Lifecycle.Event.ON_DESTROY -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_DESTROY")
-                else -> Log.d("LifecycleLogger", "Unknown event")
+                else -> {}
             }
         }
 
@@ -178,7 +171,7 @@ fun ProcedureProcessTabletScreen(
                         ) {
                             if (!isTimerFinished) {
                                 Column {
-                                    if (false) {//TODO push notification for showing this message
+                                    if (procedureProcessViewModel.balmFeeding.value) {
                                         ProcedureStateInfo(
                                             firstText = stringResource(R.string.procedure_process_balm_supply),
                                         )

@@ -26,6 +26,7 @@ import com.zdravnica.app.utils.LocalBackPressedDispatcher
 import com.zdravnica.resources.ui.theme.models.LocalLanguageEnum
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.DELAY_DURATION_1200
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen().apply {
             setOnExitAnimationListener { splashScreen ->
                 lifecycleScope.launch {
-                    delay(1200)
+                    delay(DELAY_DURATION_1200)
                     splashScreen.remove()
                 }
             }
@@ -58,13 +59,11 @@ class MainActivity : ComponentActivity() {
             val isDarkModeValue = isSystemInDarkTheme()
             val isDarkMode by remember { mutableStateOf(isDarkModeValue) }
             val rootNavController = rememberNavController()
-
             setLocaleConfiguration(currentLanguage)
 
             CompositionLocalProvider(
                 LocalBackPressedDispatcher provides this@MainActivity.onBackPressedDispatcher
             ) {
-
                 ZdravnicaAppExerciseTheme(
                     darkThem = isDarkMode
                 ) {
@@ -84,7 +83,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
     private fun setLocaleConfiguration(currentLanguage: LocalLanguageEnum) {
         AppCompatDelegate.setApplicationLocales(
             LocaleListCompat.forLanguageTags(
@@ -95,4 +93,3 @@ class MainActivity : ComponentActivity() {
         Locale.setDefault(Locale(currentLanguage.languageISO))
     }
 }
-

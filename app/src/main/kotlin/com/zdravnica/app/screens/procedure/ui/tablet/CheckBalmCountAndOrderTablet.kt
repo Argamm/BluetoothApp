@@ -27,7 +27,7 @@ import com.zdravnica.uikit.resources.R
 fun CheckBalmCountAndOrderTablet(
     modifier: Modifier = Modifier,
     balmInfo: List<ChipBalmInfoModel>,
-    startProcedure: (Boolean) -> Unit,
+    startProcedure: () -> Unit,
     isBalmCountZero: (String) -> Boolean,
     orderBalm: () -> Unit,
     balmFilled: () -> Unit
@@ -84,7 +84,7 @@ fun CheckBalmCountAndOrderTablet(
             NonZeroBalmContent(
                 onClickOrderBalmButton = { orderBalm.invoke() },
                 onClickBigButton = {
-                    startProcedure.invoke(!isAnyBalmCountZero)//todo remove
+                    startProcedure.invoke()
                 }
             )
         }

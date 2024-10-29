@@ -1,6 +1,5 @@
 package com.zdravnica.app.screens.preparingTheCabin.viewModels
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.viewModelScope
@@ -49,7 +48,6 @@ class PreparingTheCabinScreenViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        Log.d("asdasdasd", "onCleared in ProcedureTheCabin: onCleared")
         stopObservingSensorData()
     }
 
@@ -73,8 +71,6 @@ class PreparingTheCabinScreenViewModel(
 
                 if (temperature.value - sensorTemperature >= 1) {
                     if (!localDataStore.getCommandState(COMMAND_TEN)) {
-                        Log.i("COMMAND_TEN", "PreparingCabin: ON COMMAND_TEN")
-
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {
@@ -88,8 +84,6 @@ class PreparingTheCabinScreenViewModel(
                     }
                 } else {
                     if (localDataStore.getCommandState(COMMAND_TEN)) {
-                        Log.i("COMMAND_TEN", "PreparingCabin: OFF COMMAND_TEN")
-
                         bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
                             localDataStore.saveCommandState(COMMAND_TEN, false)
                             updateIconStates()

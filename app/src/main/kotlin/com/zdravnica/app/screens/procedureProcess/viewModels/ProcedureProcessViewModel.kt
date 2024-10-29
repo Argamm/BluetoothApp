@@ -1,8 +1,8 @@
 package com.zdravnica.app.screens.procedureProcess.viewModels
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
@@ -23,6 +23,7 @@ import com.zdravnica.uikit.COUNT_ONE
 import com.zdravnica.uikit.COUNT_THREE
 import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.DELAY_1000_ML
+import com.zdravnica.uikit.DELAY_DURATION_12000
 import com.zdravnica.uikit.ONE_MINUTE_IN_SEC
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.chips.models.ChipBalmInfoModel
@@ -35,6 +36,7 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import kotlin.math.roundToInt
 
 class ProcedureProcessViewModel(
     private val localDataStore: LocalDataStore,
@@ -51,6 +53,8 @@ class ProcedureProcessViewModel(
     private val _duration = mutableIntStateOf(localDataStore.getDuration())
     val duration: State<Int> get() = _duration
 
+    private val _balmFeeding = mutableStateOf(false)
+    val balmFeeding: State<Boolean> get() = _balmFeeding
 
     override val container =
         container<ProcedureProcessViewState, ProcedureProcessSideEffect>(
@@ -60,7 +64,6 @@ class ProcedureProcessViewModel(
     override fun onCleared() {
         super.onCleared()
         stopObservingSensorData()
-        Log.d("asdasdasd", "onCleared in ProcedureProcess: onCleared")
     }
 
     fun observeSensorData() = intent {
@@ -92,6 +95,7 @@ class ProcedureProcessViewModel(
                         sensorTemperature = sensorData?.temrTmpr1 ?: 0,
                         calorieValue = currentCalorieValue,
                         pulse = sensorData?.snsrHC ?: 0,
+                        skinTemperature = sensorData?.skinTemperature?.roundToInt() ?: 0,
                         isTemperatureDifferenceLarge = isDifferenceLarge,
                     )
                 )
@@ -103,8 +107,6 @@ class ProcedureProcessViewModel(
 
                 if (!isTimerFinished && temperature.value - sensorTemperature >= 1) {
                     if (!localDataStore.getCommandState(COMMAND_TEN)) {
-                        Log.i("COMMAND_TEN", "ProcedureProcess: ON COMMAND_TEN")
-
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {
@@ -118,8 +120,6 @@ class ProcedureProcessViewModel(
                     }
                 } else {
                     if (localDataStore.getCommandState(COMMAND_TEN)) {
-                        Log.i("COMMAND_TEN", "ProcedureProcess: OFF COMMAND_TEN")
-
                         bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
                             localDataStore.saveCommandState(COMMAND_TEN, false)
                             updateIconStates()
@@ -157,29 +157,25 @@ class ProcedureProcessViewModel(
     fun sendEndingCommands() {
         viewModelScope.launch {
             if (localDataStore.getCommandState(COMMAND_TEN)) {
-                Log.i("COMMAND_TEN", "ProcedureProcess endingCommands: OFF COMMAND_TEN")
-
                 bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
                     localDataStore.saveCommandState(COMMAND_TEN, false)
                     updateIconStates()
-                })//turn Off
+                })
             }
-            while (localDataStore.getCommandState(COMMAND_IREM)) {
+            if (localDataStore.getCommandState(COMMAND_IREM)) {
                 bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
                     localDataStore.saveCommandState(COMMAND_IREM, false)
                     updateIconStates()
-                })//turn Off
+                })
             }
 
             GlobalScope.launch {
-                delay(120000)
+                delay(DELAY_DURATION_12000)
                 while (localDataStore.getCommandState(COMMAND_FAN)) {
-                    Log.i("COMMAND_FAN", "PROCEDURE Process finish: OFF COMMAND_FAN")
-
                     bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
                         localDataStore.saveCommandState(COMMAND_FAN, false)
                         updateIconStates()
-                    }) // turn Off
+                    })
                 }
             }
         }
@@ -190,7 +186,7 @@ class ProcedureProcessViewModel(
             bluetoothController.sendCommand(COMMAND_KMPR, onSuccess = {
                 localDataStore.saveCommandState(COMMAND_KMPR, true)
                 updateIconStates()
-            }) // Turn On
+            })
         }
     }
 
@@ -199,7 +195,7 @@ class ProcedureProcessViewModel(
             bluetoothController.sendCommand(COMMAND_KMPR, onSuccess = {
                 localDataStore.saveCommandState(COMMAND_KMPR, false)
                 updateIconStates()
-            })  // Turn Off
+            })
         }
     }
 
@@ -207,6 +203,8 @@ class ProcedureProcessViewModel(
         chipBalmInfoModels: List<ChipBalmInfoModel>,
         allBalmNames: List<String>
     ) = intent {
+        _balmFeeding.value = true
+
         chipBalmInfoModels.let { list ->
             val totalConsumption = list.sumOf { it.consumption }
             val totalDurationInSeconds = ONE_MINUTE_IN_SEC
@@ -268,6 +266,7 @@ class ProcedureProcessViewModel(
                     }
                     delay(DELAY_1000_ML)
                 }
+                _balmFeeding.value = false
             }
         }
     }

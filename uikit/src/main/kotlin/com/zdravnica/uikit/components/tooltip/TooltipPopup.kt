@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.center
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
@@ -43,11 +42,14 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
+private const val VIEW_HEIGHT = 20
+private const val DELAY_DURATION_2000 = 2000L
+
 @Composable
 fun TooltipPopup(
     modifier: Modifier = Modifier,
     isEnableToClick: Boolean = true,
-    viewHeight: Int = 20,
+    viewHeight: Int = VIEW_HEIGHT,
     requesterView: @Composable (Modifier) -> Unit,
     tooltipContent: @Composable () -> Unit,
 ) {
@@ -57,7 +59,7 @@ fun TooltipPopup(
 
     LaunchedEffect(isShowTooltip) {
         if (isShowTooltip) {
-            delay(2000)
+            delay(DELAY_DURATION_2000)
             isShowTooltip = false
         }
     }
@@ -88,8 +90,8 @@ fun TooltipPopup(
     position: TooltipPopupPosition,
     backgroundShape: Shape = RoundedCornerShape(size = ZdravnicaAppTheme.dimens.size6),
     backgroundColor: Color = Color.White,
-    arrowHeight: Dp = 6.dp,
-    horizontalPadding: Dp = 20.dp,
+    arrowHeight: Dp = ZdravnicaAppTheme.dimens.size6,
+    horizontalPadding: Dp = ZdravnicaAppTheme.dimens.size20,
     onDismissRequest: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
@@ -180,29 +182,22 @@ internal class TooltipAlignmentOffsetPositionProvider(
     ): IntOffset {
         var popupPosition = IntOffset(0, 0)
 
-        // Get the aligned point inside the parent
         val parentAlignmentPoint = alignment.align(
             IntSize.Zero,
             IntSize(anchorBounds.width, anchorBounds.height),
             layoutDirection
         )
-        // Get the aligned point inside the child
+
         val relativePopupPos = alignment.align(
             IntSize.Zero,
             IntSize(popupContentSize.width, popupContentSize.height),
             layoutDirection
         )
 
-        // Add the position of the parent
         popupPosition += IntOffset(anchorBounds.left, anchorBounds.top)
-
-        // Add the distance between the parent's top left corner and the alignment point
         popupPosition += parentAlignmentPoint
-
-        // Subtract the distance between the children's top left corner and the alignment point
         popupPosition -= IntOffset(relativePopupPos.x, relativePopupPos.y)
 
-        // Add the user offset
         val resolvedOffset = IntOffset(
             offset.x * (if (layoutDirection == LayoutDirection.Ltr) 1 else -1),
             offset.y

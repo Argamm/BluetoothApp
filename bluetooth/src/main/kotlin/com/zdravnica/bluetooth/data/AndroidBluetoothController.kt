@@ -36,7 +36,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -115,13 +114,11 @@ internal class AndroidBluetoothController(
             } catch (e: IOException) {
                 emit(ConnectionResult.Error("Connection failed: ${e.message}"))
             }
-        }.onCompletion {
-            close()
         }.flowOn(Dispatchers.IO)
     }
 
     private fun connectToDevice(device: BluetoothDevice) {
-        bluetoothGatt = device.connectGatt(context, false, object : BluetoothGattCallback() {
+        bluetoothGatt = device.connectGatt(context, true, object : BluetoothGattCallback() {
             override fun onConnectionStateChange(
                 gatt: BluetoothGatt?,
                 status: Int,
@@ -129,6 +126,8 @@ internal class AndroidBluetoothController(
             ) {
                 super.onConnectionStateChange(gatt, status, newState)
                 if (newState == BluetoothGatt.STATE_CONNECTED) {
+                    gatt?.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH)
+
                     Log.d("Bluetooth", "Connected to ${device.name}")
                     _bluetoothConnectionStatus.value = BluetoothConnectionStatus.Connected
 
@@ -146,6 +145,7 @@ internal class AndroidBluetoothController(
                     }
                     stopListening()
                     close()
+                    gatt?.close()
                 }
             }
 
@@ -306,10 +306,7 @@ internal class AndroidBluetoothController(
                                     success = true
                                     break
                                 } else {
-                                    Log.e(
-                                        "Bluetooth",
-                                        "Failed to send command: $cmd (attempt $attempt)"
-                                    )
+                                    Log.e("Bluetooth", "Failed to send command: $cmd (attempt $attempt)")
                                     attempt++
                                     delay(DELAY_DURATION_1000)
                                 }
@@ -389,6 +386,7 @@ internal class AndroidBluetoothController(
                 temrTmpr1 = temrTmpr1,
                 temrIR1 = temrIR1,
                 temrIR2 = temrIR2,
+                skinTemperature = (temrIR1 + temrIR2) / 2,
                 snsrHC = snsrHC,
                 thermostat = thermostat,
                 stateDevice = stateDevice
@@ -424,7 +422,6 @@ internal class AndroidBluetoothController(
     }
 }
 
-const val DELAY_DURATION_500 = 500L
 const val DELAY_DURATION_1000 = 1000L
 const val DELAY_DURATION_2000 = 2000L
 const val DELAY_DURATION_3000 = 3000L

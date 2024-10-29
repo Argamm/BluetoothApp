@@ -27,7 +27,7 @@ import com.zdravnica.uikit.FLOAT_1
 import com.zdravnica.uikit.FLOAT_140
 import com.zdravnica.uikit.FLOAT_160
 import com.zdravnica.uikit.FLOAT_1_6
-import com.zdravnica.uikit.TIMER_DISCOUNT_VALUE
+import com.zdravnica.uikit.COUNT_FIVE
 import kotlinx.coroutines.delay
 
 @Composable
@@ -36,7 +36,7 @@ fun AnimationCircle(
     animationEnd: () -> Unit,
 ) {
     val dimens = ZdravnicaAppTheme.dimens
-    var timer by remember { mutableIntStateOf(TIMER_DISCOUNT_VALUE) }
+    var timer by remember { mutableIntStateOf(COUNT_FIVE) }
     LaunchedEffect(Unit) {
         while (timer > 0) {
             delay(DELAY_1000_ML)

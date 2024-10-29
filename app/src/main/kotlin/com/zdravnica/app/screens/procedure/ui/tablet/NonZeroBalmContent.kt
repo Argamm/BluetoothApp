@@ -22,7 +22,6 @@ import com.zdravnica.uikit.components.buttons.ui.BigButton
 import com.zdravnica.uikit.components.buttons.ui.OrderBalmButton
 import com.zdravnica.uikit.resources.R
 
-
 @Composable
 fun NonZeroBalmContent(
     onClickOrderBalmButton: () -> Unit,

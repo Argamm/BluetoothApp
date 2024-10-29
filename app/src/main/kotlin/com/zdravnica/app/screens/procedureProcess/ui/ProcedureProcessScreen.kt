@@ -1,6 +1,5 @@
 package com.zdravnica.app.screens.procedureProcess.ui
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Spacer
@@ -93,20 +92,14 @@ fun ProcedureProcessScreen(
     DisposableEffect(lifecycleOwner) {
         val lifecycleObserver = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_CREATE -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_CREATE")
-                Lifecycle.Event.ON_START -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_START")
                 Lifecycle.Event.ON_RESUME -> {
                     procedureProcessViewModel.onChangeCancelDialogPageVisibility(false)
                     procedureProcessViewModel.observeSensorData()
-                    Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_RESUME")
                 }
-                Lifecycle.Event.ON_PAUSE -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_PAUSE")
                 Lifecycle.Event.ON_STOP -> {
                     procedureProcessViewModel.stopObservingSensorData()
-                    Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_STOP")
                 }
-                Lifecycle.Event.ON_DESTROY -> Log.d("LifecycleLogger", "ProcedureProcessScreen  ON_DESTROY")
-                else -> Log.d("LifecycleLogger", "Unknown event")
+                else -> {}
             }
         }
 
@@ -160,6 +153,13 @@ fun ProcedureProcessScreen(
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size38))
 
                     if (!isTimerFinished) {
+                        if (procedureProcessViewModel.balmFeeding.value) {
+                            ProcedureStateInfo(
+                                firstText = stringResource(R.string.procedure_process_balm_supply),
+                            )
+                            Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size8))
+                        }
+
                         TimerProcess(totalSeconds = procedureProcessViewModel.duration.value,
                             onTimerFinish = {
                                 isTimerFinished = true
@@ -206,7 +206,7 @@ fun ProcedureProcessScreen(
                     )
 
                     HealthMetricsDisplay(
-                        temperatureValue = "${procedureProcessViewState.sensorTemperature}°C",
+                        temperatureValue = "${procedureProcessViewState.skinTemperature}°C",
                         calorieValue = "${procedureProcessViewState.calorieValue} кк.",
                         pulseValue = "${procedureProcessViewState.pulse}/60",
                     )
@@ -222,11 +222,8 @@ fun ProcedureProcessScreen(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
                                 ) {
-                                    procedureProcessViewModel.onChangeCancelDialogPageVisibility(
-                                        true
-                                    )
+                                    procedureProcessViewModel.onChangeCancelDialogPageVisibility(true)
                                     procedureProcessViewModel.navigateToCancelDialogPage()
-
                                 },
                             text = stringResource(R.string.preparing_the_cabin_cancel_procedure),
                             style = ZdravnicaAppTheme.typography.bodyMediumSemi,

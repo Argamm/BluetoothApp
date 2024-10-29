@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
+import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.ERROR_ICON_DESCRIPTION
 import com.zdravnica.uikit.ORDER_DESCRIPTION
 import com.zdravnica.uikit.components.buttons.ui.OrderBalmButton
@@ -40,7 +41,7 @@ fun MenuBalms(
     onBalmFilledClick: () -> Unit,
 ) {
     val zeroTextVisible = remember { mutableStateOf(false) }
-    zeroTextVisible.value = firstBalmCount == 2 || secondBalmCount == 2 || thirdBalmCount == 2
+    zeroTextVisible.value = firstBalmCount == COUNT_TWO || secondBalmCount == COUNT_TWO || thirdBalmCount == COUNT_TWO
 
     Card(
         elevation = ZdravnicaAppTheme.dimens.size4,
