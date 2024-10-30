@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.procedureProcess.ui.tablet
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -80,12 +81,17 @@ fun ProcedureProcessTabletScreen(
 
             is ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen -> {
                 showFailedScreen = true
-                statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
+                statusInfoState = StatusInfoState.SENSOR_ERROR
             }
 
             is ProcedureProcessSideEffect.OnNavigateToFailedTemperatureCommandScreen -> {
                 showFailedScreen = true
-                statusInfoState = StatusInfoState.SENSOR_ERROR
+                statusInfoState = StatusInfoState.TEMPERATURE_EXCEEDED
+            }
+
+            is ProcedureProcessSideEffect.OnNavigateToFailedFanCommandScreen -> {
+                showFailedScreen = true
+                statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
             }
 
             is ProcedureProcessSideEffect.OnBluetoothConnectionLost -> {
@@ -124,6 +130,11 @@ fun ProcedureProcessTabletScreen(
 
     LaunchedEffect(Unit) {
         procedureProcessViewModel.updateIconStates()
+    }
+
+    BackHandler {
+        procedureProcessViewModel.onChangeCancelDialogPageVisibility(true)
+        navigateToCancelDialogPage.invoke(true, cancelDialog)
     }
 
     Scaffold(
@@ -228,7 +239,7 @@ fun ProcedureProcessTabletScreen(
                         ) {
 
                             HealthMetricsDisplay(
-                                temperatureValue = "${procedureProcessViewState.sensorTemperature}°C",
+                                temperatureValue = "${procedureProcessViewState.skinTemperature}°C",
                                 calorieValue = "${procedureProcessViewState.calorieValue} кк.",
                                 pulseValue = "${procedureProcessViewState.pulse}/60",
                             )

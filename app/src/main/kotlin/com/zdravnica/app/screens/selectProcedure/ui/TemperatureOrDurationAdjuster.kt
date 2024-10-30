@@ -73,7 +73,7 @@ fun TemperatureOrDurationAdjuster(
                         horizontal = if (isTablet()) {
                             ZdravnicaAppTheme.dimens.size1
                         } else
-                            ZdravnicaAppTheme.dimens.size48
+                            ZdravnicaAppTheme.dimens.size25
                     )
             ) {
                 GradientIconButton(

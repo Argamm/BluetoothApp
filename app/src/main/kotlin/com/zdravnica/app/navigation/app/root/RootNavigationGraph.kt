@@ -202,6 +202,7 @@ fun RootNavigationGraph(
                     chipTitle = chipData,
                     onNavigateUp = { navHostController.navigateUp() },
                     startProcedure = { chipTitle ->
+                        connectivityViewModel.stopTurningOffProcesses()
                         navHostController.navigate("${AppNavGraph.PreparingTheCabinScreen.route}/${chipTitle}")
                     },
                     navigateToTheConnectionScreen = {
@@ -313,6 +314,7 @@ fun RootNavigationGraph(
                     chipTitle = chipData,
                     onNavigateUp = { navHostController.navigateUp() },
                     startProcedure = { chipTitle ->
+                        connectivityViewModel.stopTurningOffProcesses()
                         navHostController.navigate("${AppNavGraph.PreparingTheCabinScreen.route}/${chipTitle}")
                     },
                     navigateToTheConnectionScreen = {

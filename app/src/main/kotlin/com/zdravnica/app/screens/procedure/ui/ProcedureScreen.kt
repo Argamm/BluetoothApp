@@ -66,16 +66,6 @@ fun ProcedureScreen(
                 balmInfo = getBalmInfoByTitle(sideEffect.selectedOption)
             }
 
-            is ProcedureScreenSideEffect.OnNavigateToFailedTenCommandScreen -> {
-                showFailedScreen = true
-                statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
-            }
-
-            is ProcedureScreenSideEffect.OnNavigateToFailedFanCommandScreen -> {
-                showFailedScreen = true
-                statusInfoState = StatusInfoState.TEMPERATURE_EXCEEDED
-            }
-
             is ProcedureScreenSideEffect.OnBluetoothConnectionLost -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.CONNECTION_LOST

@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.procedureProcess.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Spacer
@@ -74,12 +75,17 @@ fun ProcedureProcessScreen(
 
             is ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen -> {
                 showFailedScreen = true
+                statusInfoState = StatusInfoState.SENSOR_ERROR
+            }
+
+            is ProcedureProcessSideEffect.OnNavigateToFailedFanCommandScreen -> {
+                showFailedScreen = true
                 statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
             }
 
             is ProcedureProcessSideEffect.OnNavigateToFailedTemperatureCommandScreen -> {
                 showFailedScreen = true
-                statusInfoState = StatusInfoState.SENSOR_ERROR
+                statusInfoState = StatusInfoState.TEMPERATURE_EXCEEDED
             }
 
             is ProcedureProcessSideEffect.OnBluetoothConnectionLost -> {
@@ -87,6 +93,11 @@ fun ProcedureProcessScreen(
                 statusInfoState = StatusInfoState.CONNECTION_LOST
             }
         }
+    }
+
+    BackHandler {
+        procedureProcessViewModel.onChangeCancelDialogPageVisibility(true)
+        navigateToCancelDialogPage.invoke(true, cancelDialog)
     }
 
     DisposableEffect(lifecycleOwner) {

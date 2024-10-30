@@ -66,20 +66,11 @@ fun ProcedureTabletScreen(
     procedureScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is ProcedureScreenSideEffect.OnNavigateUp -> onNavigateUp?.invoke()
+
             is ProcedureScreenSideEffect.OnOptionSelected -> {
                 selectedOption = sideEffect.selectedOption
                 chipData = BigChipType.getChipDataByTitle(sideEffect.selectedOption)
                 balmInfo = getBalmInfoByTitle(sideEffect.selectedOption)
-            }
-
-            is ProcedureScreenSideEffect.OnNavigateToFailedTenCommandScreen -> {
-                showFailedScreen = true
-                statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
-            }
-
-            is ProcedureScreenSideEffect.OnNavigateToFailedFanCommandScreen -> {
-                showFailedScreen = true
-                statusInfoState = StatusInfoState.TEMPERATURE_EXCEEDED
             }
 
             is ProcedureScreenSideEffect.OnBluetoothConnectionLost -> {

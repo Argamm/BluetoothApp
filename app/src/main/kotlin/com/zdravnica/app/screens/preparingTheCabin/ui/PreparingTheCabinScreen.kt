@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.preparingTheCabin.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -93,6 +94,11 @@ fun PreparingTheCabinScreen(
 
             is PreparingTheCabinScreenSideEffect.OnNavigateToFailedTenCommandScreen -> {
                 showFailedScreen = true
+                statusInfoState = StatusInfoState.SENSOR_ERROR
+            }
+
+            is PreparingTheCabinScreenSideEffect.OnNavigateToFailedFanCommandScreen -> {
+                showFailedScreen = true
                 statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
             }
 
@@ -131,6 +137,11 @@ fun PreparingTheCabinScreen(
 
     LaunchedEffect(Unit) {
         preparingTheCabinScreenViewModel.updateIconStates()
+    }
+
+    BackHandler {
+        preparingTheCabinScreenViewModel.onChangeCancelDialogPageVisibility(true)
+        navigateToCancelDialogPage.invoke(true, cancelDialog)
     }
 
     Scaffold(

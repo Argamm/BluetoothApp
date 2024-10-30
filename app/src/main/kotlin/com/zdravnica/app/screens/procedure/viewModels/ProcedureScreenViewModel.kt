@@ -4,8 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.screens.procedure.models.ProcedureScreenViewState
-import com.zdravnica.bluetooth.data.COMMAND_FAN
-import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import kotlinx.coroutines.launch
@@ -43,26 +41,6 @@ class ProcedureScreenViewModel(
                         postSideEffect(ProcedureScreenSideEffect.OnBluetoothConnectionLost)
                     }
                 }
-            }
-        }
-
-        viewModelScope.launch {
-            if (!localDataStore.getCommandState(COMMAND_FAN)) {
-                bluetoothController.sendCommand(
-                    COMMAND_FAN,
-                    onSuccess = {
-                        localDataStore.saveCommandState(COMMAND_FAN, true)
-                    },
-                    onFailed = {
-                        postSideEffect(ProcedureScreenSideEffect.OnNavigateToFailedTenCommandScreen)
-                    }
-                )
-            }
-
-            if (!localDataStore.getCommandState(COMMAND_IREM)) {
-                bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_IREM, true)
-                })
             }
         }
     }

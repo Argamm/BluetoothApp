@@ -74,6 +74,10 @@ internal class AndroidBluetoothController(
     override val bluetoothConnectionStatus: StateFlow<BluetoothConnectionStatus> =
         _bluetoothConnectionStatus
 
+    private var commandCharacteristic: BluetoothGattCharacteristic? =
+        null
+    private var command: String = ""
+
 //    private val _getCommandsState = MutableSharedFlow<String>()
 //    override val getCommandsState: SharedFlow<String> = _getCommandsState
 
@@ -126,6 +130,9 @@ internal class AndroidBluetoothController(
             ) {
                 super.onConnectionStateChange(gatt, status, newState)
                 if (newState == BluetoothGatt.STATE_CONNECTED) {
+                    commandCharacteristic = gatt?.let { findCharacteristic(it) }
+                    command = COMMAND_START
+
                     gatt?.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH)
 
                     Log.d("Bluetooth", "Connected to ${device.name}")
@@ -133,7 +140,7 @@ internal class AndroidBluetoothController(
 
                     scope.launch {
                         delay(DELAY_DURATION_1000)
-                        sendCommand(COMMAND_START)
+                        sendCommand(command)
                         _connectionResultFlow.emit(ConnectionResult.Transferred(InfoDataModel("Connected")))
                     }
                     bluetoothGatt?.discoverServices()
@@ -270,89 +277,79 @@ internal class AndroidBluetoothController(
             return
         }
 
-        var gatt = bluetoothGatt
-        var characteristic = gatt?.let { findCharacteristic(it) }
-
-        if (gatt == null || characteristic == null) {
-            Log.w("Bluetooth", "Reinitializing BluetoothGatt and characteristic")
-            gatt = bluetoothGatt
-            characteristic = gatt?.let { findCharacteristic(it) }
-            if (gatt == null || characteristic == null) {
-                Log.e("Bluetooth", "Failed to reinitialize BluetoothGatt or characteristic")
-                onFailed?.invoke()
-                return
-            }
+        val characteristic = commandCharacteristic ?: bluetoothGatt?.let { findCharacteristic(it) }
+        if (bluetoothGatt == null || characteristic == null) {
+            Log.e("Bluetooth", "BluetoothGatt or characteristic is not available")
+            onFailed?.invoke()
+            return
         }
 
-        if (cmd.isNotEmpty()) {
+        if (cmd.isNotEmpty() && characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE != 0) {
             val binCmd = cmd.toByteArray(Charsets.UTF_8)
+            sendWithRetry(binCmd, characteristic, onSuccess, onFailed)
+        } else {
+            Log.e("Bluetooth", "Characteristic does not support write")
+            onFailed?.invoke()
+        }
+    }
 
-            withContext(Dispatchers.IO) {
-                var attempt = 0
-                var success = false
+    private suspend fun sendWithRetry(
+        binCmd: ByteArray,
+        characteristic: BluetoothGattCharacteristic,
+        onSuccess: (() -> Unit)?,
+        onFailed: (() -> Unit)?
+    ) {
+        withContext(Dispatchers.IO) {
+            var attempt = 0
+            var delayTime = 500L
 
-                if (characteristic?.properties?.and(BluetoothGattCharacteristic.PROPERTY_WRITE) != 0) {
-                    try {
-                        while (attempt < 3 && !success) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                val result = gatt?.writeCharacteristic(
-                                    characteristic!!,
-                                    binCmd,
-                                    BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-                                )
-                                if (result == BluetoothStatusCodes.SUCCESS) {
-                                    Log.d("Bluetooth", "Command sent: $cmd")
-                                    onSuccess?.invoke()
-                                    success = true
-                                    break
-                                } else {
-                                    Log.e("Bluetooth", "Failed to send command: $cmd (attempt $attempt)")
-                                    attempt++
-                                    delay(DELAY_DURATION_1000)
-                                }
-                            } else {
-                                @Suppress("DEPRECATION")
-                                characteristic?.value = binCmd
-                                @Suppress("DEPRECATION")
-                                val result = gatt?.writeCharacteristic(characteristic)
-                                if (result == true) {
-                                    Log.d("Bluetooth", "Command sent: $cmd")
-                                    onSuccess?.invoke()
-                                    success = true
-                                    break
-                                } else {
-                                    Log.e(
-                                        "Bluetooth",
-                                        "Failed to send command: $cmd (attempt $attempt)"
-                                    )
-                                    attempt++
-                                    delay(DELAY_DURATION_1000)
-                                }
-                            }
-                        }
-                        if (!success) {
-                            Log.e("Bluetooth", "Command failed after 3 attempts, reinitializing...")
-                            gatt = bluetoothGatt
-                            characteristic = gatt?.let { findCharacteristic(it) }
-                            if (gatt != null && characteristic != null) {
-                                sendCommand(cmd, onSuccess, onFailed)
-                            } else {
-                                Log.e(
-                                    "Bluetooth",
-                                    "Failed to reinitialize BluetoothGatt or characteristic after retry"
-                                )
-                                onFailed?.invoke()
-                            }
-                        } else {
-                        }
-                    } catch (e: Exception) {
-                        Log.e("Bluetooth", "Error sending command: ${e.message}")
-                    }
+            while (attempt < 3) {
+                if (bluetoothGatt?.device?.bondState != BluetoothDevice.BOND_BONDED) {
+                    bluetoothGatt?.connect()
+                }
+
+                val success = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    sendCommandTiramisu(binCmd, characteristic)
                 } else {
-                    Log.e("Bluetooth", "Characteristic does not support write")
+                    sendCommandPreTiramisu(binCmd, characteristic)
+                }
+
+                if (success) {
+                    Log.d("Bluetooth", "Command sent: ${String(binCmd)}")
+                    onSuccess?.invoke()
+                    return@withContext
+                } else {
+                    Log.e("Bluetooth", "Failed to send command, attempt: ${String(binCmd)}")
+                    attempt++
+                    delay(delayTime)
+                    delayTime *= 2
                 }
             }
+
+            Log.e("Bluetooth", "Command failed after max attempts")
+            onFailed?.invoke()
         }
+    }
+
+    private fun sendCommandTiramisu(
+        binCmd: ByteArray,
+        characteristic: BluetoothGattCharacteristic
+    ): Boolean {
+        val result = bluetoothGatt?.writeCharacteristic(
+            characteristic,
+            binCmd,
+            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+        )
+        return result == BluetoothStatusCodes.SUCCESS
+    }
+
+    @Suppress("DEPRECATION")
+    private fun sendCommandPreTiramisu(
+        binCmd: ByteArray,
+        characteristic: BluetoothGattCharacteristic
+    ): Boolean {
+        characteristic.value = binCmd
+        return bluetoothGatt?.writeCharacteristic(characteristic) == true
     }
 
     private fun findCharacteristic(gatt: BluetoothGatt): BluetoothGattCharacteristic? {

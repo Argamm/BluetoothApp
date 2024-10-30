@@ -30,6 +30,7 @@ class SelectProcedureViewModel(
 
     private val _duration = mutableIntStateOf(localDataStore.getDuration())
     val duration: State<Int> get() = _duration
+    private var isProcessing = false
 
     override val container =
         container<SelectProcedureViewState, SelectProcedureSideEffect>(
@@ -89,11 +90,20 @@ class SelectProcedureViewModel(
     }
 
     private fun switchIk(newState: Boolean) {
+        if (isProcessing) return
+        isProcessing = true
         viewModelScope.launch {
-            bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
-                localDataStore.saveCommandState(COMMAND_IREM, newState)
-                loadCommandStates()
-            })
+            bluetoothController.sendCommand(COMMAND_IREM,
+                onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_IREM, newState)
+                    loadCommandStates()
+                    isProcessing = false
+                },
+                onFailed = {
+                    loadCommandStates()
+                    isProcessing = false
+                }
+            )
         }
     }
 

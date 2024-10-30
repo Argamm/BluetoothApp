@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.procedureProcess.viewModels
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +45,7 @@ class ProcedureProcessViewModel(
     private val calculateCaloriesUseCase: CalculateCaloriesUseCase
 ) : BaseViewModel<ProcedureProcessViewState, ProcedureProcessSideEffect>() {
     private var sensorDataJob: Job? = null
+    private var sendingCommands: Job? = null
     private var hasTemperatureDifferenceWarningBeenShown = false
     private var isTimerFinished: Boolean = false
 
@@ -76,6 +78,7 @@ class ProcedureProcessViewModel(
                     is BluetoothConnectionStatus.Disconnected -> {
                         postSideEffect(ProcedureProcessSideEffect.OnBluetoothConnectionLost)
                     }
+
                     is BluetoothConnectionStatus.Error -> {
                         postSideEffect(ProcedureProcessSideEffect.OnBluetoothConnectionLost)
                     }
@@ -107,6 +110,8 @@ class ProcedureProcessViewModel(
 
                 if (!isTimerFinished && temperature.value - sensorTemperature >= 1) {
                     if (!localDataStore.getCommandState(COMMAND_TEN)) {
+                        Log.i("asdsadas", "ProcedureProcess: COMMAND_TEN ON")
+
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {
@@ -120,10 +125,18 @@ class ProcedureProcessViewModel(
                     }
                 } else {
                     if (localDataStore.getCommandState(COMMAND_TEN)) {
-                        bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
-                            localDataStore.saveCommandState(COMMAND_TEN, false)
-                            updateIconStates()
-                        })
+                        Log.i("asdsadas", "ProcedureProcess: COMMAND_TEN OFF")
+
+                        bluetoothController.sendCommand(
+                            COMMAND_TEN,
+                            onSuccess = {
+                                localDataStore.saveCommandState(COMMAND_TEN, false)
+                                updateIconStates()
+                            },
+                            onFailed = {
+                                postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen)
+                            }
+                        )
                     }
                 }
             }
@@ -136,6 +149,7 @@ class ProcedureProcessViewModel(
 
     fun stopObservingSensorData() {
         sensorDataJob?.cancel()
+        sendingCommands?.cancel()
     }
 
     fun onChangeCancelDialogPageVisibility(isVisible: Boolean) = intent {
@@ -157,10 +171,18 @@ class ProcedureProcessViewModel(
     fun sendEndingCommands() {
         viewModelScope.launch {
             if (localDataStore.getCommandState(COMMAND_TEN)) {
-                bluetoothController.sendCommand(COMMAND_TEN, onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_TEN, false)
-                    updateIconStates()
-                })
+                Log.i("asdsadas", "ProcedureProcess: COMMAND_TEN Offfffff")
+
+                bluetoothController.sendCommand(
+                    COMMAND_TEN,
+                    onSuccess = {
+                        localDataStore.saveCommandState(COMMAND_TEN, false)
+                        updateIconStates()
+                    },
+                    onFailed = {
+                        postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen)
+                    }
+                )
             }
             if (localDataStore.getCommandState(COMMAND_IREM)) {
                 bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
@@ -172,10 +194,16 @@ class ProcedureProcessViewModel(
             GlobalScope.launch {
                 delay(DELAY_DURATION_12000)
                 while (localDataStore.getCommandState(COMMAND_FAN)) {
-                    bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
-                        localDataStore.saveCommandState(COMMAND_FAN, false)
-                        updateIconStates()
-                    })
+                    bluetoothController.sendCommand(
+                        COMMAND_FAN,
+                        onSuccess = {
+                            localDataStore.saveCommandState(COMMAND_FAN, false)
+                            updateIconStates()
+                        },
+                        onFailed = {
+                            postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedFanCommandScreen)
+                        }
+                    )
                 }
             }
         }
@@ -272,18 +300,24 @@ class ProcedureProcessViewModel(
     }
 
     private suspend fun sendCommandUntilOn(command: String) {
-        while (!localDataStore.getCommandState(command)) {
-            bluetoothController.sendCommand(command, onSuccess = {
-                localDataStore.saveCommandState(command, true)
-            })
+        sendingCommands?.cancel()
+        sendingCommands = viewModelScope.launch {
+            while (!localDataStore.getCommandState(command)) {
+                bluetoothController.sendCommand(command, onSuccess = {
+                    localDataStore.saveCommandState(command, true)
+                })
+            }
         }
     }
 
     private suspend fun sendCommandUntilOff(command: String) {
-        while (localDataStore.getCommandState(command)) {
-            bluetoothController.sendCommand(command, onSuccess = {
-                localDataStore.saveCommandState(command, false)
-            })
+        sendingCommands?.cancel()
+        sendingCommands = viewModelScope.launch {
+            while (localDataStore.getCommandState(command)) {
+                bluetoothController.sendCommand(command, onSuccess = {
+                    localDataStore.saveCommandState(command, false)
+                })
+            }
         }
     }
 
