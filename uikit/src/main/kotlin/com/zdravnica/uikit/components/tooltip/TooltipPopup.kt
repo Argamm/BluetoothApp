@@ -39,7 +39,7 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import kotlinx.coroutines.delay
+import com.zdravnica.uikit.components.clock.Clock
 import kotlin.math.roundToInt
 
 private const val VIEW_HEIGHT = 20
@@ -56,11 +56,17 @@ fun TooltipPopup(
     var isShowTooltip by remember { mutableStateOf(false) }
     var position by remember { mutableStateOf(TooltipPopupPosition()) }
     val view = LocalView.current.rootView
+    var snackBarClock: Clock? = remember { null }
 
     LaunchedEffect(isShowTooltip) {
         if (isShowTooltip) {
-            delay(DELAY_DURATION_2000)
-            isShowTooltip = false
+            snackBarClock?.cancel()
+            snackBarClock = Clock(DELAY_DURATION_2000).apply {
+                start(
+                    onFinish = { isShowTooltip = false },
+                    onTick = {}
+                )
+            }
         }
     }
 

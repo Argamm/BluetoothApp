@@ -26,8 +26,6 @@ import com.zdravnica.app.utils.LocalBackPressedDispatcher
 import com.zdravnica.resources.ui.theme.models.LocalLanguageEnum
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.DELAY_DURATION_1200
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -48,7 +46,6 @@ class MainActivity : ComponentActivity() {
         installSplashScreen().apply {
             setOnExitAnimationListener { splashScreen ->
                 lifecycleScope.launch {
-                    delay(DELAY_DURATION_1200)
                     splashScreen.remove()
                 }
             }

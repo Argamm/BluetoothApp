@@ -24,12 +24,10 @@ import com.zdravnica.uikit.COUNT_ONE
 import com.zdravnica.uikit.COUNT_THREE
 import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.DELAY_1000_ML
-import com.zdravnica.uikit.DELAY_DURATION_12000
 import com.zdravnica.uikit.ONE_MINUTE_IN_SEC
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.chips.models.ChipBalmInfoModel
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import com.zdravnica.uikit.components.clock.Clock
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -48,6 +46,7 @@ class ProcedureProcessViewModel(
     private var sendingCommands: Job? = null
     private var hasTemperatureDifferenceWarningBeenShown = false
     private var isTimerFinished: Boolean = false
+    private var clock: Clock? = null
 
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
@@ -150,6 +149,8 @@ class ProcedureProcessViewModel(
     fun stopObservingSensorData() {
         sensorDataJob?.cancel()
         sendingCommands?.cancel()
+        clock?.cancel()
+        clock = null
     }
 
     fun onChangeCancelDialogPageVisibility(isVisible: Boolean) = intent {
@@ -165,48 +166,6 @@ class ProcedureProcessViewModel(
     fun navigateToMainScreen() {
         stopObservingSensorData()
         postSideEffect(ProcedureProcessSideEffect.OnNavigateToMainScreen)
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    fun sendEndingCommands() {
-        viewModelScope.launch {
-            if (localDataStore.getCommandState(COMMAND_TEN)) {
-                Log.i("asdsadas", "ProcedureProcess: COMMAND_TEN Offfffff")
-
-                bluetoothController.sendCommand(
-                    COMMAND_TEN,
-                    onSuccess = {
-                        localDataStore.saveCommandState(COMMAND_TEN, false)
-                        updateIconStates()
-                    },
-                    onFailed = {
-                        postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen)
-                    }
-                )
-            }
-            if (localDataStore.getCommandState(COMMAND_IREM)) {
-                bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_IREM, false)
-                    updateIconStates()
-                })
-            }
-
-            GlobalScope.launch {
-                delay(DELAY_DURATION_12000)
-                while (localDataStore.getCommandState(COMMAND_FAN)) {
-                    bluetoothController.sendCommand(
-                        COMMAND_FAN,
-                        onSuccess = {
-                            localDataStore.saveCommandState(COMMAND_FAN, false)
-                            updateIconStates()
-                        },
-                        onFailed = {
-                            postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedFanCommandScreen)
-                        }
-                    )
-                }
-            }
-        }
     }
 
     fun turnOnKMPR() = intent {

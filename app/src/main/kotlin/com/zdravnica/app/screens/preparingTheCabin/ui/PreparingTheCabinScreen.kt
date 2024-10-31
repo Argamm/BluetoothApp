@@ -102,6 +102,11 @@ fun PreparingTheCabinScreen(
                 statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
             }
 
+            is PreparingTheCabinScreenSideEffect.OnNavigateToFailedTemperatureCommandScreen -> {
+                showFailedScreen = true
+                statusInfoState = StatusInfoState.TEMPERATURE_EXCEEDED
+            }
+
             is PreparingTheCabinScreenSideEffect.OnBluetoothConnectionLost -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.CONNECTION_LOST
@@ -159,7 +164,7 @@ fun PreparingTheCabinScreen(
                 temperature = preparingTheCabinScreenViewState.sensorTemperature,
                 iconStates = iconStates,
                 backgroundColor = backgroundColor,
-                isTemperatureDifferenceLarge = false,
+                isTemperatureDifferenceLarge = preparingTheCabinScreenViewState.isTemperatureDifferenceLarge,
             )
         },
 

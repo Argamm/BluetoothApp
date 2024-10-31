@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -23,13 +23,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.app.utils.isLandscape
 import com.zdravnica.app.utils.isTablet
-import com.zdravnica.uikit.resources.R
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.COUNT_ONE
 import com.zdravnica.uikit.DELAY_1000_ML
+import com.zdravnica.uikit.components.clock.Clock
 import com.zdravnica.uikit.extensions.compose.calculateTimeText
-import kotlinx.coroutines.delay
+import com.zdravnica.uikit.resources.R
 
 private const val NINE_MINUTES_IN_SECONDS = 540
 private const val FOUR_MINUTES_IN_SECONDS = 240
@@ -53,38 +52,40 @@ fun TimerProcess(
     var hasNineMinutesBeenCalled by remember { mutableStateOf(false) }
     var hasFourMinutesBeenCalled by remember { mutableStateOf(false) }
 
-    LaunchedEffect(remainingSeconds.intValue) {
-        if (remainingSeconds.intValue > 0) {
-            delay(DELAY_1000_ML)
-            remainingSeconds.intValue -= COUNT_ONE
+    val clock = remember {
+        Clock(duration = totalSeconds * DELAY_1000_ML).apply {
+            start(
+                onFinish = { onTimerFinish() },
+                onTick = { remainingTime ->
+                    remainingSeconds.intValue = (remainingTime / DELAY_1000_ML).toInt()
 
-            if (remainingSeconds.intValue == NINE_MINUTES_IN_SECONDS && !hasNineMinutesBeenCalled) {
-                onNineMinutesLeft()
-                hasNineMinutesBeenCalled = true
-            }
+                    if (remainingSeconds.intValue == NINE_MINUTES_IN_SECONDS && !hasNineMinutesBeenCalled) {
+                        onNineMinutesLeft()
+                        hasNineMinutesBeenCalled = true
+                    }
 
-            if (remainingSeconds.intValue == MINUTES_LEFT_CREDITS_NINE_MINUTES && !hasNineMinutesBeenCalled) {
-                onMinutesLeftWithCredits()
-            }
+                    if (remainingSeconds.intValue == MINUTES_LEFT_CREDITS_NINE_MINUTES && !hasNineMinutesBeenCalled) {
+                        onMinutesLeftWithCredits()
+                    }
 
-            if (remainingSeconds.intValue == TURN_OFF_THRESHOLD_NINE_MINUTES && hasNineMinutesBeenCalled) {
-                onTurnOffCommand()
-            }
+                    if (remainingSeconds.intValue == TURN_OFF_THRESHOLD_NINE_MINUTES && hasNineMinutesBeenCalled) {
+                        onTurnOffCommand()
+                    }
 
-            if (remainingSeconds.intValue == FOUR_MINUTES_IN_SECONDS && !hasFourMinutesBeenCalled) {
-                onFourMinutesLeft()
-                hasFourMinutesBeenCalled = true
-            }
+                    if (remainingSeconds.intValue == FOUR_MINUTES_IN_SECONDS && !hasFourMinutesBeenCalled) {
+                        onFourMinutesLeft()
+                        hasFourMinutesBeenCalled = true
+                    }
 
-            if (remainingSeconds.intValue == MINUTES_LEFT_CREDITS_FOUR_MINUTES && !hasFourMinutesBeenCalled) {
-                onMinutesLeftWithCredits()
-            }
+                    if (remainingSeconds.intValue == MINUTES_LEFT_CREDITS_FOUR_MINUTES && !hasFourMinutesBeenCalled) {
+                        onMinutesLeftWithCredits()
+                    }
 
-            if (remainingSeconds.intValue == TURN_OFF_THRESHOLD_FOUR_MINUTES && hasFourMinutesBeenCalled) {
-                onTurnOffCommandAfterFour()
-            }
-        } else {
-            onTimerFinish()
+                    if (remainingSeconds.intValue == TURN_OFF_THRESHOLD_FOUR_MINUTES && hasFourMinutesBeenCalled) {
+                        onTurnOffCommandAfterFour()
+                    }
+                }
+            )
         }
     }
 
@@ -127,6 +128,10 @@ fun TimerProcess(
                 ZdravnicaAppTheme.typography.bodyMediumMedium,
             color = ZdravnicaAppTheme.colors.baseAppColor.gray300
         )
+    }
+
+    DisposableEffect(Unit) {
+        onDispose { clock.cancel() }
     }
 }
 

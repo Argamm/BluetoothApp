@@ -33,14 +33,12 @@ import com.zdravnica.app.screens.statusScreen.StatusScreen
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
-import com.zdravnica.uikit.DELAY_DURATION_3000
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.dividers.YTHorizontalDivider
 import com.zdravnica.uikit.components.snackbars.models.SnackBarTypeEnum
 import com.zdravnica.uikit.components.snackbars.ui.SnackBarComponent
 import com.zdravnica.uikit.components.statusDetails.StatusInfoState
 import com.zdravnica.uikit.components.statusDetails.stateDataMap
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -111,9 +109,11 @@ fun SelectProcedureTabletScreen(
                             iconStates[0] == IconState.DISABLED && isFanCommandFailed -> {
                                 StatusInfoState.THERMOSTAT_ACTIVATION
                             }
+
                             iconStates[1] == IconState.DISABLED && isTenCommandFailed -> {
                                 StatusInfoState.SENSOR_ERROR
                             }
+
                             else -> null
                         }
 
@@ -169,10 +169,7 @@ fun SelectProcedureTabletScreen(
             }
         }
         if (viewState.isShowingSnackBar && isShowingSnackBar) {
-            LaunchedEffect(Unit) {
-                delay(DELAY_DURATION_3000)
-                selectProcedureViewModel.setSnackBarInvisible()
-            }
+            selectProcedureViewModel.startSnackBarClock()
 
             Box(
                 modifier = Modifier
@@ -187,6 +184,8 @@ fun SelectProcedureTabletScreen(
                         .align(Alignment.TopCenter)
                 )
             }
+        } else {
+            selectProcedureViewModel.cancelSnackBarClock()
         }
     }
 

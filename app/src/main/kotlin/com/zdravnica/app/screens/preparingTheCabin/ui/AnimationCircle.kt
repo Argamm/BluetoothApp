@@ -1,6 +1,11 @@
 package com.zdravnica.app.screens.preparingTheCabin.ui
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,7 +13,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -21,14 +31,14 @@ import androidx.compose.ui.unit.dp
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.ANIMATION_DURATION_700
 import com.zdravnica.uikit.COUNT_ONE
+import com.zdravnica.uikit.COUNT_SIX
 import com.zdravnica.uikit.DELAY_1000_ML
 import com.zdravnica.uikit.FLOAT_0_3
 import com.zdravnica.uikit.FLOAT_1
 import com.zdravnica.uikit.FLOAT_140
 import com.zdravnica.uikit.FLOAT_160
 import com.zdravnica.uikit.FLOAT_1_6
-import com.zdravnica.uikit.COUNT_FIVE
-import kotlinx.coroutines.delay
+import com.zdravnica.uikit.components.clock.Clock
 
 @Composable
 fun AnimationCircle(
@@ -36,16 +46,25 @@ fun AnimationCircle(
     animationEnd: () -> Unit,
 ) {
     val dimens = ZdravnicaAppTheme.dimens
-    var timer by remember { mutableIntStateOf(COUNT_FIVE) }
-    LaunchedEffect(Unit) {
-        while (timer > 0) {
-            delay(DELAY_1000_ML)
-            timer -= COUNT_ONE
+    var timer by remember { mutableIntStateOf(COUNT_SIX) }
+    val colors = ZdravnicaAppTheme.colors.baseAppColor
+
+    val clock = remember {
+        Clock(duration = COUNT_SIX * DELAY_1000_ML).apply {
+            start(
+                onFinish = { animationEnd.invoke() },
+                onTick = { remainingTime ->
+                    timer = (remainingTime / DELAY_1000_ML).toInt()
+
+                    if (timer == COUNT_ONE) {
+                        cancel()
+                        animationEnd.invoke()
+                    }
+                }
+            )
         }
-        animationEnd.invoke()
     }
 
-    val colors = ZdravnicaAppTheme.colors.baseAppColor
     val infiniteTransition = rememberInfiniteTransition(label = "")
     val pulseSize by infiniteTransition.animateFloat(
         initialValue = FLOAT_140,
@@ -96,8 +115,8 @@ fun AnimationCircle(
                 .background(
                     brush = Brush.linearGradient(
                         listOf(
-                            ZdravnicaAppTheme.colors.baseAppColor.success800,
-                            ZdravnicaAppTheme.colors.baseAppColor.success800
+                            colors.success800,
+                            colors.success800
                         )
                     ),
                     shape = CircleShape
@@ -118,5 +137,9 @@ fun AnimationCircle(
                 style = ZdravnicaAppTheme.typography.headH1
             )
         }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose { clock.cancel() }
     }
 }

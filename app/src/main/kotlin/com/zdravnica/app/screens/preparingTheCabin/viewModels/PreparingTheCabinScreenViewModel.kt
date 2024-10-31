@@ -32,6 +32,7 @@ class PreparingTheCabinScreenViewModel(
 ) : BaseViewModel<PreparingTheCabinScreenViewState, PreparingTheCabinScreenSideEffect>() {
 
     private var sensorDataJob: Job? = null
+    private var hasTemperatureDifferenceWarningBeenShown = false
 
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
@@ -81,12 +82,19 @@ class PreparingTheCabinScreenViewModel(
 
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 val sensorTemperature = sensorData?.temrTmpr1 ?: 0
+                val isDifferenceLarge = (sensorTemperature - temperature.value) >= 5
 
                 postViewState(
                     state.copy(
-                        sensorTemperature = sensorTemperature
+                        sensorTemperature = sensorTemperature,
+                        isTemperatureDifferenceLarge = isDifferenceLarge,
                     )
                 )
+
+                if (isDifferenceLarge && !hasTemperatureDifferenceWarningBeenShown) {
+                    hasTemperatureDifferenceWarningBeenShown = true
+                    postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToFailedTemperatureCommandScreen)
+                }
 
                 if (temperature.value - sensorTemperature >= 1) {
                     if (!localDataStore.getCommandState(COMMAND_TEN)) {

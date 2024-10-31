@@ -264,6 +264,9 @@ fun RootNavigationGraph(
                     },
                     navigateToTheConnectionScreen = {
                         navHostController.navigate(AppNavGraph.Connection.route)
+                    },
+                    sendEndingCommands = {
+                        connectivityViewModel.turnOffAllWorkingProcesses()
                     }
                 )
             }
@@ -340,6 +343,9 @@ fun RootNavigationGraph(
                     },
                     navigateToTheConnectionScreen = {
                         navHostController.navigate(AppNavGraph.Connection.route)
+                    },
+                    sendEndingCommands = {
+                        connectivityViewModel.turnOffAllWorkingProcesses()
                     }
                 )
             }

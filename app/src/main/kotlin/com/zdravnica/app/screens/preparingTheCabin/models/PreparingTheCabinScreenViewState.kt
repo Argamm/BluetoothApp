@@ -8,6 +8,7 @@ import com.zdravnica.uikit.base_type.IconState
 data class PreparingTheCabinScreenViewState(
     val isDialogVisible: Boolean = false,
     val sensorTemperature: Int = 0,
+    val isTemperatureDifferenceLarge: Boolean = false,
     val iconStates: List<IconState> = listOf(
         IconState.DISABLED,
         IconState.DISABLED,

@@ -31,7 +31,6 @@ import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewM
 import com.zdravnica.app.screens.statusScreen.StatusScreen
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_TEN
-import com.zdravnica.bluetooth.data.DELAY_DURATION_3000
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.ANIMATION_DURATION_3000
@@ -47,7 +46,6 @@ import com.zdravnica.uikit.components.snackbars.models.SnackBarTypeEnum
 import com.zdravnica.uikit.components.snackbars.ui.SnackBarComponent
 import com.zdravnica.uikit.components.statusDetails.StatusInfoState
 import com.zdravnica.uikit.components.statusDetails.stateDataMap
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -223,10 +221,7 @@ fun SelectProcedureScreen(
             }
         }
         if (viewState.isShowingSnackBar && isShowingSnackBar) {
-            LaunchedEffect(Unit) {
-                delay(DELAY_DURATION_3000)
-                selectProcedureViewModel.setSnackBarInvisible()
-            }
+            selectProcedureViewModel.startSnackBarClock()
 
             Box(
                 modifier = Modifier
@@ -241,6 +236,8 @@ fun SelectProcedureScreen(
                         .align(Alignment.TopCenter)
                 )
             }
+        } else {
+            selectProcedureViewModel.cancelSnackBarClock()
         }
     }
 

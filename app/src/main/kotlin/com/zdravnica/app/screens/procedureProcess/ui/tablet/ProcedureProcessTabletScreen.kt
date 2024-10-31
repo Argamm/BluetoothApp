@@ -60,6 +60,7 @@ fun ProcedureProcessTabletScreen(
     navigateToMainScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
     navigateToTheConnectionScreen: () -> Unit,
+    sendEndingCommands: () -> Unit,
 ) {
     val ctx = LocalContext.current
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
@@ -124,12 +125,17 @@ fun ProcedureProcessTabletScreen(
 
     LaunchedEffect(isTimerFinished) {
         if (isTimerFinished) {
-            procedureProcessViewModel.sendEndingCommands()
+            procedureProcessViewModel.updateTimerStatus(true)
+            sendEndingCommands.invoke()
         }
     }
 
     LaunchedEffect(Unit) {
         procedureProcessViewModel.updateIconStates()
+    }
+
+    LaunchedEffect(procedureProcessViewModel) {
+        procedureProcessViewModel.observeSensorData()
     }
 
     BackHandler {
@@ -151,7 +157,7 @@ fun ProcedureProcessTabletScreen(
                 temperature = procedureProcessViewState.sensorTemperature,
                 iconStates = iconStates,
                 backgroundColor = Color.White,
-                isTemperatureDifferenceLarge = false,
+                isTemperatureDifferenceLarge = procedureProcessViewState.isTemperatureDifferenceLarge,
             )
         },
         content = { paddingValues ->
@@ -314,6 +320,7 @@ private fun ProcedureProcessScreenPrevT() {
             navigateToMainScreen = {},
             navigateToCancelDialogPage = { _, _ -> },
             navigateToTheConnectionScreen = {},
+            sendEndingCommands = {},
         )
     }
 }

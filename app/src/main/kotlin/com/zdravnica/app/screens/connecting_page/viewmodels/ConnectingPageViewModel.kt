@@ -16,25 +16,33 @@ import com.zdravnica.bluetooth.data.COMMAND_STV2
 import com.zdravnica.bluetooth.data.COMMAND_STV3
 import com.zdravnica.bluetooth.data.COMMAND_STV4
 import com.zdravnica.bluetooth.data.COMMAND_TEN
+import com.zdravnica.bluetooth.data.DELAY_DURATION_2000
 import com.zdravnica.bluetooth.data.models.ConnectionResult
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import com.zdravnica.bluetooth.domain.models.BluetoothDeviceDomainModel
-import com.zdravnica.uikit.DELAY_DURATION_12000
-import com.zdravnica.uikit.DELAY_DURATION_1500
+import com.zdravnica.uikit.DELAY_DURATION_120000
+import com.zdravnica.uikit.components.clock.Clock
+import com.zdravnica.uikit.components.snackbars.models.SnackBarTypeEnum
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.viewmodel.container
-import kotlin.coroutines.resume
 
 class ConnectingPageViewModel(
     private val localDataStore: LocalDataStore,
     private val bluetoothController: BluetoothController
 ) : BaseViewModel<ConnectingPageViewState, ConnectingPageSideEffect>() {
     private var turnOffJob: Job? = null
+    private var clock: Clock? = null
+    private var snackBarClock: Clock? = null
+
+    private val _currentSnackBarModel = MutableStateFlow<SnackBarTypeEnum?>(null)
+    val currentSnackBarModel: StateFlow<SnackBarTypeEnum?> = _currentSnackBarModel
 
     override val container =
         container<ConnectingPageViewState, ConnectingPageSideEffect>(
@@ -44,6 +52,22 @@ class ConnectingPageViewModel(
     override fun onCleared() {
         super.onCleared()
         bluetoothController.close()
+        snackBarClock?.cancel()
+    }
+
+    fun setSnackBarModel(snackBarType: SnackBarTypeEnum) {
+        _currentSnackBarModel.value = snackBarType
+        startSnackBarTimer()
+    }
+
+    private fun startSnackBarTimer() {
+        snackBarClock?.cancel()
+        snackBarClock = Clock(DELAY_DURATION_2000).apply {
+            start(
+                onFinish = { _currentSnackBarModel.value = null },
+                onTick = {}
+            )
+        }
     }
 
     init {
@@ -127,7 +151,6 @@ class ConnectingPageViewModel(
     fun connectingToDevice(deviceUIModel: DeviceUIModel) = intent {
         viewModelScope.launch {
             postViewState(state.copy(isLoading = true))
-            delay(DELAY_DURATION_1500)
             bluetoothController.connect(
                 BluetoothDeviceDomainModel(
                     name = deviceUIModel.name,
@@ -142,17 +165,25 @@ class ConnectingPageViewModel(
     }
 
     fun turnOffAllWorkingProcesses() = intent {
-        turnOffJob = viewModelScope.launch {
-            delay(DELAY_DURATION_12000)
+        clock?.cancel()
+        clock = Clock(DELAY_DURATION_120000)
 
-            if (localDataStore.getCommandState(COMMAND_FAN)) {
-                bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_FAN, false)
-                })
-            }
+        withContext(Dispatchers.Main) {
+            clock?.start(
+                onFinish = {
+                    if (localDataStore.getCommandState(COMMAND_FAN)) {
+                        viewModelScope.launch {
+                            bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
+                                localDataStore.saveCommandState(COMMAND_FAN, false)
+                            })
+                        }
+                    }
+                },
+                onTick = { }
+            )
         }
-        Log.i("asdsadas", "turnOffAllWorkingProcesses: COMMAND_TEN OFF")
 
+        Log.i("asdsadas", "turnOffAllWorkingProcesses: COMMAND_TEN OFF")
 
         val commands = listOf(
             COMMAND_IREM,
@@ -178,5 +209,7 @@ class ConnectingPageViewModel(
     fun stopTurningOffProcesses() {
         turnOffJob?.cancel()
         turnOffJob = null
+        clock?.cancel()
+        clock = null
     }
 }

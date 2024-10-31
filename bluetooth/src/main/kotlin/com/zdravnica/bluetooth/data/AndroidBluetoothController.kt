@@ -74,9 +74,7 @@ internal class AndroidBluetoothController(
     override val bluetoothConnectionStatus: StateFlow<BluetoothConnectionStatus> =
         _bluetoothConnectionStatus
 
-    private var commandCharacteristic: BluetoothGattCharacteristic? =
-        null
-    private var command: String = ""
+    private var commandCharacteristic: BluetoothGattCharacteristic? = null
 
 //    private val _getCommandsState = MutableSharedFlow<String>()
 //    override val getCommandsState: SharedFlow<String> = _getCommandsState
@@ -131,7 +129,6 @@ internal class AndroidBluetoothController(
                 super.onConnectionStateChange(gatt, status, newState)
                 if (newState == BluetoothGatt.STATE_CONNECTED) {
                     commandCharacteristic = gatt?.let { findCharacteristic(it) }
-                    command = COMMAND_START
 
                     gatt?.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH)
 
@@ -140,7 +137,7 @@ internal class AndroidBluetoothController(
 
                     scope.launch {
                         delay(DELAY_DURATION_1000)
-                        sendCommand(command)
+                        sendCommand(COMMAND_START)
                         _connectionResultFlow.emit(ConnectionResult.Transferred(InfoDataModel("Connected")))
                     }
                     bluetoothGatt?.discoverServices()
@@ -222,7 +219,6 @@ internal class AndroidBluetoothController(
                             addScannedDevice(it)
                             if (it.name == TARGET_DEVICE_NAME) {
                                 _showLoading.emit(true)
-                                delay(DELAY_DURATION_2000)
                                 stopScanning()
                                 connectToDevice(it)
                             }
@@ -408,17 +404,16 @@ internal class AndroidBluetoothController(
         if (devices != null) _pairedDevices.emit(devices)
     }
 
-    private fun setStateButtons(ss: String) {
-        Log.e("Bluetooth", "setStateButtons: ${ss.length}")
-        Log.e("Bluetooth", "setState: ${ss[0]}")
-        Log.e("Bluetooth", "setState: ${ss[1]}")
-        Log.e("Bluetooth", "setState: ${ss[2]}")
-        scope.launch {
+//    private fun setStateButtons(ss: String) {
+//        Log.e("Bluetooth", "setStateButtons: ${ss.length}")
+//        Log.e("Bluetooth", "setState: ${ss[0]}")
+//        Log.e("Bluetooth", "setState: ${ss[1]}")
+//        Log.e("Bluetooth", "setState: ${ss[2]}")
+//        scope.launch {
 //            _getCommandsState.emit(ss)
-        }
-    }
+//        }
+//    }
 }
 
 const val DELAY_DURATION_1000 = 1000L
 const val DELAY_DURATION_2000 = 2000L
-const val DELAY_DURATION_3000 = 3000L

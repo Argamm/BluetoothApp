@@ -54,6 +54,7 @@ fun ProcedureProcessScreen(
     navigateToMainScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
     navigateToTheConnectionScreen: () -> Unit,
+    sendEndingCommands: () -> Unit,
 ) {
     val context = LocalContext.current
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
@@ -132,7 +133,7 @@ fun ProcedureProcessScreen(
     LaunchedEffect(isTimerFinished) {
         if (isTimerFinished) {
             procedureProcessViewModel.updateTimerStatus(true)
-            procedureProcessViewModel.sendEndingCommands()
+            sendEndingCommands.invoke()
         }
     }
 
@@ -288,6 +289,7 @@ private fun ProcedureProcessScreenPrev() {
             navigateToMainScreen = {},
             navigateToCancelDialogPage = { _, _ -> },
             navigateToTheConnectionScreen = {},
+            sendEndingCommands = {},
         )
     }
 }

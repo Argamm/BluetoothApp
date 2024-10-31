@@ -12,9 +12,11 @@ import com.zdravnica.bluetooth.data.COMMAND_KMPR
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
+import com.zdravnica.uikit.DELAY_DURATION_1500
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getChipDataList
 import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
+import com.zdravnica.uikit.components.clock.Clock
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -24,6 +26,7 @@ class SelectProcedureViewModel(
     private val localDataStore: LocalDataStore,
     private val bluetoothController: BluetoothController,
 ) : BaseViewModel<SelectProcedureViewState, SelectProcedureSideEffect>() {
+    private var snackBarClock: Clock? = null
 
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
@@ -138,8 +141,29 @@ class SelectProcedureViewModel(
         postViewState(state.copy(scrollToEnd = newState))
     }
 
-    fun setSnackBarInvisible() = intent {
-        postViewState(state.copy(isShowingSnackBar = false))
+    fun startSnackBarClock() {
+        if (snackBarClock == null) {
+            snackBarClock = Clock(DELAY_DURATION_1500)
+            snackBarClock?.start(
+                onFinish = { setSnackBarInvisible() },
+                onTick = {}
+            )
+        }
+        updateIsShowingSnackBar(true)
+    }
+
+    fun cancelSnackBarClock() {
+        snackBarClock?.cancel()
+        snackBarClock = null
+    }
+
+    fun setSnackBarInvisible() {
+        updateIsShowingSnackBar(false)
+        cancelSnackBarClock()
+    }
+
+    private fun updateIsShowingSnackBar(isVisible: Boolean) = intent {
+        postViewState(state.copy(isShowingSnackBar = isVisible))
     }
 
     fun loadCommandStates() = intent {
