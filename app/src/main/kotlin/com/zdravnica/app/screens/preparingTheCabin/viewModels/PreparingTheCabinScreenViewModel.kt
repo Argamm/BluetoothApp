@@ -74,12 +74,6 @@ class PreparingTheCabinScreenViewModel(
                 )
             }
 
-            if (!localDataStore.getCommandState(COMMAND_IREM)) {
-                bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_IREM, true)
-                })
-            }
-
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 val sensorTemperature = sensorData?.temrTmpr1 ?: 0
                 val isDifferenceLarge = (sensorTemperature - temperature.value) >= 5

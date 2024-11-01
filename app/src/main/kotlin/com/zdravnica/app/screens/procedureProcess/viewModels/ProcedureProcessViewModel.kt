@@ -86,6 +86,12 @@ class ProcedureProcessViewModel(
         }
 
         sensorDataJob = viewModelScope.launch {
+            if (!localDataStore.getCommandState(COMMAND_IREM)) {
+                bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_IREM, true)
+                })
+            }
+
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 val currentCalorieValue =
                     calculateCaloriesUseCase.calculateCalories(sensorData?.snsrHC ?: 0, isTimerFinished)
