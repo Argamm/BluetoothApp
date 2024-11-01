@@ -88,7 +88,7 @@ class ProcedureProcessViewModel(
         sensorDataJob = viewModelScope.launch {
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 val currentCalorieValue =
-                    calculateCaloriesUseCase.calculateCalories(sensorData?.snsrHC ?: 0)
+                    calculateCaloriesUseCase.calculateCalories(sensorData?.snsrHC ?: 0, isTimerFinished)
                 val sensorTemperature = sensorData?.temrTmpr1 ?: 0
                 val isDifferenceLarge = (sensorTemperature - temperature.value) >= 5
 
@@ -101,6 +101,8 @@ class ProcedureProcessViewModel(
                         isTemperatureDifferenceLarge = isDifferenceLarge,
                     )
                 )
+
+                updateIconStates()
 
                 if (isDifferenceLarge && !hasTemperatureDifferenceWarningBeenShown) {
                     hasTemperatureDifferenceWarningBeenShown = true

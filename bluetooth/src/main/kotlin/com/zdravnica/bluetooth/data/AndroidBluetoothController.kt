@@ -51,6 +51,9 @@ internal class AndroidBluetoothController(
     private var serverSocket: BluetoothServerSocket? = null
     private var clientSocket: BluetoothSocket? = null
     private var isListening = false
+    private var lastTemrTmpr1: Int? = null
+    private var anomalyCount = 0
+    private var lastValidSkinTemperature: Double? = null
 
     private val _scannedDevices = MutableStateFlow<List<BluetoothDeviceDomainModel>>(emptyList())
     override val scannedDevices: StateFlow<List<BluetoothDeviceDomainModel>> =
@@ -356,30 +359,58 @@ internal class AndroidBluetoothController(
 
     private fun frmtSnsrData(data: ByteArray) {
         if (data.isNotEmpty()) {
-            val temrTmpr1 = data[0].toDouble().roundToInt()
+            var temrTmpr1 = maxOf(data[0].toDouble().roundToInt(), 0)
             val temrIR1 = ((data[2].toInt() shl 8) + data[3].toInt()).toDouble() * 0.02 - 273.15
             val temrIR2 = ((data[4].toInt() shl 8) + data[5].toInt()).toDouble() * 0.02 - 273.15
-            val snsrHC = data[6].toInt()
+            val snsrHC = maxOf(data[6].toInt(), 0)
             val thermostat = data[8].toInt() == 1
             val stateDevice = data[10].toInt()
-//
-//            Log.d(
-//                "log snsr", """
-//            |data ${data.joinToString(", ")}
-//            |temrTmpr1 $temrTmpr1
-//            |tempIR1 $temrIR1
-//            |tempIR2 $temrIR2
-//            |HeartCounter $snsrHC
-//            |thermostat $thermostat
-//            |statedevice ${data[9].toInt()}, $stateDevice
-//        """.trimMargin()
-//            )
+
+            Log.d(
+                "log snsr", """
+            |data ${data.joinToString(", ")}
+            |temrTmpr1 $temrTmpr1
+            |tempIR1 $temrIR1
+            |tempIR2 $temrIR2
+            |HeartCounter $snsrHC
+            |thermostat $thermostat
+            |statedevice ${data[9].toInt()}, $stateDevice
+        """.trimMargin()
+            )
+
+            lastTemrTmpr1?.let { lastValue ->
+                if (temrTmpr1 in (lastValue - 10)..(lastValue + 10)) {
+                    lastTemrTmpr1 = temrTmpr1
+                    anomalyCount = 0
+                } else {
+                    anomalyCount++
+                    if (anomalyCount >= 7) {
+                        lastTemrTmpr1 = temrTmpr1
+                        anomalyCount = 0
+                    } else {
+                        temrTmpr1 = lastValue
+                    }
+                }
+            } ?: run {
+                lastTemrTmpr1 = temrTmpr1
+            }
+
+            val skinTemperature = when {
+                temrIR1 > 0 && temrIR2 > 0 -> (temrIR1 + temrIR2) / 2
+                temrIR1 > 0 -> temrIR1
+                temrIR2 > 0 -> temrIR2
+                else -> lastValidSkinTemperature ?: 0.0
+            }
+
+            if (skinTemperature > 0) {
+                lastValidSkinTemperature = skinTemperature
+            }
 
             val sensorData = SensorData(
                 temrTmpr1 = temrTmpr1,
                 temrIR1 = temrIR1,
                 temrIR2 = temrIR2,
-                skinTemperature = (temrIR1 + temrIR2) / 2,
+                skinTemperature = skinTemperature,
                 snsrHC = snsrHC,
                 thermostat = thermostat,
                 stateDevice = stateDevice

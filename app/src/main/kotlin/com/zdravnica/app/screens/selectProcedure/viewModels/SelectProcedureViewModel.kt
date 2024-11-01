@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.selectProcedure.viewModels
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.zdravnica.app.screens.selectProcedure.models.SelectProcedureViewState
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.COMMAND_KMPR
+import com.zdravnica.bluetooth.data.COMMAND_START
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
@@ -43,7 +45,18 @@ class SelectProcedureViewModel(
         )
 
     init {
+        sendStartCommand()
         observeSensorData()
+    }
+
+    private fun sendStartCommand() = intent {
+        while (!localDataStore.getCommandState(COMMAND_START)) {
+            Log.e("adasdsadsa", "sendStartCommand: stertttttttttttttttttt", )
+            bluetoothController.sendCommand(
+                COMMAND_START,
+                onSuccess = { localDataStore.saveCommandState(COMMAND_START, true) }
+            )
+        }
     }
 
     private fun observeSensorData() = intent {
