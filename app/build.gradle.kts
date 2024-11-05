@@ -13,6 +13,7 @@ android {
         targetSdk = Config.TARGET_SDK_VERSION
         versionCode = Config.VERSION_CODE
         versionName = Config.VERSION_NAME
+        setProperty("archivesBaseName", "Zdravnica-$versionName")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

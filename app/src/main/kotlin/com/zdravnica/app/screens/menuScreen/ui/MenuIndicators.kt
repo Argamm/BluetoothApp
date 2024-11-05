@@ -57,19 +57,19 @@ fun MenuIndicators(
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_fan),
                 indicatorText = stringResource(R.string.menu_screen_fan),
-                errorIconVisible = true,
+                errorIconVisible = false,
             )
 
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_ten),
                 indicatorText = stringResource(R.string.menu_screen_ten),
-                errorIconVisible = true,
+                errorIconVisible = false,
             )
 
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_compressor),
                 indicatorText = stringResource(R.string.menu_screen_compressor),
-                errorIconVisible = true,
+                errorIconVisible = false,
             )
 
             IndicatorRowLine(

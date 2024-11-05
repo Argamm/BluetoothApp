@@ -98,7 +98,7 @@ fun ProcedureProcessScreen(
 
     BackHandler {
         procedureProcessViewModel.onChangeCancelDialogPageVisibility(true)
-        navigateToCancelDialogPage.invoke(true, cancelDialog)
+        procedureProcessViewModel.navigateToCancelDialogPage()
     }
 
     DisposableEffect(lifecycleOwner) {

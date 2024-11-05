@@ -27,7 +27,6 @@ import com.zdravnica.uikit.DELAY_1000_ML
 import com.zdravnica.uikit.ONE_MINUTE_IN_SEC
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.chips.models.ChipBalmInfoModel
-import com.zdravnica.uikit.components.clock.Clock
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -43,10 +42,10 @@ class ProcedureProcessViewModel(
     private val calculateCaloriesUseCase: CalculateCaloriesUseCase
 ) : BaseViewModel<ProcedureProcessViewState, ProcedureProcessSideEffect>() {
     private var sensorDataJob: Job? = null
+    private var balmSupplyJob: Job? = null
     private var sendingCommands: Job? = null
     private var hasTemperatureDifferenceWarningBeenShown = false
     private var isTimerFinished: Boolean = false
-    private var clock: Clock? = null
 
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
@@ -69,6 +68,20 @@ class ProcedureProcessViewModel(
 
     fun observeSensorData() = intent {
         sensorDataJob?.cancel()
+
+//        viewModelScope.launch {
+//            bluetoothController.getCommandsState.collect { state ->
+//                localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
+//                localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
+//                localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')
+//                localDataStore.saveCommandState(COMMAND_IREM, state[3] == '1')
+//
+//                localDataStore.saveCommandState(COMMAND_STV1, state[5] == '1')
+//                localDataStore.saveCommandState(COMMAND_STV2, state[6] == '1')
+//                localDataStore.saveCommandState(COMMAND_STV3, state[7] == '1')
+//                localDataStore.saveCommandState(COMMAND_STV4, state[8] == '1')
+//            }
+//        }
 
         viewModelScope.launch {
             bluetoothController.bluetoothConnectionStatus.collect { status ->
@@ -157,8 +170,7 @@ class ProcedureProcessViewModel(
     fun stopObservingSensorData() {
         sensorDataJob?.cancel()
         sendingCommands?.cancel()
-        clock?.cancel()
-        clock = null
+        balmSupplyJob?.cancel()
     }
 
     fun onChangeCancelDialogPageVisibility(isVisible: Boolean) = intent {
@@ -210,7 +222,7 @@ class ProcedureProcessViewModel(
                 Pair(balmInfo, commandTime.toLong())
             }
 
-            viewModelScope.launch {
+            balmSupplyJob = viewModelScope.launch {
                 commandDurations.forEachIndexed { index, (balmInfo, duration) ->
                     val balmName = allBalmNames.getOrNull(index) ?: "Unknown Balm"
 
