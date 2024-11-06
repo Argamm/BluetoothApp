@@ -16,10 +16,10 @@ import androidx.navigation.navArgument
 import com.zdravnica.app.navigation.app.navgraphs.AppNavGraph
 import com.zdravnica.app.screens.connecting_page.ConnectingPageScreen
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
-import com.zdravnica.app.screens.dialog.cancelProcedure.ui.CancelProcedureDialog
-import com.zdravnica.app.screens.dialog.cancelProcedure.ui.teblet.CancelProcedureTabletDialog
 import com.zdravnica.app.screens.dialog.ShowDevicesDialog
 import com.zdravnica.app.screens.dialog.cancelProcedure.models.CancelProcedureDialogState
+import com.zdravnica.app.screens.dialog.cancelProcedure.ui.CancelProcedureDialog
+import com.zdravnica.app.screens.dialog.cancelProcedure.ui.teblet.CancelProcedureTabletDialog
 import com.zdravnica.app.screens.menuScreen.ui.MenuScreen
 import com.zdravnica.app.screens.menuScreen.ui.tablet.MenuScreenTabletDialog
 import com.zdravnica.app.screens.preparingTheCabin.ui.PreparingTheCabinScreen
@@ -169,14 +169,16 @@ fun RootNavigationGraph(
                             if (navigateToSelectProcedure == true) {
                                 connectivityViewModel.turnOffAllWorkingProcesses()
                                 navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}") {
-                                    popUpTo(AppNavGraph.Connection.route) {
+                                    popUpTo("${AppNavGraph.SelectProcedureScreen.route}/${false}") {
                                         inclusive = true
                                     }
                                     launchSingleTop = true
                                 }
                             } else {
                                 connectivityViewModel.sendStopCommand()
-                                navHostController.navigate(AppNavGraph.Connection.route) {
+                                connectivityViewModel.stopConnectionObserving()
+
+                                navHostController.navigate(AppNavGraph.Root.route) {
                                     popUpTo(AppNavGraph.Connection.route) {
                                         inclusive = true
                                     }
@@ -372,18 +374,24 @@ fun RootNavigationGraph(
                             navHostController.navigateUp()
                         },
                         onYesClick = {
-                            val route = if (navigateToSelectProcedure == true) {
-                                "${AppNavGraph.SelectProcedureTabletScreen.route}/${false}"
-                            } else {
-                                AppNavGraph.Connection.route
-                            }
-
-                            connectivityViewModel.turnOffAllWorkingProcesses()
-                            navHostController.navigate(route) {
-                                popUpTo(AppNavGraph.Connection.route) {
-                                    inclusive = true
+                            if (navigateToSelectProcedure == true) {
+                                connectivityViewModel.turnOffAllWorkingProcesses()
+                                navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}") {
+                                    popUpTo("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}") {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
                                 }
-                                launchSingleTop = true
+                            } else {
+                                connectivityViewModel.sendStopCommand()
+                                connectivityViewModel.stopConnectionObserving()
+
+                                navHostController.navigate(AppNavGraph.Root.route) {
+                                    popUpTo(AppNavGraph.Connection.route) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                }
                             }
                         }
                     ),

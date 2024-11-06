@@ -6,8 +6,6 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
-import android.bluetooth.BluetoothServerSocket
-import android.bluetooth.BluetoothSocket
 import android.bluetooth.BluetoothStatusCodes
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -48,12 +46,12 @@ internal class AndroidBluetoothController(
 ) : BluetoothController {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var bluetoothGatt: BluetoothGatt? = null
-    private var serverSocket: BluetoothServerSocket? = null
-    private var clientSocket: BluetoothSocket? = null
     private var isListening = false
     private var lastTemrTmpr1: Int? = null
     private var anomalyCount = 0
     private var lastValidSkinTemperature: Double? = null
+    private var commandCharacteristic: BluetoothGattCharacteristic? = null
+    private var isConnecting = false
 
     private val _scannedDevices = MutableStateFlow<List<BluetoothDeviceDomainModel>>(emptyList())
     override val scannedDevices: StateFlow<List<BluetoothDeviceDomainModel>> =
@@ -77,10 +75,8 @@ internal class AndroidBluetoothController(
     override val bluetoothConnectionStatus: StateFlow<BluetoothConnectionStatus> =
         _bluetoothConnectionStatus
 
-    private var commandCharacteristic: BluetoothGattCharacteristic? = null
-
-//    private val _getCommandsState = MutableSharedFlow<String>()
-//    override val getCommandsState: SharedFlow<String> = _getCommandsState
+    private val _getCommandsState = MutableSharedFlow<String>()
+    override val getCommandsState: SharedFlow<String> = _getCommandsState
 
     override fun bluetoothIsEnabled(): Boolean = adapter?.isEnabled ?: false
 
@@ -123,6 +119,7 @@ internal class AndroidBluetoothController(
     }
 
     private fun connectToDevice(device: BluetoothDevice) {
+        close()
         bluetoothGatt = device.connectGatt(context, true, object : BluetoothGattCallback() {
             override fun onConnectionStateChange(
                 gatt: BluetoothGatt?,
@@ -138,11 +135,6 @@ internal class AndroidBluetoothController(
                     Log.d("Bluetooth", "Connected to ${device.name}")
                     _bluetoothConnectionStatus.value = BluetoothConnectionStatus.Connected
 
-                    scope.launch {
-                        delay(DELAY_DURATION_1000)
-                        sendCommand(COMMAND_START)
-                        _connectionResultFlow.emit(ConnectionResult.Transferred(InfoDataModel("Connected")))
-                    }
                     bluetoothGatt?.discoverServices()
                 } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
                     _bluetoothConnectionStatus.value = BluetoothConnectionStatus.Disconnected
@@ -159,7 +151,11 @@ internal class AndroidBluetoothController(
             override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
                 super.onServicesDiscovered(gatt, status)
                 if (status == BluetoothGatt.GATT_SUCCESS) {
+                    scope.launch {
+                        _connectionResultFlow.emit(ConnectionResult.Transferred(InfoDataModel("Connected")))
+                    }
                     startListeningForData()
+                    startListeningForState()
                 }
             }
 
@@ -171,10 +167,19 @@ internal class AndroidBluetoothController(
             ) {
                 super.onCharacteristicRead(gatt, characteristic, value, status)
                 if (status == BluetoothGatt.GATT_SUCCESS) {
-                    bluetoothGatt?.setCharacteristicNotification(characteristic, true)
-                    frmtSnsrData(value)
-//                    val stateResult = String(value)
-//                    setStateButtons(stateResult)
+                    Log.i("asdasd", "onCharacteristicRead: ${characteristic.uuid}")
+                    when (characteristic.uuid.toString()) {
+                        CHARACTERISTIC_INFO_UUID -> {
+                            bluetoothGatt?.setCharacteristicNotification(characteristic, true)
+                            frmtSnsrData(value)
+                        }
+
+                        TARGET_CHARACTERISTIC_UUID -> {
+                            bluetoothGatt?.setCharacteristicNotification(characteristic, true)
+                            val stateResult = String(value)
+                            setStateButtons(stateResult)
+                        }
+                    }
                 }
             }
         })
@@ -184,12 +189,27 @@ internal class AndroidBluetoothController(
         isListening = true
         scope.launch {
             while (isListening) {
+                bluetoothGatt?.services?.flatMap { it.characteristics }
+                    ?.forEach { characteristic ->
+                        if (characteristic.uuid.toString() == CHARACTERISTIC_INFO_UUID) {
+                            bluetoothGatt?.readCharacteristic(characteristic)
+                        }
+                    }
+                delay(DELAY_DURATION_1000)
+            }
+        }
+    }
+
+    private fun startListeningForState() {
+        isListening = true
+        scope.launch {
+            while (isListening) {
                 bluetoothGatt?.services?.flatMap { it.characteristics }?.forEach { characteristic ->
-                    if (characteristic.uuid.toString() == CHARACTERISTIC_INFO_UUID) {
+                    if (characteristic.uuid.toString() == TARGET_CHARACTERISTIC_UUID) {
                         bluetoothGatt?.readCharacteristic(characteristic)
                     }
                 }
-                delay(DELAY_DURATION_1000)
+                delay(DELAY_DURATION_900)
             }
         }
     }
@@ -198,41 +218,52 @@ internal class AndroidBluetoothController(
         isListening = false
     }
 
-    override fun startScanning() {
-        if (!PermissionUtil.canBluetoothConnect(context)) return
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val action = intent?.action
+            if (BluetoothDevice.ACTION_FOUND == action) {
+                val device: BluetoothDevice? =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent.getParcelableExtra(
+                            BluetoothDevice.EXTRA_DEVICE,
+                            BluetoothDevice::class.java
+                        )
+                    } else {
+                        @Suppress("DEPRECATION")
+                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE) as? BluetoothDevice
+                    }
 
-        adapter?.startDiscovery()
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                val action = intent?.action
-                if (BluetoothDevice.ACTION_FOUND == action) {
-                    val device: BluetoothDevice? =
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            intent.getParcelableExtra(
-                                BluetoothDevice.EXTRA_DEVICE,
-                                BluetoothDevice::class.java
-                            )
-                        } else {
-                            @Suppress("DEPRECATION")
-                            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE) as? BluetoothDevice
-                        }
-
-                    device?.let {
-                        scope.launch {
-                            addScannedDevice(it)
-                            if (it.name == TARGET_DEVICE_NAME) {
-                                _showLoading.emit(true)
-                                stopScanning()
-                                connectToDevice(it)
-                            }
+                device?.let {
+                    scope.launch {
+                        addScannedDevice(it)
+                        if (!isConnecting && it.name == TARGET_DEVICE_NAME) {
+                            isConnecting = true
+                            _showLoading.emit(true)
+                            stopScanning()
+                            connectToDevice(it)
                         }
                     }
                 }
             }
         }
+    }
+
+    override fun startScanning() {
+        if (!PermissionUtil.canBluetoothConnect(context)) return
+
+        isConnecting = false
+        adapter?.startDiscovery()
 
         val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
         context.registerReceiver(receiver, filter)
+    }
+
+    override fun stopScanning() {
+        adapter?.cancelDiscovery()
+        try {
+            context.unregisterReceiver(receiver)
+        } catch (_: IllegalArgumentException) {
+        }
     }
 
     private fun addScannedDevice(device: BluetoothDevice) {
@@ -246,22 +277,12 @@ internal class AndroidBluetoothController(
         }
     }
 
-    override fun stopScanning() {
-        if (adapter?.isDiscovering == true) {
-            adapter.cancelDiscovery()
-        }
-    }
-
     override fun close() {
         stopListening()
         try {
-            serverSocket?.close()
-            clientSocket?.close()
             bluetoothGatt?.close()
         } catch (_: IOException) {
         } finally {
-            serverSocket = null
-            clientSocket = null
             bluetoothGatt = null
         }
     }
@@ -271,11 +292,6 @@ internal class AndroidBluetoothController(
         onSuccess: (() -> Unit)?,
         onFailed: (() -> Unit)?
     ) {
-        if (cmd == COMMAND_STOP) {
-            close()
-            return
-        }
-
         val characteristic = commandCharacteristic ?: bluetoothGatt?.let { findCharacteristic(it) }
         if (bluetoothGatt == null || characteristic == null) {
             Log.e("Bluetooth", "BluetoothGatt or characteristic is not available")
@@ -289,6 +305,11 @@ internal class AndroidBluetoothController(
         } else {
             Log.e("Bluetooth", "Characteristic does not support write")
             onFailed?.invoke()
+        }
+
+        if (cmd == COMMAND_STOP) {
+            close()
+            return
         }
     }
 
@@ -435,16 +456,14 @@ internal class AndroidBluetoothController(
         if (devices != null) _pairedDevices.emit(devices)
     }
 
-//    private fun setStateButtons(ss: String) {
-//        Log.e("Bluetooth", "setStateButtons: ${ss.length}")
-//        Log.e("Bluetooth", "setState: ${ss[0]}")
-//        Log.e("Bluetooth", "setState: ${ss[1]}")
-//        Log.e("Bluetooth", "setState: ${ss[2]}")
-//        scope.launch {
-//            _getCommandsState.emit(ss)
-//        }
-//    }
+    private fun setStateButtons(ss: String) {
+        Log.e("Bluetooth", "setStateButtons: ${ss}")
+        scope.launch {
+            _getCommandsState.emit(ss)
+        }
+    }
 }
 
+const val DELAY_DURATION_900 = 900L
 const val DELAY_DURATION_1000 = 1000L
 const val DELAY_DURATION_2000 = 2000L

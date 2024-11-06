@@ -1,6 +1,5 @@
 package com.zdravnica.app.screens.connecting_page.viewmodels
 
-import android.util.Log
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
@@ -11,6 +10,7 @@ import com.zdravnica.bluetooth.data.COMMAND_ALLOFF
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.COMMAND_KMPR
+import com.zdravnica.bluetooth.data.COMMAND_START
 import com.zdravnica.bluetooth.data.COMMAND_STOP
 import com.zdravnica.bluetooth.data.COMMAND_STV1
 import com.zdravnica.bluetooth.data.COMMAND_STV2
@@ -42,7 +42,7 @@ class ConnectingPageViewModel(
     private var connectionJob: Job? = null
     private var clock: Clock? = null
     private var snackBarClock: Clock? = null
-    val commands = listOf(
+    private val commands = listOf(
         COMMAND_IREM,
         COMMAND_TEN,
         COMMAND_KMPR,
@@ -55,6 +55,8 @@ class ConnectingPageViewModel(
     private val _currentSnackBarModel = MutableStateFlow<SnackBarTypeEnum?>(null)
     val currentSnackBarModel: StateFlow<SnackBarTypeEnum?> = _currentSnackBarModel
 
+    private val isStartCommandSent = MutableStateFlow(false)
+
     override val container =
         container<ConnectingPageViewState, ConnectingPageSideEffect>(
             ConnectingPageViewState()
@@ -64,8 +66,6 @@ class ConnectingPageViewModel(
         super.onCleared()
         bluetoothController.close()
         snackBarClock?.cancel()
-        connectionJob?.cancel()
-        connectionJob = null
     }
 
     fun setSnackBarModel(snackBarType: SnackBarTypeEnum) {
@@ -98,23 +98,18 @@ class ConnectingPageViewModel(
     }
 
     fun observeBluetoothDevices() = intent {
-//        viewModelScope.launch {
-//            bluetoothController.getCommandsState.collect { state ->
-//                Log.i("asdasdsa", "observeSensorData in state: $state")
-//                Log.i("asdasdsa", "observeSensorData in state 0: ${state[0]}")
-//                Log.i("asdasdsa", "observeSensorData in state 1: ${state[1]}")
-//                Log.i("asdasdsa", "observeSensorData in state 2: ${state[2]}")
-//                localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
-//                localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
-//                localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')
-//                localDataStore.saveCommandState(COMMAND_IREM, state[3] == '1')
-//
-//                localDataStore.saveCommandState(COMMAND_STV1, state[5] == '1')
-//                localDataStore.saveCommandState(COMMAND_STV2, state[6] == '1')
-//                localDataStore.saveCommandState(COMMAND_STV3, state[7] == '1')
-//                localDataStore.saveCommandState(COMMAND_STV4, state[8] == '1')
-//            }
-//        }
+        viewModelScope.launch {
+            bluetoothController.getCommandsState.collect { state ->
+                localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
+                localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
+                localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')
+                localDataStore.saveCommandState(COMMAND_IREM, state[3] == '1')
+                localDataStore.saveCommandState(COMMAND_STV1, state[5] == '1')
+                localDataStore.saveCommandState(COMMAND_STV2, state[6] == '1')
+                localDataStore.saveCommandState(COMMAND_STV3, state[7] == '1')
+                localDataStore.saveCommandState(COMMAND_STV4, state[8] == '1')
+            }
+        }
 
         viewModelScope.launch {
             bluetoothController.refreshPairedDevices()
@@ -157,8 +152,8 @@ class ConnectingPageViewModel(
                     }
 
                     is ConnectionResult.Transferred -> {
-                        postViewState(state.copy(isLoading = false))
-                        postSideEffect(ConnectingPageSideEffect.OnSuccess)
+                        isStartCommandSent.value = false
+                        sendStartCommand()
                     }
 
                     is ConnectionResult.Error -> {
@@ -193,10 +188,10 @@ class ConnectingPageViewModel(
 
     fun sendStopCommand() = intent {
         bluetoothController.sendCommand(COMMAND_ALLOFF)
-//        for (command in commands) {
-            localDataStore.saveCommandState(COMMAND_FAN, false)
-//        }
-        bluetoothController.sendCommand(COMMAND_STOP)
+        localDataStore.saveCommandState(COMMAND_FAN, false)
+        bluetoothController.sendCommand(COMMAND_STOP, onSuccess = {
+            localDataStore.saveCommandState(COMMAND_START, false)
+        })
     }
 
     fun turnOffAllWorkingProcesses() = intent {
@@ -218,8 +213,6 @@ class ConnectingPageViewModel(
             )
         }
 
-        Log.i("asdsadas", "turnOffAllWorkingProcesses: COMMAND_TEN OFF")
-
         localDataStore.saveAllCommandsAreTurnedOff()
 
         for (command in commands) {
@@ -229,6 +222,26 @@ class ConnectingPageViewModel(
                 })
             }
         }
+    }
+
+    private fun sendStartCommand() = intent {
+        while (!isStartCommandSent.value) {
+            bluetoothController.sendCommand(
+                COMMAND_START,
+                onSuccess = {
+                    postViewState(state.copy(isLoading = false))
+                    postSideEffect(ConnectingPageSideEffect.OnSuccess)
+                    localDataStore.saveCommandState(COMMAND_START, true)
+                    isStartCommandSent.value = true
+                }
+            )
+        }
+    }
+
+    fun stopConnectionObserving(){
+        connectionJob?.cancel()
+        connectionJob = null
+        isStartCommandSent.value = false
     }
 
     fun stopTurningOffProcesses() {

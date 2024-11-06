@@ -4,6 +4,14 @@ import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.screens.procedure.models.ProcedureScreenViewState
+import com.zdravnica.bluetooth.data.COMMAND_FAN
+import com.zdravnica.bluetooth.data.COMMAND_IREM
+import com.zdravnica.bluetooth.data.COMMAND_KMPR
+import com.zdravnica.bluetooth.data.COMMAND_STV1
+import com.zdravnica.bluetooth.data.COMMAND_STV2
+import com.zdravnica.bluetooth.data.COMMAND_STV3
+import com.zdravnica.bluetooth.data.COMMAND_STV4
+import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import kotlinx.coroutines.launch
@@ -29,6 +37,19 @@ class ProcedureScreenViewModel(
     }
 
     fun startProcedureWithCommands() {
+        viewModelScope.launch {
+            bluetoothController.getCommandsState.collect { state ->
+                localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
+                localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
+                localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')
+                localDataStore.saveCommandState(COMMAND_IREM, state[3] == '1')
+                localDataStore.saveCommandState(COMMAND_STV1, state[5] == '1')
+                localDataStore.saveCommandState(COMMAND_STV2, state[6] == '1')
+                localDataStore.saveCommandState(COMMAND_STV3, state[7] == '1')
+                localDataStore.saveCommandState(COMMAND_STV4, state[8] == '1')
+            }
+        }
+
         viewModelScope.launch {
             bluetoothController.bluetoothConnectionStatus.collect { status ->
                 when (status) {

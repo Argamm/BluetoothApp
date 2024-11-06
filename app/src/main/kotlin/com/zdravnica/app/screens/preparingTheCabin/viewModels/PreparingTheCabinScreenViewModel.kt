@@ -1,6 +1,5 @@
 package com.zdravnica.app.screens.preparingTheCabin.viewModels
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.viewModelScope
@@ -11,6 +10,10 @@ import com.zdravnica.app.screens.preparingTheCabin.models.PreparingTheCabinScree
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.COMMAND_KMPR
+import com.zdravnica.bluetooth.data.COMMAND_STV1
+import com.zdravnica.bluetooth.data.COMMAND_STV2
+import com.zdravnica.bluetooth.data.COMMAND_STV3
+import com.zdravnica.bluetooth.data.COMMAND_STV4
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
@@ -61,6 +64,20 @@ class PreparingTheCabinScreenViewModel(
         sensorDataJob?.cancel()
         sensorDataJob = null
 
+        viewModelScope.launch {
+            bluetoothController.getCommandsState.collect { state ->
+                localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
+                localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
+                localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')
+                localDataStore.saveCommandState(COMMAND_IREM, state[3] == '1')
+                localDataStore.saveCommandState(COMMAND_STV1, state[5] == '1')
+                localDataStore.saveCommandState(COMMAND_STV2, state[6] == '1')
+                localDataStore.saveCommandState(COMMAND_STV3, state[7] == '1')
+                localDataStore.saveCommandState(COMMAND_STV4, state[8] == '1')
+                updateIconStates()
+            }
+        }
+
         sensorDataJob = viewModelScope.launch {
             if (!localDataStore.getCommandState(COMMAND_FAN)) {
                 bluetoothController.sendCommand(
@@ -92,7 +109,6 @@ class PreparingTheCabinScreenViewModel(
 
                 if (temperature.value - sensorTemperature >= 1) {
                     if (!localDataStore.getCommandState(COMMAND_TEN)) {
-                        Log.i("asdsadas", "PreparingCabin: COMMAND_TEN ON")
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {
@@ -106,8 +122,6 @@ class PreparingTheCabinScreenViewModel(
                     }
                 } else {
                     if (localDataStore.getCommandState(COMMAND_TEN)) {
-                        Log.i("asdsadas", "PreparingCabin: COMMAND_TEN OFF")
-
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {
@@ -134,6 +148,7 @@ class PreparingTheCabinScreenViewModel(
             bluetoothController.bluetoothConnectionStatus.collect { status ->
                 when (status) {
                     is BluetoothConnectionStatus.Connected -> {}
+
                     is BluetoothConnectionStatus.Disconnected -> {
                         postSideEffect(PreparingTheCabinScreenSideEffect.OnBluetoothConnectionLost)
                     }

@@ -1,6 +1,5 @@
 package com.zdravnica.app.screens.procedureProcess.viewModels
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -69,19 +68,19 @@ class ProcedureProcessViewModel(
     fun observeSensorData() = intent {
         sensorDataJob?.cancel()
 
-//        viewModelScope.launch {
-//            bluetoothController.getCommandsState.collect { state ->
-//                localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
-//                localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
-//                localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')
-//                localDataStore.saveCommandState(COMMAND_IREM, state[3] == '1')
-//
-//                localDataStore.saveCommandState(COMMAND_STV1, state[5] == '1')
-//                localDataStore.saveCommandState(COMMAND_STV2, state[6] == '1')
-//                localDataStore.saveCommandState(COMMAND_STV3, state[7] == '1')
-//                localDataStore.saveCommandState(COMMAND_STV4, state[8] == '1')
-//            }
-//        }
+        viewModelScope.launch {
+            bluetoothController.getCommandsState.collect { state ->
+                localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
+                localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
+                localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')
+                localDataStore.saveCommandState(COMMAND_IREM, state[3] == '1')
+                localDataStore.saveCommandState(COMMAND_STV1, state[5] == '1')
+                localDataStore.saveCommandState(COMMAND_STV2, state[6] == '1')
+                localDataStore.saveCommandState(COMMAND_STV3, state[7] == '1')
+                localDataStore.saveCommandState(COMMAND_STV4, state[8] == '1')
+                updateIconStates()
+            }
+        }
 
         viewModelScope.launch {
             bluetoothController.bluetoothConnectionStatus.collect { status ->
@@ -130,8 +129,6 @@ class ProcedureProcessViewModel(
 
                 if (!isTimerFinished && temperature.value - sensorTemperature >= 1) {
                     if (!localDataStore.getCommandState(COMMAND_TEN)) {
-                        Log.i("asdsadas", "ProcedureProcess: COMMAND_TEN ON")
-
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {
@@ -145,8 +142,6 @@ class ProcedureProcessViewModel(
                     }
                 } else {
                     if (localDataStore.getCommandState(COMMAND_TEN)) {
-                        Log.i("asdsadas", "ProcedureProcess: COMMAND_TEN OFF")
-
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {

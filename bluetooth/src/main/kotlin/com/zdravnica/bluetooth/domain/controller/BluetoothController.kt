@@ -15,7 +15,7 @@ interface BluetoothController {
     val showLoading: SharedFlow<Boolean>
     val sensorDataFlow: StateFlow<SensorData?>
     val bluetoothConnectionStatus: StateFlow<BluetoothConnectionStatus>
-//    val getCommandsState: SharedFlow<String>
+    val getCommandsState: SharedFlow<String>
 
     fun bluetoothIsEnabled(): Boolean
     fun refreshPairedDevices()

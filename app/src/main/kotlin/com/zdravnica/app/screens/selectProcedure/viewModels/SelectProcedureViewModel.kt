@@ -1,6 +1,5 @@
 package com.zdravnica.app.screens.selectProcedure.viewModels
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,10 @@ import com.zdravnica.app.screens.selectProcedure.models.SelectProcedureViewState
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.COMMAND_KMPR
-import com.zdravnica.bluetooth.data.COMMAND_START
+import com.zdravnica.bluetooth.data.COMMAND_STV1
+import com.zdravnica.bluetooth.data.COMMAND_STV2
+import com.zdravnica.bluetooth.data.COMMAND_STV3
+import com.zdravnica.bluetooth.data.COMMAND_STV4
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
@@ -45,38 +47,24 @@ class SelectProcedureViewModel(
         )
 
     init {
-        sendStartCommand()
         observeSensorData()
     }
 
-    private fun sendStartCommand() = intent {
-        while (!localDataStore.getCommandState(COMMAND_START)) {
-            Log.e("adasdsadsa", "sendStartCommand: stertttttttttttttttttt", )
-            bluetoothController.sendCommand(
-                COMMAND_START,
-                onSuccess = { localDataStore.saveCommandState(COMMAND_START, true) }
-            )
-        }
-    }
-
     private fun observeSensorData() = intent {
-       /* viewModelScope.launch {
+        viewModelScope.launch {
             bluetoothController.getCommandsState.collect { state ->
-                Log.i("asdasdsa", "observeSensorData in state: $state")
-                Log.i("asdasdsa", "observeSensorData in state 0: ${state[0]}")
-                Log.i("asdasdsa", "observeSensorData in state 1: ${state[1]}")
-                Log.i("asdasdsa", "observeSensorData in state 2: ${state[2]}")
-//                localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
-//                localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
-//                localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')
-//                localDataStore.saveCommandState(COMMAND_IREM, state[3] == '1')
-//
-//                localDataStore.saveCommandState(COMMAND_STV1, state[5] == '1')
-//                localDataStore.saveCommandState(COMMAND_STV2, state[6] == '1')
-//                localDataStore.saveCommandState(COMMAND_STV3, state[7] == '1')
-//                localDataStore.saveCommandState(COMMAND_STV4, state[8] == '1')
+                localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
+                localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
+                localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')
+                localDataStore.saveCommandState(COMMAND_IREM, state[3] == '1')
+
+                localDataStore.saveCommandState(COMMAND_STV1, state[5] == '1')
+                localDataStore.saveCommandState(COMMAND_STV2, state[6] == '1')
+                localDataStore.saveCommandState(COMMAND_STV3, state[7] == '1')
+                localDataStore.saveCommandState(COMMAND_STV4, state[8] == '1')
+                loadCommandStates()
             }
-        }*/
+        }
 
         viewModelScope.launch {
             bluetoothController.bluetoothConnectionStatus.collect { status ->
