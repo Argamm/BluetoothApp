@@ -33,6 +33,10 @@ import com.zdravnica.uikit.resources.R
 @Composable
 fun MenuIndicators(
     modifier: Modifier = Modifier,
+    tenErrorCase: Boolean = false,
+    fanErrorCase: Boolean = false,
+    kmprErrorCase: Boolean = false,
+    ikErrorCase: Boolean = false,
 ) {
     Card(
         elevation = ZdravnicaAppTheme.dimens.size4,
@@ -57,25 +61,25 @@ fun MenuIndicators(
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_fan),
                 indicatorText = stringResource(R.string.menu_screen_fan),
-                errorIconVisible = false,
+                errorIconVisible = tenErrorCase,//here
             )
 
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_ten),
                 indicatorText = stringResource(R.string.menu_screen_ten),
-                errorIconVisible = false,
+                errorIconVisible = fanErrorCase,
             )
 
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_compressor),
                 indicatorText = stringResource(R.string.menu_screen_compressor),
-                errorIconVisible = false,
+                errorIconVisible = kmprErrorCase,
             )
 
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_ik),
                 indicatorText = stringResource(R.string.menu_screen_ik),
-                errorIconVisible = false,
+                errorIconVisible = ikErrorCase,
             )
         }
     }

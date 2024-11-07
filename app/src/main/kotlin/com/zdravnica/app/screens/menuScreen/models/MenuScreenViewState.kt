@@ -11,4 +11,8 @@ data class MenuScreenViewState(
     val firstBalmCount: Float = 0f,
     val secondBalmCount: Float = 0f,
     val thirdBalmCount: Float = 0f,
+    val fanErrorCase: Boolean = false,
+    val tenErrorCase: Boolean = false,
+    val kmprErrorCase: Boolean = false,
+    val ikErrorCase: Boolean = false,
 ) : BaseViewState()

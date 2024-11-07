@@ -2,10 +2,14 @@ package com.zdravnica.app.screens.menuScreen.viewModels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.screens.menuScreen.models.MenuScreenViewState
+import com.zdravnica.bluetooth.data.COMMAND_FAN
+import com.zdravnica.bluetooth.data.COMMAND_KMPR
+import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import kotlinx.coroutines.flow.collectLatest
@@ -21,6 +25,34 @@ class MenuScreenViewModel(
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
 
+    private val _fanErrorCase = mutableStateOf(
+        localDataStore.getIsFailedSendingCommand(
+            COMMAND_FAN
+        )
+    )
+    val fanErrorCase: State<Boolean> get() = _fanErrorCase
+
+    private val _tenErrorCase = mutableStateOf(
+        localDataStore.getIsFailedSendingCommand(
+            COMMAND_TEN
+        )
+    )
+    val tenErrorCase: State<Boolean> get() = _tenErrorCase
+
+    private val _kmprErrorCase = mutableStateOf(
+        localDataStore.getIsFailedSendingCommand(
+            COMMAND_KMPR
+        )
+    )
+    val kmprErrorCase: State<Boolean> get() = _kmprErrorCase
+
+    private val _ikErrorCase = mutableStateOf(
+        localDataStore.getIsFailedSendingCommand(
+            COMMAND_FAN
+        )
+    )
+    val ikErrorCase: State<Boolean> get() = _ikErrorCase
+
     override val container =
         container<MenuScreenViewState, MenuScreenSideEffect>(
             MenuScreenViewState()
@@ -34,6 +66,7 @@ class MenuScreenViewModel(
                     is BluetoothConnectionStatus.Disconnected -> {
                         postSideEffect(MenuScreenSideEffect.OnBluetoothConnectionLost)
                     }
+
                     is BluetoothConnectionStatus.Error -> {
                         postSideEffect(MenuScreenSideEffect.OnBluetoothConnectionLost)
                     }
@@ -82,7 +115,7 @@ class MenuScreenViewModel(
         postSideEffect(MenuScreenSideEffect.OnCallClick)
     }
 
-    private fun getBalmCount(balmName: String) : Float {
+    private fun getBalmCount(balmName: String): Float {
         return localDataStore.getBalmCount(balmName)
     }
 

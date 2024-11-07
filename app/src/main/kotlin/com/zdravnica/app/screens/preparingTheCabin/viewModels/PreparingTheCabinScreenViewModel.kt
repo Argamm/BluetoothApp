@@ -84,8 +84,10 @@ class PreparingTheCabinScreenViewModel(
                     COMMAND_FAN,
                     onSuccess = {
                         localDataStore.saveCommandState(COMMAND_FAN, true)
+                        localDataStore.saveFailSendingCommand(COMMAND_FAN, false)
                     },
                     onFailed = {
+                        localDataStore.saveFailSendingCommand(COMMAND_FAN, true)
                         postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToFailedFanCommandScreen)
                     }
                 )
@@ -112,10 +114,12 @@ class PreparingTheCabinScreenViewModel(
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {
+                                localDataStore.saveFailSendingCommand(COMMAND_TEN, false)
                                 localDataStore.saveCommandState(COMMAND_TEN, true)
                                 updateIconStates()
                             },
                             onFailed = {
+                                localDataStore.saveFailSendingCommand(COMMAND_TEN, true)
                                 postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToFailedTenCommandScreen)
                             }
                         )

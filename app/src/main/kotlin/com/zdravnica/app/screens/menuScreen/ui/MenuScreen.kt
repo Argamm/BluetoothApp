@@ -146,7 +146,12 @@ fun MenuScreen(
                     )
                 }
                 item {
-                    MenuIndicators()
+                    MenuIndicators(
+                        fanErrorCase = menuScreenViewModel.fanErrorCase.value,
+                        tenErrorCase = menuScreenViewModel.tenErrorCase.value,
+                        kmprErrorCase = menuScreenViewModel.kmprErrorCase.value,
+                        ikErrorCase = menuScreenViewModel.ikErrorCase.value
+                    )
                 }
                 item {
                     MenuBalms(

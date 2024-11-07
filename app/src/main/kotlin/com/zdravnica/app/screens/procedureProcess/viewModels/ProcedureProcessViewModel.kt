@@ -99,14 +99,22 @@ class ProcedureProcessViewModel(
 
         sensorDataJob = viewModelScope.launch {
             if (!localDataStore.getCommandState(COMMAND_IREM)) {
-                bluetoothController.sendCommand(COMMAND_IREM, onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_IREM, true)
-                })
+                bluetoothController.sendCommand(
+                    COMMAND_IREM,
+                    onSuccess = {
+                        localDataStore.saveFailSendingCommand(COMMAND_IREM, false)
+                        localDataStore.saveCommandState(COMMAND_IREM, true)
+                    }, onFailed = {
+                        localDataStore.saveFailSendingCommand(COMMAND_IREM, true)
+                    })
             }
 
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 val currentCalorieValue =
-                    calculateCaloriesUseCase.calculateCalories(sensorData?.snsrHC ?: 0, isTimerFinished)
+                    calculateCaloriesUseCase.calculateCalories(
+                        sensorData?.snsrHC ?: 0,
+                        isTimerFinished
+                    )
                 val sensorTemperature = sensorData?.temrTmpr1 ?: 0
                 val isDifferenceLarge = (sensorTemperature - temperature.value) >= 5
 
@@ -132,10 +140,12 @@ class ProcedureProcessViewModel(
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {
+                                localDataStore.saveFailSendingCommand(COMMAND_TEN, false)
                                 localDataStore.saveCommandState(COMMAND_TEN, true)
                                 updateIconStates()
                             },
                             onFailed = {
+                                localDataStore.saveFailSendingCommand(COMMAND_TEN, true)
                                 postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen)
                             }
                         )
@@ -187,7 +197,10 @@ class ProcedureProcessViewModel(
         while (!localDataStore.getCommandState(COMMAND_KMPR)) {
             bluetoothController.sendCommand(COMMAND_KMPR, onSuccess = {
                 localDataStore.saveCommandState(COMMAND_KMPR, true)
+                localDataStore.saveFailSendingCommand(COMMAND_KMPR, false)
                 updateIconStates()
+            }, onFailed = {
+                localDataStore.saveFailSendingCommand(COMMAND_KMPR, true)
             })
         }
     }
