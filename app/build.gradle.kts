@@ -63,7 +63,7 @@ dependencies {
     implementation(Dependencies.Android.APP_COMPACT)
     implementation(Dependencies.Android.APP_COMPACT_ACTIVITY_RESOURCES)
     implementation(Dependencies.Android.SPLASH_SCREEN)
-
+    implementation(Dependencies.Android.LOCATION)
     // Firebase
     implementation(platform(Dependencies.Firebase.FIREBASE_BOOM))
     implementation(Dependencies.Firebase.FIREBASE_ANALYTICS)

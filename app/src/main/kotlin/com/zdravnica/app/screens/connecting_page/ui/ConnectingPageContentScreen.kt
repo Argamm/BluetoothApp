@@ -3,7 +3,9 @@ package com.zdravnica.app.screens.connecting_page.ui
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
+import android.location.LocationManager
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -31,6 +33,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsStatusCodes
+import com.google.android.gms.location.Priority
 import com.zdravnica.app.screens.connecting_page.models.ConnectingPageViewState
 import com.zdravnica.app.screens.connecting_page.viewmodels.ConnectingPageViewModel
 import com.zdravnica.app.utils.getDimensionBasedOnDeviceType
@@ -51,6 +60,9 @@ fun ConnectingPageContentScreen(
 ) {
     val context = LocalContext.current
     var hasBluetoothPermission by remember { mutableStateOf(false) }
+    val locationClient = LocationServices.getSettingsClient(context)
+    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    val locationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -62,6 +74,42 @@ fun ConnectingPageContentScreen(
         }
     }
 
+    if (!locationEnabled) {
+        val locationRequest =
+            LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
+        val locationSettingsRequest =
+            LocationSettingsRequest.Builder().addLocationRequest(locationRequest).build()
+
+        var locationDialogShown by remember { mutableStateOf(false) }
+
+        locationClient.checkLocationSettings(locationSettingsRequest)
+            .addOnCompleteListener { task ->
+                try {
+                    task.getResult(ApiException::class.java)
+                } catch (ex: ApiException) {
+                    when (ex.statusCode) {
+                        LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+                            if (!locationDialogShown) {
+                                (ex as ResolvableApiException).startResolutionForResult(
+                                    context as Activity,
+                                    REQUEST_CODE_LOCATION_SETTINGS
+                                )
+                                locationDialogShown = true
+                            }
+                        }
+
+                        else -> {
+                            Toast.makeText(
+                                context,
+                                "Couldn't change location settings",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+            }
+    }
+
     LaunchedEffect(viewModel) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             permissionLauncher.launch(
@@ -69,10 +117,16 @@ fun ConnectingPageContentScreen(
                     Manifest.permission.BLUETOOTH_SCAN,
                     Manifest.permission.BLUETOOTH_CONNECT,
                     Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
                 )
             )
         } else {
-            hasBluetoothPermission = true
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                )
+            )
         }
     }
 
@@ -127,3 +181,5 @@ fun ConnectingPageContentScreen(
         )
     }
 }
+
+private const val REQUEST_CODE_LOCATION_SETTINGS = 1001

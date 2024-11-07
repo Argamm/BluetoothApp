@@ -8,6 +8,7 @@ object Dependencies {
         private const val GSON_VERSION = "2.9.0"
         private const val APP_COMPACT_VERSION = "1.6.1"
         private const val SPLASH_SCREEN_VERSION = "1.0.1"
+        private const val LOCATION_VERSION = "21.3.0"
 
         const val KTX_CORE = "androidx.core:core-ktx:$KTX_VERSION"
         const val RUNTIME_LIFECYCLE = "androidx.lifecycle:lifecycle-runtime-ktx:$LIFECYCLE_VERSION"
@@ -18,6 +19,7 @@ object Dependencies {
             "androidx.appcompat:appcompat-resources:$APP_COMPACT_VERSION"
         const val APP_COMPACT = "androidx.appcompat:appcompat:$APP_COMPACT_VERSION"
         const val SPLASH_SCREEN = "androidx.core:core-splashscreen:$SPLASH_SCREEN_VERSION"
+        const val LOCATION = "com.google.android.gms:play-services-location:$LOCATION_VERSION"
     }
 
 

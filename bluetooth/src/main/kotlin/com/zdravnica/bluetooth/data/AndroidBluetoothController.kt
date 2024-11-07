@@ -129,12 +129,9 @@ internal class AndroidBluetoothController(
                 super.onConnectionStateChange(gatt, status, newState)
                 if (newState == BluetoothGatt.STATE_CONNECTED) {
                     commandCharacteristic = gatt?.let { findCharacteristic(it) }
-
                     gatt?.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH)
-
                     Log.d("Bluetooth", "Connected to ${device.name}")
                     _bluetoothConnectionStatus.value = BluetoothConnectionStatus.Connected
-
                     bluetoothGatt?.discoverServices()
                 } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
                     _bluetoothConnectionStatus.value = BluetoothConnectionStatus.Disconnected
@@ -182,6 +179,39 @@ internal class AndroidBluetoothController(
                     }
                 }
             }
+
+            @Deprecated("Deprecated in Java")
+            override fun onCharacteristicRead(
+                gatt: BluetoothGatt?,
+                characteristic: BluetoothGattCharacteristic?,
+                status: Int
+            ) {
+                @Suppress("DEPRECATION")
+                super.onCharacteristicRead(gatt, characteristic, status)
+                if (status == BluetoothGatt.GATT_SUCCESS) {
+                    @Suppress("DEPRECATION")
+                    val value = characteristic?.value
+
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                        when (characteristic?.uuid.toString()) {
+                            CHARACTERISTIC_INFO_UUID -> {
+                                bluetoothGatt?.setCharacteristicNotification(characteristic, true)
+                                if (value != null) {
+                                    frmtSnsrData(value)
+                                }
+                            }
+
+                            TARGET_CHARACTERISTIC_UUID -> {
+                                bluetoothGatt?.setCharacteristicNotification(characteristic, true)
+                                val stateResult = value?.let { String(it) }
+                                if (stateResult != null) {
+                                    setStateButtons(stateResult)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         })
     }
 
@@ -221,6 +251,7 @@ internal class AndroidBluetoothController(
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val action = intent?.action
+
             if (BluetoothDevice.ACTION_FOUND == action) {
                 val device: BluetoothDevice? =
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
