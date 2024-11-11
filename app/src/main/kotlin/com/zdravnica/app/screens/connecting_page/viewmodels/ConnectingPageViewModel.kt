@@ -24,13 +24,12 @@ import com.zdravnica.bluetooth.domain.models.BluetoothDeviceDomainModel
 import com.zdravnica.uikit.DELAY_DURATION_120000
 import com.zdravnica.uikit.components.clock.Clock
 import com.zdravnica.uikit.components.snackbars.models.SnackBarTypeEnum
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.viewmodel.container
 
@@ -195,22 +194,14 @@ class ConnectingPageViewModel(
     }
 
     fun turnOffAllWorkingProcesses() = intent {
-        clock?.cancel()
-        clock = Clock(DELAY_DURATION_120000)
+        turnOffJob = viewModelScope.launch {
+            delay(DELAY_DURATION_120000)
 
-        withContext(Dispatchers.Main) {
-            clock?.start(
-                onFinish = {
-                    if (localDataStore.getCommandState(COMMAND_FAN)) {
-                        viewModelScope.launch {
-                            bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
-                                localDataStore.saveCommandState(COMMAND_FAN, false)
-                            })
-                        }
-                    }
-                },
-                onTick = { }
-            )
+            if (localDataStore.getCommandState(COMMAND_FAN)) {
+                bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_FAN, false)
+                })
+            }
         }
 
         localDataStore.saveAllCommandsAreTurnedOff()

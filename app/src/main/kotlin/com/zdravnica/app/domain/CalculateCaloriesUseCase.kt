@@ -17,4 +17,9 @@ class CalculateCaloriesUseCase {
 
         return totalCalories.roundToInt()
     }
+
+    fun resetCalories() {
+        totalCalories = 0.0
+        previousPulse = 0
+    }
 }

@@ -67,6 +67,7 @@ class ProcedureProcessViewModel(
 
     fun observeSensorData() = intent {
         sensorDataJob?.cancel()
+        calculateCaloriesUseCase.resetCalories()
 
         viewModelScope.launch {
             bluetoothController.bluetoothConnectionStatus.collect { status ->
@@ -84,7 +85,7 @@ class ProcedureProcessViewModel(
         }
 
         sensorDataJob = viewModelScope.launch {
-            if (!localDataStore.getCommandState(COMMAND_IREM)) {
+            if (!isTimerFinished && !localDataStore.getCommandState(COMMAND_IREM)) {
                 bluetoothController.sendCommand(
                     COMMAND_IREM,
                     onSuccess = {
