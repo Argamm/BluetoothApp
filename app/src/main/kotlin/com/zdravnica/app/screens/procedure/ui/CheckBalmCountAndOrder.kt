@@ -42,6 +42,7 @@ import com.zdravnica.uikit.resources.R
 fun CheckBalmCountAndOrder(
     modifier: Modifier = Modifier,
     balmInfo: List<ChipBalmInfoModel>,
+    temperatureAlert: Boolean,
     isBalmCountZero: (String) -> Boolean,
     startProcedure: () -> Unit,
     orderBalm: () -> Unit,
@@ -148,10 +149,11 @@ fun CheckBalmCountAndOrder(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            if (isAnyBalmCountZero) {
+            if (isAnyBalmCountZero || temperatureAlert) {
                 BigButtonWithTooltip(
                     modifier = modifier
                         .wrapContentSize(),
+                    temperatureAlert = temperatureAlert,
                     showTooltip = true,
                     bigButtonModel = BigButtonModel(
                         buttonText = stringResource(R.string.procedure_screen_start_procedure),
@@ -188,6 +190,7 @@ private fun CheckBalmCountAndOrderPrev() {
         getBalmInfoByTitle(R.string.select_product_skin)?.let {
             CheckBalmCountAndOrder(
                 balmInfo = it,
+                temperatureAlert = false,
                 isBalmCountZero = { false },
                 startProcedure = {},
                 orderBalm = {}

@@ -1,5 +1,7 @@
 package com.zdravnica.app.screens.procedure.viewModels
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
@@ -14,6 +16,7 @@ import com.zdravnica.bluetooth.data.COMMAND_STV4
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.viewmodel.container
@@ -22,11 +25,33 @@ class ProcedureScreenViewModel(
     private val localDataStore: LocalDataStore,
     private val bluetoothController: BluetoothController,
 ) : BaseViewModel<ProcedureScreenViewState, ProcedureScreenSideEffect>() {
+    private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
+    val temperature: State<Int> get() = _temperature
 
     override val container =
         container<ProcedureScreenViewState, ProcedureScreenSideEffect>(
             ProcedureScreenViewState()
         )
+
+    init {
+        observeSensorData()
+    }
+
+    private fun observeSensorData() = intent {
+        viewModelScope.launch {
+            bluetoothController.sensorDataFlow.collectLatest { sensorData ->
+                val currentTemperature = sensorData?.temrTmpr1 ?: 0
+                val alertCondition = currentTemperature > _temperature.value + 5
+
+                postViewState(
+                    state.copy(
+                        temperatureAlert = alertCondition
+                    )
+                )
+            }
+        }
+    }
+
 
     fun onNavigateUp() {
         postSideEffect(ProcedureScreenSideEffect.OnNavigateUp)

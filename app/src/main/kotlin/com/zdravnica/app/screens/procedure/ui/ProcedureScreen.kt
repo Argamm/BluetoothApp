@@ -120,6 +120,7 @@ fun ProcedureScreen(
                         CheckBalmCountAndOrder(
                             modifier,
                             balmInfo,
+                            temperatureAlert = procedureScreenViewState.temperatureAlert,
                             isBalmCountZero = { balmName ->
                                 when (balmName) {
                                     stringBurdock -> procedureScreenViewState.firstBalmCount == 2f

@@ -81,6 +81,7 @@
     <string name="procedure_screen_start_procedure">Start procedure</string>
     <string name="procedure_screen_tooltip_message">Not enough balm for\nthe selected program.</string>
     <string name="procedure_screen_title">Procedure</string>
+    <string name="procedure_screen_temperature_alert">The set temperature is lower than the current temperature. Please wait for the device to cool down.</string>
     <!--    ProcedureScreen Page end -->
 
     <!--    PreparingTheCabinScreen Page start -->

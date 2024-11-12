@@ -436,7 +436,7 @@ internal class AndroidBluetoothController(
                     anomalyCount = 0
                 } else {
                     anomalyCount++
-                    if (anomalyCount >= 7) {
+                    if (anomalyCount >= 3) {
                         lastTemrTmpr1 = temrTmpr1
                         anomalyCount = 0
                     } else {

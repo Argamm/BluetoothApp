@@ -77,6 +77,7 @@
     <string name="procedure_screen_start_procedure">Начать процедуру</string>
     <string name="procedure_screen_tooltip_message">Недостаточно бальзама для\n выбранной программы.</string>
     <string name="procedure_screen_title">Процедура</string>
+    <string name="procedure_screen_temperature_alert">Заданная температура ниже текущей. Дождитесь охлаждения Здравницы.</string>
     <!--    ProcedureScreen Page end-->
 
     <!--    PreparingTheCabinScreen Page start -->

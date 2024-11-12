@@ -35,8 +35,9 @@ import com.zdravnica.uikit.resources.R
 
 @Composable
 fun BigButtonWithTooltip(
-    bigButtonModel: BigButtonModel,
     modifier: Modifier = Modifier,
+    temperatureAlert: Boolean,
+    bigButtonModel: BigButtonModel,
     showTooltip: Boolean = false,
     bigBtnStateColors: BigButtonStateColor = ZdravnicaAppTheme.colors.bigButtonStateColor
 ) {
@@ -96,7 +97,7 @@ fun BigButtonWithTooltip(
                 )
             },
             tooltipContent = {
-                if(showTooltip) {
+                if (showTooltip) {
                     Text(
                         maxLines = COUNT_TWO,
                         minLines = COUNT_TWO,
@@ -107,7 +108,8 @@ fun BigButtonWithTooltip(
                             )
                             .widthIn(max = ZdravnicaAppTheme.dimens.size152)
                             .heightIn(max = ZdravnicaAppTheme.dimens.size100),
-                        text = stringResource(R.string.procedure_screen_tooltip_message),
+                        text = if (temperatureAlert) stringResource(R.string.procedure_screen_temperature_alert)
+                        else stringResource(R.string.procedure_screen_tooltip_message),
                         style = ZdravnicaAppTheme.typography.bodyXSMedium,
                         color = Color.Black,
                     )

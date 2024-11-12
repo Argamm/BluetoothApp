@@ -14,4 +14,5 @@ data class ProcedureScreenViewState(
     val firstBalmCount: Float = 0f,
     val secondBalmCount: Float = 0f,
     val thirdBalmCount: Float = 0f,
+    val temperatureAlert: Boolean = true,
 ) : BaseViewState()
