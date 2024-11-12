@@ -17,6 +17,11 @@ fun isLandscape(): Boolean {
 }
 
 @Composable
+fun isSmallWidth(): Boolean {
+    return LocalConfiguration.current.screenWidthDp <= 900
+}
+
+@Composable
 fun  getDimensionBasedOnDeviceType (isTablet: Dp, isMobile: Dp ) : Dp {
     return  when (isTablet()) { true -> isTablet else -> isMobile }
 }
