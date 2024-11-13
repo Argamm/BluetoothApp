@@ -41,7 +41,7 @@ fun MenuBalms(
     onBalmFilledClick: () -> Unit,
 ) {
     val zeroTextVisible = remember { mutableStateOf(false) }
-    zeroTextVisible.value = firstBalmCount == COUNT_TWO || secondBalmCount == COUNT_TWO || thirdBalmCount == COUNT_TWO
+    zeroTextVisible.value = firstBalmCount <= COUNT_TWO || secondBalmCount <= COUNT_TWO || thirdBalmCount <= COUNT_TWO
 
     Card(
         elevation = ZdravnicaAppTheme.dimens.size4,

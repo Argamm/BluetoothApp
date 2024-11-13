@@ -178,3 +178,78 @@ sealed class BigChipType {
         }
     }
 }
+
+fun getSystemTimingSequence(chipTitle: Int): List<List<Pair<ValveType, Long>>> {
+    val systemType = when (chipTitle) {
+        R.string.select_product_skin -> SystemType.SKIN
+        R.string.select_product_heart -> SystemType.CARDIOVASCULAR
+        R.string.select_product_knee_joint -> SystemType.MUSCLE_JOINT
+        R.string.select_product_brain -> SystemType.NERVOUS_SYSTEM
+        R.string.select_product_lungs -> SystemType.RESPIRATORY
+        R.string.select_product_uterus -> SystemType.URINARY
+        R.string.select_product_nose -> SystemType.IMMUNE_METABOLIC
+        R.string.select_product_intestine -> SystemType.DIGESTIVE
+        R.string.select_product_custom_mix -> SystemType.INDIVIDUAL
+        else -> SystemType.WITHOUT_BALM
+    }
+
+    return when (systemType) {
+        SystemType.SKIN -> listOf(
+            listOf(ValveType.FIRST_BALM to 0L, ValveType.SECOND_BALM to 5L, ValveType.THIRD_BALM to 15L),
+            listOf(ValveType.FIRST_BALM to 0L, ValveType.SECOND_BALM to 5L, ValveType.THIRD_BALM to 15L),
+            listOf(ValveType.FIRST_BALM to 0L, ValveType.SECOND_BALM to 5L, ValveType.THIRD_BALM to 15L)
+        )
+        SystemType.CARDIOVASCULAR -> listOf(
+            listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 6L, ValveType.THIRD_BALM to 2L),
+            listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 6L, ValveType.THIRD_BALM to 2L),
+            listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 6L, ValveType.THIRD_BALM to 2L)
+        )
+        SystemType.MUSCLE_JOINT -> listOf(
+            listOf(ValveType.FIRST_BALM to 13L, ValveType.SECOND_BALM to 7L, ValveType.THIRD_BALM to 0L),
+            listOf(ValveType.FIRST_BALM to 13L, ValveType.SECOND_BALM to 7L, ValveType.THIRD_BALM to 0L),
+            listOf(ValveType.FIRST_BALM to 13L, ValveType.SECOND_BALM to 7L, ValveType.THIRD_BALM to 0L)
+        )
+        SystemType.NERVOUS_SYSTEM -> listOf(
+            listOf(ValveType.FIRST_BALM to 8L, ValveType.SECOND_BALM to 8L, ValveType.THIRD_BALM to 4L),
+            listOf(ValveType.FIRST_BALM to 8L, ValveType.SECOND_BALM to 8L, ValveType.THIRD_BALM to 4L),
+            listOf(ValveType.FIRST_BALM to 8L, ValveType.SECOND_BALM to 8L, ValveType.THIRD_BALM to 4L)
+        )
+        SystemType.RESPIRATORY -> listOf(
+            listOf(ValveType.FIRST_BALM to 7L, ValveType.SECOND_BALM to 6L, ValveType.THIRD_BALM to 6L),
+            listOf(ValveType.FIRST_BALM to 7L, ValveType.SECOND_BALM to 6L, ValveType.THIRD_BALM to 6L),
+            listOf(ValveType.FIRST_BALM to 7L, ValveType.SECOND_BALM to 7L, ValveType.THIRD_BALM to 7L)
+        )
+        SystemType.URINARY -> listOf(
+            listOf(ValveType.FIRST_BALM to 5L, ValveType.SECOND_BALM to 5L, ValveType.THIRD_BALM to 7L),
+            listOf(ValveType.FIRST_BALM to 5L, ValveType.SECOND_BALM to 5L, ValveType.THIRD_BALM to 7L),
+            listOf(ValveType.FIRST_BALM to 5L, ValveType.SECOND_BALM to 5L, ValveType.THIRD_BALM to 6L)
+        )
+        SystemType.IMMUNE_METABOLIC -> listOf(
+            listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 8L, ValveType.THIRD_BALM to 10L),
+            listOf(ValveType.FIRST_BALM to 3L, ValveType.SECOND_BALM to 8L, ValveType.THIRD_BALM to 10L),
+            listOf(ValveType.FIRST_BALM to 0L, ValveType.SECOND_BALM to 6L, ValveType.THIRD_BALM to 10L)
+        )
+        SystemType.DIGESTIVE -> listOf(
+            listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 4L, ValveType.THIRD_BALM to 12L),
+            listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 4L, ValveType.THIRD_BALM to 12L),
+            listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 4L, ValveType.THIRD_BALM to 12L)
+        )
+        SystemType.INDIVIDUAL -> listOf(
+            listOf(ValveType.FOURTH_BALM to 60L)
+        )
+
+        SystemType.WITHOUT_BALM -> listOf(
+            listOf()
+        )
+    }
+}
+
+
+
+enum class SystemType {
+    SKIN, CARDIOVASCULAR, MUSCLE_JOINT, NERVOUS_SYSTEM, RESPIRATORY, URINARY, IMMUNE_METABOLIC, DIGESTIVE, INDIVIDUAL, WITHOUT_BALM
+}
+
+enum class ValveType {
+    FIRST_BALM, SECOND_BALM, THIRD_BALM, FOURTH_BALM,
+}

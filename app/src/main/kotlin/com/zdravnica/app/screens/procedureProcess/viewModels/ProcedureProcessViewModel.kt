@@ -18,14 +18,13 @@ import com.zdravnica.bluetooth.data.COMMAND_STV4
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
-import com.zdravnica.uikit.COUNT_FOUR
-import com.zdravnica.uikit.COUNT_ONE
-import com.zdravnica.uikit.COUNT_THREE
 import com.zdravnica.uikit.COUNT_TWO
 import com.zdravnica.uikit.DELAY_1000_ML
 import com.zdravnica.uikit.ONE_MINUTE_IN_SEC
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.chips.models.ChipBalmInfoModel
+import com.zdravnica.uikit.components.chips.models.ValveType
+import com.zdravnica.uikit.components.chips.models.getSystemTimingSequence
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -55,6 +54,9 @@ class ProcedureProcessViewModel(
     private val _balmFeeding = mutableStateOf(false)
     val balmFeeding: State<Boolean> get() = _balmFeeding
 
+    private val _timerFinished = mutableStateOf(false)
+    val timerFinished: State<Boolean> get() = _timerFinished
+
     override val container =
         container<ProcedureProcessViewState, ProcedureProcessSideEffect>(
             ProcedureProcessViewState()
@@ -65,9 +67,20 @@ class ProcedureProcessViewModel(
         stopObservingSensorData()
     }
 
+    init {
+        switchIkOn()
+    }
+
     fun observeSensorData() = intent {
         sensorDataJob?.cancel()
         calculateCaloriesUseCase.resetCalories()
+
+        viewModelScope.launch {
+            bluetoothController.getCommandsState.collect { state ->
+                if (state[1] == '0')
+                    _timerFinished.value = true
+            }
+        }
 
         viewModelScope.launch {
             bluetoothController.bluetoothConnectionStatus.collect { status ->
@@ -85,17 +98,6 @@ class ProcedureProcessViewModel(
         }
 
         sensorDataJob = viewModelScope.launch {
-            if (!isTimerFinished && !localDataStore.getCommandState(COMMAND_IREM)) {
-                bluetoothController.sendCommand(
-                    COMMAND_IREM,
-                    onSuccess = {
-                        localDataStore.saveFailSendingCommand(COMMAND_IREM, false)
-                        localDataStore.saveCommandState(COMMAND_IREM, true)
-                    }, onFailed = {
-                        localDataStore.saveFailSendingCommand(COMMAND_IREM, true)
-                    })
-            }
-
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 val currentCalorieValue =
                     calculateCaloriesUseCase.calculateCalories(
@@ -155,6 +157,22 @@ class ProcedureProcessViewModel(
         }
     }
 
+    private fun switchIkOn() = intent{
+        if (!isTimerFinished && !localDataStore.getCommandState(COMMAND_IREM)) {
+            bluetoothController.sendCommand(
+                COMMAND_IREM,
+                onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_IREM, true)
+                    updateIconStates()
+                    localDataStore.saveFailSendingCommand(COMMAND_IREM, false)
+                }, onFailed = {
+                    localDataStore.saveFailSendingCommand(COMMAND_IREM, true)
+                }
+            )
+            updateIconStates()
+        }
+    }
+
     fun updateTimerStatus(isFinished: Boolean) {
         isTimerFinished = isFinished
     }
@@ -194,18 +212,22 @@ class ProcedureProcessViewModel(
 
     fun turnOffKMPR() = intent {
         while (localDataStore.getCommandState(COMMAND_KMPR)) {
-            bluetoothController.sendCommand(COMMAND_KMPR, onSuccess = {
-                localDataStore.saveCommandState(COMMAND_KMPR, false)
-                updateIconStates()
-            })
+            if (!_balmFeeding.value) {
+                bluetoothController.sendCommand(COMMAND_KMPR, onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_KMPR, false)
+                    updateIconStates()
+                })
+            }
         }
     }
 
     fun startSTVCommandSequence(
         chipBalmInfoModels: List<ChipBalmInfoModel>,
-        allBalmNames: List<String>
+        allBalmNames: List<String>,
+        chipTitle: Int
     ) = intent {
         _balmFeeding.value = true
+        val sequence = getSystemTimingSequence(chipTitle)
 
         chipBalmInfoModels.let { list ->
             val totalConsumption = list.sumOf { it.consumption }
@@ -218,55 +240,45 @@ class ProcedureProcessViewModel(
             }
 
             balmSupplyJob = viewModelScope.launch {
-                commandDurations.forEachIndexed { index, (balmInfo, duration) ->
+                sequence.forEach { timingPattern ->
+                    timingPattern.forEachIndexed { index, (command, duration) ->
+                        if (duration != 0L) {
+                            when (command) {
+                                ValveType.FIRST_BALM -> sendCommandUntilOn(COMMAND_STV1)
+                                ValveType.SECOND_BALM -> sendCommandUntilOn(COMMAND_STV2)
+                                ValveType.THIRD_BALM -> sendCommandUntilOn(COMMAND_STV3)
+                                ValveType.FOURTH_BALM -> sendCommandUntilOn(COMMAND_STV4)
+                            }
+
+                            delay((duration - 1) * DELAY_1000_ML)
+
+                            if (index + 1 < timingPattern.size && timingPattern[index + 1].second != 0L) {
+                                val nextCommand = timingPattern[index + 1].first
+                                when (nextCommand) {
+                                    ValveType.FIRST_BALM -> sendCommandUntilOn(COMMAND_STV1)
+                                    ValveType.SECOND_BALM -> sendCommandUntilOn(COMMAND_STV2)
+                                    ValveType.THIRD_BALM -> sendCommandUntilOn(COMMAND_STV3)
+                                    ValveType.FOURTH_BALM -> sendCommandUntilOn(COMMAND_STV4)
+                                }
+                            }
+                            delay(DELAY_1000_ML)
+
+                            when (command) {
+                                ValveType.FIRST_BALM -> sendCommandUntilOff(COMMAND_STV1)
+                                ValveType.SECOND_BALM -> sendCommandUntilOff(COMMAND_STV2)
+                                ValveType.THIRD_BALM -> sendCommandUntilOff(COMMAND_STV3)
+                                ValveType.FOURTH_BALM -> sendCommandUntilOff(COMMAND_STV4)
+                            }
+
+                            delay(DELAY_1000_ML)
+                        }
+                    }
+                }
+
+                // Update balm consumption in the local data store
+                commandDurations.forEachIndexed { index, (balmInfo, _) ->
                     val balmName = allBalmNames.getOrNull(index) ?: "Unknown Balm"
-
-                    when (balmInfo.key) {
-                        COUNT_ONE -> {
-                            sendCommandUntilOn(
-                                COMMAND_STV1,
-                            )
-                        }
-
-                        COUNT_TWO -> {
-                            sendCommandUntilOn(
-                                COMMAND_STV2,
-                            )
-                        }
-
-                        COUNT_THREE -> {
-                            sendCommandUntilOn(
-                                COMMAND_STV3,
-                            )
-                        }
-
-                        COUNT_FOUR -> {
-                            sendCommandUntilOn(
-                                COMMAND_STV4,
-                            )
-                        }
-                    }
-                    delay(duration * DELAY_1000_ML)
                     localDataStore.consumeBalm(balmName, balmInfo.balmCount / COUNT_TWO)
-
-                    when (balmInfo.key) {
-                        COUNT_ONE -> {
-                            sendCommandUntilOff(COMMAND_STV1)
-                        }
-
-                        COUNT_TWO -> {
-                            sendCommandUntilOff(COMMAND_STV2)
-                        }
-
-                        COUNT_THREE -> {
-                            sendCommandUntilOff(COMMAND_STV3)
-                        }
-
-                        COUNT_FOUR -> {
-                            sendCommandUntilOff(COMMAND_STV4)
-                        }
-                    }
-                    delay(DELAY_1000_ML)
                 }
                 _balmFeeding.value = false
             }

@@ -82,7 +82,7 @@
 
     <!--    PreparingTheCabinScreen Page start -->
     <string name="preparing_the_cabin_cancel_procedure">Отменить процедуру</string>
-    <string name="preparing_the_cabin_waiting">Подождите, здравница готовится...</string>
+    <string name="preparing_the_cabin_waiting">Подождите, Здравница готовится...</string>
     <string name="preparing_the_cabin_ready">Здравница готова! Заходите внутрь</string>
     <string name="preparing_the_cabin_cancel_procedure_question">Вы уверены что хотите отменить процедуру</string>
     <string name="preparing_the_cabin_time_and_temperature_info">%1$s° · %2$s минут</string>
@@ -97,6 +97,7 @@
     <string name="procedure_process_to_main_screen">На главную</string>
     <string name="procedure_process_to_the_end_of_procedure">До конца процедуры</string>
     <string name="procedure_process_balm_supply">Включена подача бальзама</string>
+    <string name="procedure_process_wellness_program">Программа оздоровления: </string>
     <!--    ProcedureProcessScreen Page end -->
 
     <!--    StatusScreen Page start -->

@@ -30,12 +30,12 @@ import com.zdravnica.uikit.components.clock.Clock
 import com.zdravnica.uikit.extensions.compose.calculateTimeText
 import com.zdravnica.uikit.resources.R
 
-private const val NINE_MINUTES_IN_SECONDS = 540
-private const val FOUR_MINUTES_IN_SECONDS = 240
+private const val NINE_MINUTES_IN_SECONDS = 539
+private const val FOUR_MINUTES_IN_SECONDS = 239
 private const val TURN_OFF_THRESHOLD_NINE_MINUTES = 480
 private const val TURN_OFF_THRESHOLD_FOUR_MINUTES = 180
-private const val MINUTES_LEFT_CREDITS_NINE_MINUTES = 544
-private const val MINUTES_LEFT_CREDITS_FOUR_MINUTES = 244
+private const val MINUTES_LEFT_CREDITS_NINE_MINUTES = 540
+private const val MINUTES_LEFT_CREDITS_FOUR_MINUTES = 240
 
 @Composable
 fun TimerProcess(

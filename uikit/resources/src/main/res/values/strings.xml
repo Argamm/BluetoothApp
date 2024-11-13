@@ -102,6 +102,7 @@
     <string name="procedure_process_to_main_screen">To Main Screen</string>
     <string name="procedure_process_to_the_end_of_procedure">Time Remaining</string>
     <string name="procedure_process_balm_supply">Balm supply included</string>
+    <string name="procedure_process_wellness_program">Wellness program: </string>
     <!--    ProcedureProcessScreen Page end -->
 
     <!--    StatusScreen Page start -->

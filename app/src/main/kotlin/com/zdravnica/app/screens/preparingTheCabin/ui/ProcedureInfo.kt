@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.zdravnica.uikit.resources.R
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
@@ -29,7 +30,9 @@ fun ProcedureInfo(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = procedureName,
+            text = stringResource(id = R.string.procedure_process_wellness_program)
+                    + " " + procedureName,
+            textAlign = TextAlign.Center,
             style = ZdravnicaAppTheme.typography.bodyLargeSemi,
             color = ZdravnicaAppTheme.colors.baseAppColor.gray200
         )

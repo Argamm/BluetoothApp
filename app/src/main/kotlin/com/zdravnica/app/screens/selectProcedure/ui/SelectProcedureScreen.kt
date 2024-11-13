@@ -42,10 +42,12 @@ import com.zdravnica.uikit.components.buttons.models.IconButtonType
 import com.zdravnica.uikit.components.buttons.ui.IconButtonsComponent
 import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getChipDataList
 import com.zdravnica.uikit.components.dividers.YTHorizontalDivider
+import com.zdravnica.uikit.components.push.ProcedureStateInfo
 import com.zdravnica.uikit.components.snackbars.models.SnackBarTypeEnum
 import com.zdravnica.uikit.components.snackbars.ui.SnackBarComponent
 import com.zdravnica.uikit.components.statusDetails.StatusInfoState
 import com.zdravnica.uikit.components.statusDetails.stateDataMap
+import com.zdravnica.uikit.resources.R
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -55,6 +57,7 @@ fun SelectProcedureScreen(
     modifier: Modifier = Modifier,
     selectProcedureViewModel: SelectProcedureViewModel = koinViewModel(),
     isShowingSnackBar: Boolean = false,
+    procedureCanceled: Boolean = false,
     navigateToMenuScreen: () -> Unit,
     navigateToProcedureScreen: (Int) -> Unit,
     navigateToTheConnectionScreen: () -> Unit,
@@ -167,6 +170,13 @@ fun SelectProcedureScreen(
                         }
                     }
                     item {
+                        if (procedureCanceled && !selectProcedureViewModel.timerFinished.value) {
+                            ProcedureStateInfo(
+                                firstText = stringResource(R.string.procedure_process_procedure_end),
+                                secondText = stringResource(R.string.procedure_process_cooling)
+                            )
+                        }
+
                         TextWithSwitches(
                             switchState = viewState.ikSwitchState,
                             onSwitchChange = {

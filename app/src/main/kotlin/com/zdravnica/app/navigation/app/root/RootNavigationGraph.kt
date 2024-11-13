@@ -78,9 +78,9 @@ fun RootNavigationGraph(
                     },
                     navigateOnSelectProcedureScreen = { showSnackBar ->
                         if (isTablet) {
-                            navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${showSnackBar}")
+                            navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${showSnackBar}/${false}")
                         } else {
-                            navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${showSnackBar}")
+                            navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${showSnackBar}/${false}")
                         }
                     },
                     onNavigateUp = {
@@ -101,12 +101,15 @@ fun RootNavigationGraph(
             }
 
             composable(
-                route = "${AppNavGraph.SelectProcedureScreen.route}/{showSnackBar}",
+                route = "${AppNavGraph.SelectProcedureScreen.route}/{showSnackBar}/{procedureCanceled}",
                 arguments = listOf(navArgument("showSnackBar") {
+                    type = NavType.BoolType
+                }, navArgument("procedureCanceled") {
                     type = NavType.BoolType
                 })
             ) { backStackEntry ->
                 val showSnackBar = backStackEntry.arguments?.getBoolean("showSnackBar")
+                val procedureCanceled = backStackEntry.arguments?.getBoolean("procedureCanceled")
                 SelectProcedureScreen(
                     navigateToMenuScreen = {
                         navHostController.navigate(AppNavGraph.ManuScreen.route)
@@ -115,6 +118,7 @@ fun RootNavigationGraph(
                         navHostController.navigate("${AppNavGraph.ProcedureScreen.route}/${chipTitle}")
                     },
                     isShowingSnackBar = showSnackBar ?: false,
+                    procedureCanceled = procedureCanceled ?: false,
                     navigateToTheConnectionScreen = {
                         navHostController.navigate(AppNavGraph.Connection.route)
                     }
@@ -168,8 +172,8 @@ fun RootNavigationGraph(
                         onYesClick = {
                             if (navigateToSelectProcedure == true) {
                                 connectivityViewModel.turnOffAllWorkingProcesses()
-                                navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}") {
-                                    popUpTo("${AppNavGraph.SelectProcedureScreen.route}/${false}") {
+                                navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}/${true}") {
+                                    popUpTo("${AppNavGraph.SelectProcedureScreen.route}/${false}/${true}") {
                                         inclusive = true
                                     }
                                     launchSingleTop = true
@@ -222,7 +226,7 @@ fun RootNavigationGraph(
                 PreparingTheCabinScreen(
                     chipTitleId = chipTitle,
                     navigateToSelectProcedureScreen = {
-                        navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}")
+                        navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}/${false}")
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         if (isTablet) {
@@ -257,7 +261,7 @@ fun RootNavigationGraph(
                 ProcedureProcessScreen(
                     chipTitle = chipTitle,
                     navigateToMainScreen = {
-                        navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}")
+                        navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}/${false}")
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         navHostController.navigate(
@@ -289,12 +293,15 @@ fun RootNavigationGraph(
 
             //Tablets
             composable(
-                route = "${AppNavGraph.SelectProcedureTabletScreen.route}/{showSnackBar}",
+                route = "${AppNavGraph.SelectProcedureTabletScreen.route}/{showSnackBar}/{procedureCanceled}",
                 arguments = listOf(navArgument("showSnackBar") {
+                    type = NavType.BoolType
+                }, navArgument("procedureCanceled") {
                     type = NavType.BoolType
                 })
             ) { backStackEntry ->
                 val showSnackBar = backStackEntry.arguments?.getBoolean("showSnackBar")
+                val procedureCanceled = backStackEntry.arguments?.getBoolean("procedureCanceled")
 
                 SelectProcedureTabletScreen(
                     navigateToMenuScreen = {
@@ -304,6 +311,7 @@ fun RootNavigationGraph(
                         navHostController.navigate("${AppNavGraph.ProcedureTabletScreen.route}/${chipTitle}")
                     },
                     isShowingSnackBar = showSnackBar ?: false,
+                    procedureCanceled = procedureCanceled ?: false,
                     navigateToTheConnectionScreen = {
                         navHostController.navigate(AppNavGraph.Connection.route)
                     }
@@ -336,7 +344,7 @@ fun RootNavigationGraph(
                 ProcedureProcessTabletScreen(
                     chipTitle = chipData,
                     navigateToMainScreen = {
-                        navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}")
+                        navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}/${false}")
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         navHostController.navigate(
@@ -376,8 +384,8 @@ fun RootNavigationGraph(
                         onYesClick = {
                             if (navigateToSelectProcedure == true) {
                                 connectivityViewModel.turnOffAllWorkingProcesses()
-                                navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}") {
-                                    popUpTo("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}") {
+                                navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}/${true}") {
+                                    popUpTo("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}/${true}") {
                                         inclusive = true
                                     }
                                     launchSingleTop = true

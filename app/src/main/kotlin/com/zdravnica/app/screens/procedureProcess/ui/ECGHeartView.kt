@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -82,6 +83,16 @@ fun ECGAnimation(//NOT finished animation of heart with cardiogram
 
 @Composable
 fun HeartWithECG() {
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.2f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = ""
+    )
+
     Box(
         modifier = Modifier
             .size(200.dp)
@@ -90,7 +101,9 @@ fun HeartWithECG() {
         Image(
             painter = painterResource(id = R.drawable.heart_anim),
             contentDescription = null,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .scale(scale)
         )
         ECGAnimation(
             modifier = Modifier

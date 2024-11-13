@@ -123,9 +123,9 @@ fun ProcedureScreen(
                             temperatureAlert = procedureScreenViewState.temperatureAlert,
                             isBalmCountZero = { balmName ->
                                 when (balmName) {
-                                    stringBurdock -> procedureScreenViewState.firstBalmCount == 2f
-                                    stringNut -> procedureScreenViewState.secondBalmCount == 2f
-                                    stringMint -> procedureScreenViewState.thirdBalmCount == 2f
+                                    stringBurdock -> procedureScreenViewState.firstBalmCount <= 2f
+                                    stringNut -> procedureScreenViewState.secondBalmCount <= 2f
+                                    stringMint -> procedureScreenViewState.thirdBalmCount <= 2f
                                     else -> false
                                 }
                             },

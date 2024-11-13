@@ -2,6 +2,7 @@ package com.zdravnica.app.screens.selectProcedure.viewModels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
@@ -31,13 +32,16 @@ class SelectProcedureViewModel(
     private val bluetoothController: BluetoothController,
 ) : BaseViewModel<SelectProcedureViewState, SelectProcedureSideEffect>() {
     private var snackBarClock: Clock? = null
+    private var isProcessing = false
 
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
 
     private val _duration = mutableIntStateOf(localDataStore.getDuration())
     val duration: State<Int> get() = _duration
-    private var isProcessing = false
+
+    private val _timerFinished = mutableStateOf(false)
+    val timerFinished: State<Boolean> get() = _timerFinished
 
     override val container =
         container<SelectProcedureViewState, SelectProcedureSideEffect>(
@@ -53,6 +57,9 @@ class SelectProcedureViewModel(
     private fun observeSensorData() = intent {
         viewModelScope.launch {
             bluetoothController.getCommandsState.collect { state ->
+                if (state[1] == '0') {
+                    _timerFinished.value = true
+                }
                 localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
                 localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
                 localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')

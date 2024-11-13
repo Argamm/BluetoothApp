@@ -22,11 +22,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -59,6 +63,8 @@ fun ProcedureProcessScreen(
     val context = LocalContext.current
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
+    val wellnessProgram = stringResource(id = R.string.procedure_process_wellness_program) +
+            " " + chipTitle?.let { stringResource(id = it) }
     var isTimerFinished by remember { mutableStateOf(false) }
     val viewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val iconStates = viewState.iconStates
@@ -108,9 +114,11 @@ fun ProcedureProcessScreen(
                     procedureProcessViewModel.onChangeCancelDialogPageVisibility(false)
                     procedureProcessViewModel.observeSensorData()
                 }
+
                 Lifecycle.Event.ON_STOP -> {
                     procedureProcessViewModel.stopObservingSensorData()
                 }
+
                 else -> {}
             }
         }
@@ -165,36 +173,62 @@ fun ProcedureProcessScreen(
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size38))
 
                     if (!isTimerFinished) {
-                        if (procedureProcessViewModel.balmFeeding.value) {
+                        if (procedureProcessViewModel.balmFeeding.value && chipTitle != R.string.select_product_without_balm) {
                             ProcedureStateInfo(
                                 firstText = stringResource(R.string.procedure_process_balm_supply),
                             )
                             Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size8))
                         }
 
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(
+                                    style = SpanStyle(
+                                        brush = Brush.linearGradient(
+                                            colors = ZdravnicaAppTheme.colors.timeAndTemperatureColor
+                                        )
+                                    )
+                                ) {
+                                    append(wellnessProgram)
+                                }
+                            },
+                            textAlign = TextAlign.Center,
+                            style = ZdravnicaAppTheme.typography.bodyLargeSemi,
+                            color = ZdravnicaAppTheme.colors.baseAppColor.gray200,
+                        )
+
                         TimerProcess(totalSeconds = procedureProcessViewModel.duration.value,
                             onTimerFinish = {
                                 isTimerFinished = true
                             },
                             onNineMinutesLeft = {
-                                procedureProcessViewModel.turnOnKMPR()
+                                if (chipTitle != R.string.select_product_without_balm) {
+                                    procedureProcessViewModel.turnOnKMPR()
+                                }
                             },
                             onTurnOffCommand = {
-                                procedureProcessViewModel.turnOffKMPR()
+                                if (chipTitle != R.string.select_product_without_balm) {
+                                    procedureProcessViewModel.turnOffKMPR()
+                                }
                             },
                             onFourMinutesLeft = {
-                                procedureProcessViewModel.turnOnKMPR()
+                                if (chipTitle != R.string.select_product_without_balm) {
+                                    procedureProcessViewModel.turnOnKMPR()
+                                }
                             },
                             onTurnOffCommandAfterFour = {
-                                procedureProcessViewModel.turnOffKMPR()
+                                if (chipTitle != R.string.select_product_without_balm) {
+                                    procedureProcessViewModel.turnOffKMPR()
+                                }
                             },
                             onMinutesLeftWithCredits = {
-                                if (chipTitle != null) {
+                                if (chipTitle != null && chipTitle != R.string.select_product_without_balm) {
                                     BigChipType.getBalmInfoByTitle(chipTitle)
                                         ?.let { chipBalmInfoList ->
                                             procedureProcessViewModel.startSTVCommandSequence(
                                                 chipBalmInfoList,
-                                                BigChipType.getAllBalmNames(context)
+                                                BigChipType.getAllBalmNames(context),
+                                                chipTitle
                                             )
                                         }
                                 }
@@ -202,10 +236,12 @@ fun ProcedureProcessScreen(
 
                         )
                     } else {
-                        ProcedureStateInfo(
-                            firstText = stringResource(R.string.procedure_process_procedure_end),
-                            secondText = stringResource(R.string.procedure_process_cooling)
-                        )
+                        if (!procedureProcessViewModel.timerFinished.value) {
+                            ProcedureStateInfo(
+                                firstText = stringResource(R.string.procedure_process_procedure_end),
+                                secondText = stringResource(R.string.procedure_process_cooling)
+                            )
+                        }
                     }
 
                     Spacer(
@@ -234,7 +270,9 @@ fun ProcedureProcessScreen(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
                                 ) {
-                                    procedureProcessViewModel.onChangeCancelDialogPageVisibility(true)
+                                    procedureProcessViewModel.onChangeCancelDialogPageVisibility(
+                                        true
+                                    )
                                     procedureProcessViewModel.navigateToCancelDialogPage()
                                 },
                             text = stringResource(R.string.preparing_the_cabin_cancel_procedure),

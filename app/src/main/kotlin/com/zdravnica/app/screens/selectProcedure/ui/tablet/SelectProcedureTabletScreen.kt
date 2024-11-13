@@ -35,10 +35,12 @@ import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.dividers.YTHorizontalDivider
+import com.zdravnica.uikit.components.push.ProcedureStateInfo
 import com.zdravnica.uikit.components.snackbars.models.SnackBarTypeEnum
 import com.zdravnica.uikit.components.snackbars.ui.SnackBarComponent
 import com.zdravnica.uikit.components.statusDetails.StatusInfoState
 import com.zdravnica.uikit.components.statusDetails.stateDataMap
+import com.zdravnica.uikit.resources.R
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -47,6 +49,7 @@ fun SelectProcedureTabletScreen(
     modifier: Modifier = Modifier,
     selectProcedureViewModel: SelectProcedureViewModel = koinViewModel(),
     isShowingSnackBar: Boolean = false,
+    procedureCanceled: Boolean = false,
     navigateToMenuScreen: () -> Unit,
     navigateToProcedureScreen: (Int) -> Unit,
     navigateToTheConnectionScreen: () -> Unit,
@@ -128,6 +131,13 @@ fun SelectProcedureTabletScreen(
                             Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size12))
                         }
                         YTHorizontalDivider()
+
+                        if (procedureCanceled && !selectProcedureViewModel.timerFinished.value) {
+                            ProcedureStateInfo(
+                                firstText = stringResource(R.string.procedure_process_procedure_end),
+                                secondText = stringResource(R.string.procedure_process_cooling)
+                            )
+                        }
 
                         TextWithSwitches(
                             switchState = viewState.ikSwitchState,
