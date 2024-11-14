@@ -37,7 +37,7 @@ import kotlin.math.roundToInt
 class ProcedureProcessViewModel(
     private val localDataStore: LocalDataStore,
     private val bluetoothController: BluetoothController,
-    private val calculateCaloriesUseCase: CalculateCaloriesUseCase
+    private val calculateCaloriesUseCase: CalculateCaloriesUseCase,
 ) : BaseViewModel<ProcedureProcessViewState, ProcedureProcessSideEffect>() {
     private var sensorDataJob: Job? = null
     private var balmSupplyJob: Job? = null
@@ -157,7 +157,7 @@ class ProcedureProcessViewModel(
         }
     }
 
-    private fun switchIkOn() = intent{
+    private fun switchIkOn() = intent {
         if (!isTimerFinished && !localDataStore.getCommandState(COMMAND_IREM)) {
             bluetoothController.sendCommand(
                 COMMAND_IREM,
@@ -240,48 +240,73 @@ class ProcedureProcessViewModel(
             }
 
             balmSupplyJob = viewModelScope.launch {
+                var previousCommand: ValveType? = null
                 sequence.forEach { timingPattern ->
                     timingPattern.forEachIndexed { index, (command, duration) ->
                         if (duration != 0L) {
                             when (command) {
-                                ValveType.FIRST_BALM -> sendCommandUntilOn(COMMAND_STV1)
-                                ValveType.SECOND_BALM -> sendCommandUntilOn(COMMAND_STV2)
-                                ValveType.THIRD_BALM -> sendCommandUntilOn(COMMAND_STV3)
-                                ValveType.FOURTH_BALM -> sendCommandUntilOn(COMMAND_STV4)
-                            }
+                                ValveType.FIRST_BALM -> {
+                                    sendCommandUntilOn(COMMAND_STV1)
+                                    if (previousCommand == ValveType.THIRD_BALM) {
+                                        turnOffCommand(ValveType.THIRD_BALM)
+                                    } else {
+                                        turnOffCommand(ValveType.SECOND_BALM)
+                                    }
+                                }
 
-                            delay((duration - 1) * DELAY_1000_ML)
+                                ValveType.SECOND_BALM -> {
+                                    sendCommandUntilOn(COMMAND_STV2)
+                                    if (previousCommand == ValveType.FIRST_BALM) {
+                                        turnOffCommand(ValveType.FIRST_BALM)
+                                    } else {
+                                        turnOffCommand(ValveType.THIRD_BALM)
+                                    }
+                                }
 
-                            if (index + 1 < timingPattern.size && timingPattern[index + 1].second != 0L) {
-                                val nextCommand = timingPattern[index + 1].first
-                                when (nextCommand) {
-                                    ValveType.FIRST_BALM -> sendCommandUntilOn(COMMAND_STV1)
-                                    ValveType.SECOND_BALM -> sendCommandUntilOn(COMMAND_STV2)
-                                    ValveType.THIRD_BALM -> sendCommandUntilOn(COMMAND_STV3)
-                                    ValveType.FOURTH_BALM -> sendCommandUntilOn(COMMAND_STV4)
+                                ValveType.THIRD_BALM -> {
+                                    sendCommandUntilOn(COMMAND_STV3)
+                                    if (previousCommand == ValveType.SECOND_BALM) {
+                                        turnOffCommand(ValveType.SECOND_BALM)
+                                    } else {
+                                        turnOffCommand(ValveType.FIRST_BALM)
+                                    }
+                                }
+
+                                ValveType.FOURTH_BALM -> {
+                                    sendCommandUntilOn(COMMAND_STV4)
                                 }
                             }
-                            delay(DELAY_1000_ML)
 
-                            when (command) {
-                                ValveType.FIRST_BALM -> sendCommandUntilOff(COMMAND_STV1)
-                                ValveType.SECOND_BALM -> sendCommandUntilOff(COMMAND_STV2)
-                                ValveType.THIRD_BALM -> sendCommandUntilOff(COMMAND_STV3)
-                                ValveType.FOURTH_BALM -> sendCommandUntilOff(COMMAND_STV4)
+                            previousCommand = command
+                            delay((duration - 1) * DELAY_1000_ML)
+
+                            val isLastCommand = (index == timingPattern.lastIndex)
+                                    ||  ((index+1 == timingPattern.lastIndex) && timingPattern[index + 1].second == 0L)
+                            if (isLastCommand) {
+                                turnOffCommand(command)
+                            } else if (command == ValveType.FOURTH_BALM) {
+                                turnOffCommand(ValveType.FOURTH_BALM)
                             }
-
-                            delay(DELAY_1000_ML)
                         }
                     }
                 }
 
-                // Update balm consumption in the local data store
                 commandDurations.forEachIndexed { index, (balmInfo, _) ->
                     val balmName = allBalmNames.getOrNull(index) ?: "Unknown Balm"
                     localDataStore.consumeBalm(balmName, balmInfo.balmCount / COUNT_TWO)
                 }
                 _balmFeeding.value = false
             }
+        }
+    }
+
+    private suspend fun turnOffCommand(command: ValveType) {
+        delay(DELAY_1000_ML)
+        when (command) {
+            ValveType.FIRST_BALM -> sendCommandUntilOff(COMMAND_STV1)
+            ValveType.SECOND_BALM -> sendCommandUntilOff(COMMAND_STV2)
+            ValveType.THIRD_BALM -> sendCommandUntilOff(COMMAND_STV3)
+            ValveType.FOURTH_BALM -> sendCommandUntilOff(COMMAND_STV4)
         }
     }
 

@@ -244,8 +244,6 @@ fun getSystemTimingSequence(chipTitle: Int): List<List<Pair<ValveType, Long>>> {
     }
 }
 
-
-
 enum class SystemType {
     SKIN, CARDIOVASCULAR, MUSCLE_JOINT, NERVOUS_SYSTEM, RESPIRATORY, URINARY, IMMUNE_METABOLIC, DIGESTIVE, INDIVIDUAL, WITHOUT_BALM
 }
