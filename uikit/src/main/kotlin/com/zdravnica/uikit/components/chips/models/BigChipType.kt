@@ -202,6 +202,8 @@ fun getSystemTimingSequence(chipTitle: Int): List<List<Pair<ValveType, Long>>> {
         SystemType.CARDIOVASCULAR -> listOf(
             listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 6L, ValveType.THIRD_BALM to 2L),
             listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 6L, ValveType.THIRD_BALM to 2L),
+            listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 6L, ValveType.THIRD_BALM to 2L),
+            listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 6L, ValveType.THIRD_BALM to 2L),
             listOf(ValveType.FIRST_BALM to 4L, ValveType.SECOND_BALM to 6L, ValveType.THIRD_BALM to 2L)
         )
         SystemType.MUSCLE_JOINT -> listOf(

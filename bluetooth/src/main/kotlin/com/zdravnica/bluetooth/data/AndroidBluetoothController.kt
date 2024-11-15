@@ -354,7 +354,7 @@ internal class AndroidBluetoothController(
             var attempt = 0
             var delayTime = 500L
 
-            while (attempt < 3) {
+            while (attempt < 5) {
                 if (bluetoothGatt?.device?.bondState != BluetoothDevice.BOND_BONDED) {
                     bluetoothGatt?.connect()
                 }
@@ -370,7 +370,7 @@ internal class AndroidBluetoothController(
                     onSuccess?.invoke()
                     return@withContext
                 } else {
-                    Log.e("Bluetooth", "Failed to send command, attempt: ${String(binCmd)}")
+                    Log.e("Bluetooth", "Failed to send command, attempt:$attempt ${String(binCmd)}")
                     attempt++
                     delay(delayTime)
                     delayTime *= 2

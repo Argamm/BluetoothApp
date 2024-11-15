@@ -158,7 +158,7 @@ class ProcedureProcessViewModel(
     }
 
     private fun switchIkOn() = intent {
-        if (!isTimerFinished && !localDataStore.getCommandState(COMMAND_IREM)) {
+        if (!localDataStore.getCommandState(COMMAND_IREM)) {
             bluetoothController.sendCommand(
                 COMMAND_IREM,
                 onSuccess = {
@@ -199,6 +199,7 @@ class ProcedureProcessViewModel(
     }
 
     fun turnOnKMPR() = intent {
+        if (!_balmFeeding.value) return@intent
         while (!localDataStore.getCommandState(COMMAND_KMPR)) {
             bluetoothController.sendCommand(COMMAND_KMPR, onSuccess = {
                 localDataStore.saveFailSendingCommand(COMMAND_KMPR, false)
@@ -211,6 +212,7 @@ class ProcedureProcessViewModel(
     }
 
     fun turnOffKMPR() = intent {
+        if (!_balmFeeding.value) return@intent
         while (localDataStore.getCommandState(COMMAND_KMPR)) {
             if (!_balmFeeding.value) {
                 bluetoothController.sendCommand(COMMAND_KMPR, onSuccess = {
@@ -278,14 +280,14 @@ class ProcedureProcessViewModel(
                             }
 
                             previousCommand = command
-                            delay((duration - 1) * DELAY_1000_ML)
+                            delay((duration - 2) * DELAY_1000_ML)
 
                             val isLastCommand = (index == timingPattern.lastIndex)
-                                    ||  ((index+1 == timingPattern.lastIndex) && timingPattern[index + 1].second == 0L)
+                                    || ((index + 1 == timingPattern.lastIndex) && timingPattern[index + 1].second == 0L)
                             if (isLastCommand) {
-                                turnOffCommand(command)
+                                turnOffCommand(command, true)
                             } else if (command == ValveType.FOURTH_BALM) {
-                                turnOffCommand(ValveType.FOURTH_BALM)
+                                turnOffCommand(ValveType.FOURTH_BALM, true)
                             }
                         }
                     }
@@ -300,7 +302,9 @@ class ProcedureProcessViewModel(
         }
     }
 
-    private suspend fun turnOffCommand(command: ValveType) {
+    private suspend fun turnOffCommand(command: ValveType, isLastCommand: Boolean = false) {
+        if (isLastCommand)
+            turnOffKMPR()
         delay(DELAY_1000_ML)
         when (command) {
             ValveType.FIRST_BALM -> sendCommandUntilOff(COMMAND_STV1)
@@ -313,7 +317,7 @@ class ProcedureProcessViewModel(
     private suspend fun sendCommandUntilOn(command: String) {
         sendingCommands?.cancel()
         sendingCommands = viewModelScope.launch {
-            while (!localDataStore.getCommandState(command)) {
+            if (!localDataStore.getCommandState(command)) {
                 bluetoothController.sendCommand(command, onSuccess = {
                     localDataStore.saveCommandState(command, true)
                 })
@@ -324,7 +328,7 @@ class ProcedureProcessViewModel(
     private suspend fun sendCommandUntilOff(command: String) {
         sendingCommands?.cancel()
         sendingCommands = viewModelScope.launch {
-            while (localDataStore.getCommandState(command)) {
+            if (localDataStore.getCommandState(command)) {
                 bluetoothController.sendCommand(command, onSuccess = {
                     localDataStore.saveCommandState(command, false)
                 })
@@ -343,7 +347,6 @@ class ProcedureProcessViewModel(
             if (tenState) IconState.ENABLED else IconState.DISABLED,
             if (kmprState) IconState.ENABLED else IconState.DISABLED,
             if (iremState) IconState.ENABLED else IconState.DISABLED,
-            IconState.DISABLED
         )
 
         postViewState(state.copy(iconStates = newIconStates))

@@ -165,15 +165,12 @@ class PreparingTheCabinScreenViewModel(
     fun updateIconStates() = intent {
         val fanState = localDataStore.getCommandState(COMMAND_FAN)
         val tenState = localDataStore.getCommandState(COMMAND_TEN)
-        val kmprState = localDataStore.getCommandState(COMMAND_KMPR)
-        val iremState = localDataStore.getCommandState(COMMAND_IREM)
 
         val newIconStates = listOf(
             if (fanState) IconState.ENABLED else IconState.DISABLED,
             if (tenState) IconState.ENABLED else IconState.DISABLED,
-            if (kmprState) IconState.ENABLED else IconState.DISABLED,
-            if (iremState) IconState.ENABLED else IconState.DISABLED,
-            IconState.DISABLED
+            IconState.DISABLED,
+            IconState.DISABLED,
         )
 
         postViewState(state.copy(iconStates = newIconStates))

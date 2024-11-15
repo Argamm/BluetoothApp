@@ -8,6 +8,7 @@ import com.zdravnica.app.core.viewmodel.BaseViewModel
 import com.zdravnica.app.data.LocalDataStore
 import com.zdravnica.app.screens.menuScreen.models.MenuScreenViewState
 import com.zdravnica.bluetooth.data.COMMAND_FAN
+import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.COMMAND_KMPR
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
@@ -48,7 +49,7 @@ class MenuScreenViewModel(
 
     private val _ikErrorCase = mutableStateOf(
         localDataStore.getIsFailedSendingCommand(
-            COMMAND_FAN
+            COMMAND_IREM
         )
     )
     val ikErrorCase: State<Boolean> get() = _ikErrorCase
