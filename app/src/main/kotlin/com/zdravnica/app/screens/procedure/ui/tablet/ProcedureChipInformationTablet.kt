@@ -1,5 +1,7 @@
 package com.zdravnica.app.screens.procedure.ui.tablet
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProcedureChipInformationTablet(
     modifier: Modifier = Modifier,
@@ -48,6 +51,7 @@ fun ProcedureChipInformationTablet(
             style = ZdravnicaAppTheme.typography.headH2,
             textAlign = TextAlign.Start,
             modifier = Modifier
+                .basicMarquee()
                 .fillMaxWidth()
         )
 

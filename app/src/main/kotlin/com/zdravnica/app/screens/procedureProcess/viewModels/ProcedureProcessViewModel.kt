@@ -67,10 +67,6 @@ class ProcedureProcessViewModel(
         stopObservingSensorData()
     }
 
-    init {
-        switchIkOn()
-    }
-
     fun observeSensorData() = intent {
         sensorDataJob?.cancel()
         calculateCaloriesUseCase.resetCalories()
@@ -154,22 +150,6 @@ class ProcedureProcessViewModel(
                     }
                 }
             }
-        }
-    }
-
-    private fun switchIkOn() = intent {
-        if (!localDataStore.getCommandState(COMMAND_IREM)) {
-            bluetoothController.sendCommand(
-                COMMAND_IREM,
-                onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_IREM, true)
-                    updateIconStates()
-                    localDataStore.saveFailSendingCommand(COMMAND_IREM, false)
-                }, onFailed = {
-                    localDataStore.saveFailSendingCommand(COMMAND_IREM, true)
-                }
-            )
-            updateIconStates()
         }
     }
 

@@ -1,5 +1,7 @@
 package com.zdravnica.app.screens.procedure.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +25,7 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.resources.R
 import com.zdravnica.uikit.utils.buildGradientAnnotatedString
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProcedureChipInformation(
     modifier: Modifier = Modifier,
@@ -49,10 +52,14 @@ fun ProcedureChipInformation(
         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size8))
 
         Text(
-            text = buildGradientAnnotatedString(titleRes, ZdravnicaAppTheme.colors.timeAndTemperatureColor),
-            style = ZdravnicaAppTheme.typography.headH2,
+            text = buildGradientAnnotatedString(
+                titleRes,
+                ZdravnicaAppTheme.colors.timeAndTemperatureColor
+            ),
+            style = ZdravnicaAppTheme.typography.headH3,
             textAlign = TextAlign.Center,
             modifier = Modifier
+                .basicMarquee()
                 .fillMaxWidth()
                 .padding(horizontal = ZdravnicaAppTheme.dimens.size16)
         )
@@ -76,7 +83,7 @@ fun PreviewProcedureChipInformation() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         ProcedureChipInformation(
             iconRes = R.mipmap.ic_skin,
-            titleRes = R.string.select_product_skin,
+            titleRes = R.string.select_product_brain,
             descriptionRes = R.string.select_product_skin_description
         )
     }

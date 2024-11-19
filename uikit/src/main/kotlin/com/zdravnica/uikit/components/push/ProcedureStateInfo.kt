@@ -23,18 +23,19 @@ import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 fun ProcedureStateInfo(
     modifier: Modifier = Modifier,
     firstText: String,
-    secondText: String? = null
+    secondText: String? = null,
+    procedureEnded: Boolean = false
 ) {
-    val backgroundColor = if (secondText == null) {
+    val backgroundColor = if (!procedureEnded) {
         ZdravnicaAppTheme.colors.baseAppColor.info500
     } else {
         ZdravnicaAppTheme.colors.baseAppColor.success500
     }
 
-    val verticalPadding = if (secondText == null)
+    val verticalPadding = if (!procedureEnded)
         ZdravnicaAppTheme.dimens.size20
     else
-        ZdravnicaAppTheme.dimens.size11
+        ZdravnicaAppTheme.dimens.size20
 
     Box(
         modifier = modifier
@@ -87,11 +88,13 @@ fun PreviewProcedureStateInfo() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         Column {
             ProcedureStateInfo(
-                firstText = "Only First Text"
+                firstText = "Only First Text",
+                procedureEnded = false
             )
             ProcedureStateInfo(
                 firstText = "First Text",
-                secondText = "Second Text"
+                secondText = "Second Text",
+                procedureEnded = true
             )
         }
     }

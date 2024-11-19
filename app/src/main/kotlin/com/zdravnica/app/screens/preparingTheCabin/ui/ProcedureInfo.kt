@@ -31,7 +31,7 @@ fun ProcedureInfo(
     ) {
         Text(
             text = stringResource(id = R.string.procedure_process_wellness_program)
-                    + " " + procedureName,
+                    + "\n " + procedureName,
             textAlign = TextAlign.Center,
             style = ZdravnicaAppTheme.typography.bodyLargeSemi,
             color = ZdravnicaAppTheme.colors.baseAppColor.gray200

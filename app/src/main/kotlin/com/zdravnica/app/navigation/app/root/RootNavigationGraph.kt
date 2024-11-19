@@ -104,12 +104,9 @@ fun RootNavigationGraph(
                 route = "${AppNavGraph.SelectProcedureScreen.route}/{showSnackBar}/{procedureCanceled}",
                 arguments = listOf(navArgument("showSnackBar") {
                     type = NavType.BoolType
-                }, navArgument("procedureCanceled") {
-                    type = NavType.BoolType
                 })
             ) { backStackEntry ->
                 val showSnackBar = backStackEntry.arguments?.getBoolean("showSnackBar")
-                val procedureCanceled = backStackEntry.arguments?.getBoolean("procedureCanceled")
                 SelectProcedureScreen(
                     navigateToMenuScreen = {
                         navHostController.navigate(AppNavGraph.ManuScreen.route)
@@ -118,9 +115,13 @@ fun RootNavigationGraph(
                         navHostController.navigate("${AppNavGraph.ProcedureScreen.route}/${chipTitle}")
                     },
                     isShowingSnackBar = showSnackBar ?: false,
-                    procedureCanceled = procedureCanceled ?: false,
                     navigateToTheConnectionScreen = {
-                        navHostController.navigate(AppNavGraph.Connection.route)
+                        navHostController.navigate(AppNavGraph.Root.route) {
+                            popUpTo(AppNavGraph.Connection.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -140,25 +141,33 @@ fun RootNavigationGraph(
                         navHostController.navigate(AppNavGraph.Connection.route)
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
-                        navHostController.navigate("${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}")
+                        navHostController.navigate("${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}/${1}")
                     },
                     navigateToTheConnectionScreen = {
-                        navHostController.navigate(AppNavGraph.Connection.route)
+                        navHostController.navigate(AppNavGraph.Root.route) {
+                            popUpTo(AppNavGraph.Connection.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
 
             dialog(
-                route = "${AppNavGraph.CancelProcedureDialog.route}/{navigateToSelectProcedure}/{cancelDialog}",
+                route = "${AppNavGraph.CancelProcedureDialog.route}/{navigateToSelectProcedure}/{cancelDialog}/{chipTitle}",
                 arguments = listOf(navArgument("navigateToSelectProcedure") {
                     type = NavType.BoolType
                 }, navArgument("cancelDialog") {
                     type = NavType.StringType
+                }, navArgument("chipTitle") {
+                    type = NavType.IntType
                 })
             ) { backStackEntry ->
                 val navigateToSelectProcedure =
                     backStackEntry.arguments?.getBoolean("navigateToSelectProcedure")
                 val cancelDialog = backStackEntry.arguments?.getString("cancelDialog")
+                val chipTitle = backStackEntry.arguments?.getInt("chipTitle")
 
                 CancelProcedureDialog(
                     state = CancelProcedureDialogState(
@@ -171,12 +180,16 @@ fun RootNavigationGraph(
                         },
                         onYesClick = {
                             if (navigateToSelectProcedure == true) {
-                                connectivityViewModel.turnOffAllWorkingProcesses()
-                                navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}/${true}") {
-                                    popUpTo("${AppNavGraph.SelectProcedureScreen.route}/${false}/${true}") {
-                                        inclusive = true
+                                if (chipTitle != 1) {
+                                    navHostController.navigate("${AppNavGraph.ProcedureProcessScreen.route}/${chipTitle}/${true}")
+                                } else {
+                                    connectivityViewModel.turnOffAllWorkingProcesses()
+                                    navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}/${true}") {
+                                        popUpTo("${AppNavGraph.SelectProcedureScreen.route}/${false}/${true}") {
+                                            inclusive = true
+                                        }
+                                        launchSingleTop = true
                                     }
-                                    launchSingleTop = true
                                 }
                             } else {
                                 connectivityViewModel.sendStopCommand()
@@ -212,7 +225,12 @@ fun RootNavigationGraph(
                         navHostController.navigate("${AppNavGraph.PreparingTheCabinScreen.route}/${chipTitle}")
                     },
                     navigateToTheConnectionScreen = {
-                        navHostController.navigate(AppNavGraph.Connection.route)
+                        navHostController.navigate(AppNavGraph.Root.route) {
+                            popUpTo(AppNavGraph.Connection.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -231,45 +249,61 @@ fun RootNavigationGraph(
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         if (isTablet) {
                             navHostController.navigate(
-                                "${AppNavGraph.CancelProcedureTabletDialog.route}/${navigateToSelectProcedure}/${cancelDialog}"
+                                "${AppNavGraph.CancelProcedureTabletDialog.route}/${navigateToSelectProcedure}/${cancelDialog}/${chipTitle}"
                             )
                         } else {
                             navHostController.navigate(
-                                "${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}"
+                                "${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}/${chipTitle}"
                             )
                         }
                     },
                     navigateToProcedureProcessScreen = {
                         if (isTablet) {
-                            navHostController.navigate("${AppNavGraph.ProcedureProcessTabletScreen.route}/${chipTitle}")
+                            navHostController.navigate("${AppNavGraph.ProcedureProcessTabletScreen.route}/${chipTitle}/${false}")
                         } else {
-                            navHostController.navigate("${AppNavGraph.ProcedureProcessScreen.route}/${chipTitle}")
+                            navHostController.navigate("${AppNavGraph.ProcedureProcessScreen.route}/${chipTitle}/${false}")
                         }
                     },
                     navigateToTheConnectionScreen = {
-                        navHostController.navigate(AppNavGraph.Connection.route)
+                        navHostController.navigate(AppNavGraph.Root.route) {
+                            popUpTo(AppNavGraph.Connection.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
 
             composable(
-                route = "${AppNavGraph.ProcedureProcessScreen.route}/{chipTitle}",
-                arguments = listOf(navArgument("chipTitle") { type = NavType.IntType })
+                route = "${AppNavGraph.ProcedureProcessScreen.route}/{chipTitle}/{isCanceledProcedure}",
+                arguments = listOf(navArgument("chipTitle") { type = NavType.IntType },
+                    navArgument("isCanceledProcedure") {
+                        type = NavType.BoolType
+                    })
             ) { backStackEntry ->
                 val chipTitle = backStackEntry.arguments?.getInt("chipTitle")
+                val isCanceledProcedure =
+                    backStackEntry.arguments?.getBoolean("isCanceledProcedure")
 
                 ProcedureProcessScreen(
                     chipTitle = chipTitle,
+                    timerFinished = isCanceledProcedure ?: false,
                     navigateToMainScreen = {
                         navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}/${false}")
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         navHostController.navigate(
-                            "${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}"
+                            "${AppNavGraph.CancelProcedureDialog.route}/${navigateToSelectProcedure}/${cancelDialog}/${chipTitle}"
                         )
                     },
                     navigateToTheConnectionScreen = {
-                        navHostController.navigate(AppNavGraph.Connection.route)
+                        navHostController.navigate(AppNavGraph.Root.route) {
+                            popUpTo(AppNavGraph.Connection.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     },
                     sendEndingCommands = {
                         connectivityViewModel.turnOffAllWorkingProcesses()
@@ -296,12 +330,9 @@ fun RootNavigationGraph(
                 route = "${AppNavGraph.SelectProcedureTabletScreen.route}/{showSnackBar}/{procedureCanceled}",
                 arguments = listOf(navArgument("showSnackBar") {
                     type = NavType.BoolType
-                }, navArgument("procedureCanceled") {
-                    type = NavType.BoolType
                 })
             ) { backStackEntry ->
                 val showSnackBar = backStackEntry.arguments?.getBoolean("showSnackBar")
-                val procedureCanceled = backStackEntry.arguments?.getBoolean("procedureCanceled")
 
                 SelectProcedureTabletScreen(
                     navigateToMenuScreen = {
@@ -311,9 +342,13 @@ fun RootNavigationGraph(
                         navHostController.navigate("${AppNavGraph.ProcedureTabletScreen.route}/${chipTitle}")
                     },
                     isShowingSnackBar = showSnackBar ?: false,
-                    procedureCanceled = procedureCanceled ?: false,
                     navigateToTheConnectionScreen = {
-                        navHostController.navigate(AppNavGraph.Connection.route)
+                        navHostController.navigate(AppNavGraph.Root.route) {
+                            popUpTo(AppNavGraph.Connection.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -331,28 +366,45 @@ fun RootNavigationGraph(
                         navHostController.navigate("${AppNavGraph.PreparingTheCabinScreen.route}/${chipTitle}")
                     },
                     navigateToTheConnectionScreen = {
-                        navHostController.navigate(AppNavGraph.Connection.route)
+                        navHostController.navigate(AppNavGraph.Root.route) {
+                            popUpTo(AppNavGraph.Connection.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
 
             composable(
-                route = "${AppNavGraph.ProcedureProcessTabletScreen.route}/{chipTitle}",
-                arguments = listOf(navArgument("chipTitle") { type = NavType.IntType })
+                route = "${AppNavGraph.ProcedureProcessTabletScreen.route}/{chipTitle}/{isCanceledProcedure}",
+                arguments = listOf(navArgument("chipTitle") { type = NavType.IntType },
+                    navArgument("isCanceledProcedure") {
+                        type = NavType.BoolType
+                    })
             ) { backStackEntry ->
-                val chipData = backStackEntry.arguments?.getInt("chipTitle")
+                val chipTitle = backStackEntry.arguments?.getInt("chipTitle")
+                val isCanceledProcedure =
+                    backStackEntry.arguments?.getBoolean("isCanceledProcedure")
+
                 ProcedureProcessTabletScreen(
-                    chipTitle = chipData,
+                    chipTitle = chipTitle,
+                    timerFinished = isCanceledProcedure ?: false,
                     navigateToMainScreen = {
                         navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}/${false}")
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         navHostController.navigate(
-                            "${AppNavGraph.CancelProcedureTabletDialog.route}/${navigateToSelectProcedure}/${cancelDialog}"
+                            "${AppNavGraph.CancelProcedureTabletDialog.route}/${navigateToSelectProcedure}/${cancelDialog}/${chipTitle}"
                         )
                     },
                     navigateToTheConnectionScreen = {
-                        navHostController.navigate(AppNavGraph.Connection.route)
+                        navHostController.navigate(AppNavGraph.Root.route) {
+                            popUpTo(AppNavGraph.Connection.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     },
                     sendEndingCommands = {
                         connectivityViewModel.turnOffAllWorkingProcesses()
@@ -361,16 +413,17 @@ fun RootNavigationGraph(
             }
 
             dialog(
-                route = "${AppNavGraph.CancelProcedureTabletDialog.route}/{navigateToSelectProcedure}/{cancelDialog}",
+                route = "${AppNavGraph.CancelProcedureTabletDialog.route}/{navigateToSelectProcedure}/{cancelDialog}/{chipTitle}",
                 arguments = listOf(navArgument("navigateToSelectProcedure") {
                     type = NavType.BoolType
                 }, navArgument("cancelDialog") {
                     type = NavType.StringType
-                })
+                }, navArgument("chipTitle") { type = NavType.IntType })
             ) { backStackEntry ->
                 val navigateToSelectProcedure =
                     backStackEntry.arguments?.getBoolean("navigateToSelectProcedure")
                 val cancelDialog = backStackEntry.arguments?.getString("cancelDialog")
+                val chipTitle = backStackEntry.arguments?.getInt("chipTitle")
 
                 CancelProcedureTabletDialog(
                     state = CancelProcedureDialogState(
@@ -383,12 +436,16 @@ fun RootNavigationGraph(
                         },
                         onYesClick = {
                             if (navigateToSelectProcedure == true) {
-                                connectivityViewModel.turnOffAllWorkingProcesses()
-                                navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}/${true}") {
-                                    popUpTo("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}/${true}") {
-                                        inclusive = true
+                                if (chipTitle != 1) {
+                                    navHostController.navigate("${AppNavGraph.ProcedureProcessTabletScreen.route}/${chipTitle}/${true}")
+                                } else {
+                                    connectivityViewModel.turnOffAllWorkingProcesses()
+                                    navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}/${true}") {
+                                        popUpTo("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}/${true}") {
+                                            inclusive = true
+                                        }
+                                        launchSingleTop = true
                                     }
-                                    launchSingleTop = true
                                 }
                             } else {
                                 connectivityViewModel.sendStopCommand()
@@ -417,10 +474,15 @@ fun RootNavigationGraph(
                         navHostController.navigate(AppNavGraph.Connection.route)
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
-                        navHostController.navigate("${AppNavGraph.CancelProcedureTabletDialog.route}/${navigateToSelectProcedure}/${cancelDialog}")
+                        navHostController.navigate("${AppNavGraph.CancelProcedureTabletDialog.route}/${navigateToSelectProcedure}/${cancelDialog}/${1}")
                     },
                     navigateToTheConnectionScreen = {
-                        navHostController.navigate(AppNavGraph.Connection.route)
+                        navHostController.navigate(AppNavGraph.Root.route) {
+                            popUpTo(AppNavGraph.Connection.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     }
                 )
             }

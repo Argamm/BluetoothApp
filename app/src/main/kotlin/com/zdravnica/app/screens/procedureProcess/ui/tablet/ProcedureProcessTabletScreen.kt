@@ -61,6 +61,7 @@ fun ProcedureProcessTabletScreen(
     modifier: Modifier = Modifier,
     procedureProcessViewModel: ProcedureProcessViewModel = koinViewModel(),
     chipTitle: Int?,
+    timerFinished: Boolean = false,
     navigateToMainScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
     navigateToTheConnectionScreen: () -> Unit,
@@ -70,8 +71,8 @@ fun ProcedureProcessTabletScreen(
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val cancelDialog = stringResource(id = R.string.preparing_the_cabin_cancel_procedure_question)
     val wellnessProgram = stringResource(id = R.string.procedure_process_wellness_program) +
-            " " + chipTitle?.let { stringResource(id = it) }
-    var isTimerFinished by remember { mutableStateOf(false) }
+            "\n " + chipTitle?.let { stringResource(id = it) }
+    var isTimerFinished by remember { mutableStateOf(timerFinished) }
     val viewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val iconStates = viewState.iconStates
     var showFailedScreen by remember { mutableStateOf(false) }
@@ -199,6 +200,7 @@ fun ProcedureProcessTabletScreen(
                                     if (procedureProcessViewModel.balmFeeding.value && chipTitle != R.string.select_product_without_balm) {
                                         ProcedureStateInfo(
                                             firstText = stringResource(R.string.procedure_process_balm_supply),
+                                            procedureEnded = false
                                         )
                                         Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size8))
                                     }
@@ -259,11 +261,38 @@ fun ProcedureProcessTabletScreen(
                                     )
                                 }
                             } else {
-                                if (!procedureProcessViewModel.timerFinished.value) {
-                                    ProcedureStateInfo(
-                                        firstText = stringResource(R.string.procedure_process_procedure_end),
-                                        secondText = stringResource(R.string.procedure_process_cooling)
+                                Column {
+                                    Text(
+                                        text = buildAnnotatedString {
+                                            withStyle(
+                                                style = SpanStyle(
+                                                    brush = Brush.linearGradient(
+                                                        colors = ZdravnicaAppTheme.colors.timeAndTemperatureColor
+                                                    )
+                                                )
+                                            ) {
+                                                append(wellnessProgram)
+                                            }
+                                        },
+                                        textAlign = TextAlign.Center,
+                                        style = ZdravnicaAppTheme.typography.bodyLargeSemi,
+                                        color = ZdravnicaAppTheme.colors.baseAppColor.gray200,
                                     )
+
+                                    Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size8))
+
+                                    if (!procedureProcessViewModel.timerFinished.value) {
+                                        ProcedureStateInfo(
+                                            firstText = stringResource(R.string.procedure_process_procedure_end),
+                                            secondText = stringResource(R.string.procedure_process_cooling),
+                                            procedureEnded = true
+                                        )
+                                    } else if (procedureProcessViewModel.timerFinished.value) {
+                                        ProcedureStateInfo(
+                                            firstText = stringResource(R.string.procedure_process_procedure_end),
+                                            procedureEnded = true
+                                        )
+                                    }
                                 }
                             }
                         }
