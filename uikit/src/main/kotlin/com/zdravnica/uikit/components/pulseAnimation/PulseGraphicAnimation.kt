@@ -13,7 +13,7 @@ import androidx.compose.ui.res.vectorResource
 import com.zdravnica.uikit.resources.R
 
 @Composable
-fun PulseAnimationWithBackground(heartBeat: Int) {
+fun PulseAnimationWithBackground(heartBeat: Int, cardWidth: Int) {
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.heart_pulse_background),
@@ -24,11 +24,15 @@ fun PulseAnimationWithBackground(heartBeat: Int) {
                 .align(Alignment.TopCenter)
         )
 
-        EcgScreen(modifier = Modifier.align(Alignment.Center), heartBeat = heartBeat)
+        EcgScreen(
+            modifier = Modifier.align(Alignment.Center),
+            heartBeat = heartBeat,
+            cardWidth = cardWidth
+        )
     }
 }
 
 @Composable
-fun PulseAnimation(heartBeat: Int) {
-    PulseAnimationWithBackground(heartBeat)
+fun PulseAnimation(heartBeat: Int, cardWidth: Int) {
+    PulseAnimationWithBackground(heartBeat, cardWidth)
 }

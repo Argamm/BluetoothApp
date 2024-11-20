@@ -262,7 +262,10 @@ fun ProcedureProcessTabletScreen(
                                     )
                                 }
                             } else {
-                                Column {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
                                     Text(
                                         text = buildAnnotatedString {
                                             withStyle(
@@ -278,6 +281,7 @@ fun ProcedureProcessTabletScreen(
                                         textAlign = TextAlign.Center,
                                         style = ZdravnicaAppTheme.typography.bodyLargeSemi,
                                         color = ZdravnicaAppTheme.colors.baseAppColor.gray200,
+                                        modifier = Modifier.align(Alignment.CenterHorizontally)
                                     )
 
                                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size8))

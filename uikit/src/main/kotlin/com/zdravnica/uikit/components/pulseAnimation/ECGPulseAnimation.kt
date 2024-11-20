@@ -115,10 +115,9 @@ fun EcgLine(ecgState: EcgState, width: Int, height: Int) {
 
 
 @Composable
-fun EcgChart(heartBeat: Int) {
+fun EcgChart(heartBeat: Int, cardWidth: Int) {
     val ecgState = rememberEcgState(DATA_LENGTH)
-    val screenWidth = LocalConfiguration.current.screenWidthDp
-    val adjustedWidth = screenWidth + screenWidth / 1.1
+    val adjustedWidth = cardWidth / 1.1
 
     val dynamicInterval = when (heartBeat) {
         in 1..20 -> 90L
@@ -153,7 +152,7 @@ fun EcgChart(heartBeat: Int) {
 }
 
 @Composable
-fun EcgScreen(modifier: Modifier = Modifier, heartBeat: Int) {
+fun EcgScreen(modifier: Modifier = Modifier, heartBeat: Int, cardWidth: Int) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -161,6 +160,6 @@ fun EcgScreen(modifier: Modifier = Modifier, heartBeat: Int) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        EcgChart(heartBeat)
+        EcgChart(heartBeat, cardWidth)
     }
 }

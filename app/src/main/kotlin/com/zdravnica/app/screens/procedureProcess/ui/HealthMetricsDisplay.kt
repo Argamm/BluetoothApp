@@ -14,11 +14,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -137,6 +143,8 @@ fun PulseCardWithAnimation(
     pulseValue: String,
     heartBeat: Int
 ) {
+    var cardWidth by remember { mutableIntStateOf(0) }
+
     Card(
         elevation = 0.dp,
         shape = RoundedCornerShape(ZdravnicaAppTheme.dimens.size24),
@@ -149,6 +157,9 @@ fun PulseCardWithAnimation(
                 clip = false,
                 ambientColor = Color.Black.copy(alpha = 0.25f),
             )
+            .onGloballyPositioned { coordinates ->
+                cardWidth = coordinates.size.width
+            }
     ) {
         Column {
             Row(
@@ -199,7 +210,7 @@ fun PulseCardWithAnimation(
                     )
                 }
             }
-            PulseAnimation(heartBeat)
+            PulseAnimation(heartBeat, cardWidth)
         }
     }
 }
