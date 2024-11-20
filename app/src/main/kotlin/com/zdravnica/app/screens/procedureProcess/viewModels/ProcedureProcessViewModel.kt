@@ -67,7 +67,7 @@ class ProcedureProcessViewModel(
         stopObservingSensorData()
     }
 
-    fun observeSensorData() = intent {
+    fun observeSensorData(isCanceledProcedure: Boolean) = intent {
         sensorDataJob?.cancel()
         calculateCaloriesUseCase.resetCalories()
 
@@ -120,37 +120,43 @@ class ProcedureProcessViewModel(
                     postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTemperatureCommandScreen)
                 }
 
-                if (!isTimerFinished && temperature.value - sensorTemperature >= 1) {
-                    if (!localDataStore.getCommandState(COMMAND_TEN)) {
-                        bluetoothController.sendCommand(
-                            COMMAND_TEN,
-                            onSuccess = {
-                                localDataStore.saveFailSendingCommand(COMMAND_TEN, false)
-                                localDataStore.saveCommandState(COMMAND_TEN, true)
-                                updateIconStates()
-                            },
-                            onFailed = {
-                                localDataStore.saveFailSendingCommand(COMMAND_TEN, true)
-                                postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen)
-                            }
-                        )
-                    }
-                } else {
-                    if (localDataStore.getCommandState(COMMAND_TEN)) {
-                        bluetoothController.sendCommand(
-                            COMMAND_TEN,
-                            onSuccess = {
-                                localDataStore.saveCommandState(COMMAND_TEN, false)
-                                updateIconStates()
-                            },
-                            onFailed = {
-                                postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen)
-                            }
-                        )
+                if (!isCanceledProcedure) {
+                    if (!isTimerFinished && temperature.value - sensorTemperature >= 1) {
+                        if (!localDataStore.getCommandState(COMMAND_TEN)) {
+                            bluetoothController.sendCommand(
+                                COMMAND_TEN,
+                                onSuccess = {
+                                    localDataStore.saveFailSendingCommand(COMMAND_TEN, false)
+                                    localDataStore.saveCommandState(COMMAND_TEN, true)
+                                    updateIconStates()
+                                },
+                                onFailed = {
+                                    localDataStore.saveFailSendingCommand(COMMAND_TEN, true)
+                                    postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen)
+                                }
+                            )
+                        }
+                    } else {
+                        if (localDataStore.getCommandState(COMMAND_TEN)) {
+                            bluetoothController.sendCommand(
+                                COMMAND_TEN,
+                                onSuccess = {
+                                    localDataStore.saveCommandState(COMMAND_TEN, false)
+                                    updateIconStates()
+                                },
+                                onFailed = {
+                                    postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen)
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
+    }
+
+    fun timerFinished(newState: Boolean) {
+        _timerFinished.value = newState
     }
 
     fun updateTimerStatus(isFinished: Boolean) {

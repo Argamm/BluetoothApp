@@ -26,10 +26,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.zdravnica.uikit.resources.R
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.COUNT_ONE
+import com.zdravnica.uikit.components.pulseAnimation.PulseAnimation
+import com.zdravnica.uikit.resources.R
 
 @Composable
 fun HealthMetricsDisplay(
@@ -37,6 +38,7 @@ fun HealthMetricsDisplay(
     temperatureValue: String,
     calorieValue: String,
     pulseValue: String,
+    heartBeat: Int,
 ) {
     Column(
         modifier = modifier
@@ -63,6 +65,7 @@ fun HealthMetricsDisplay(
         PulseCardWithAnimation(
             modifier = Modifier.fillMaxWidth(),
             pulseValue = pulseValue,
+            heartBeat = heartBeat,
         )
     }
 }
@@ -131,7 +134,8 @@ fun MetricCard(
 @Composable
 fun PulseCardWithAnimation(
     modifier: Modifier = Modifier,
-    pulseValue: String
+    pulseValue: String,
+    heartBeat: Int
 ) {
     Card(
         elevation = 0.dp,
@@ -146,53 +150,56 @@ fun PulseCardWithAnimation(
                 ambientColor = Color.Black.copy(alpha = 0.25f),
             )
     ) {
-        Row(
-            modifier = Modifier
-                .padding(ZdravnicaAppTheme.dimens.size8)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                MainScreen()
-            }
-
-            Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size16))
-            Column(
+        Column {
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
+                    .padding(ZdravnicaAppTheme.dimens.size8)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                brush = Brush.linearGradient(
-                                    colors = ZdravnicaAppTheme.colors.timeAndTemperatureColor
+                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    HeartAnimationScreen()
+                }
+
+                Spacer(modifier = Modifier.width(ZdravnicaAppTheme.dimens.size16))
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    brush = Brush.linearGradient(
+                                        colors = ZdravnicaAppTheme.colors.timeAndTemperatureColor
+                                    )
                                 )
-                            )
-                        ) {
-                            append(pulseValue)
-                        }
-                    },
-                    style = ZdravnicaAppTheme.typography.headH3,
-                    textAlign = TextAlign.Center,
-                    maxLines = COUNT_ONE,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = ZdravnicaAppTheme.dimens.size43)
-                )
-                Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size4))
-                Text(
-                    text = stringResource(R.string.procedure_process_pulse),
-                    style = ZdravnicaAppTheme.typography.bodyMediumMedium,
-                    color = ZdravnicaAppTheme.colors.baseAppColor.gray300,
-                    textAlign = TextAlign.Center,
-                    maxLines = COUNT_ONE,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = ZdravnicaAppTheme.dimens.size43)
-                )
+                            ) {
+                                append(pulseValue)
+                            }
+                        },
+                        style = ZdravnicaAppTheme.typography.headH3,
+                        textAlign = TextAlign.Center,
+                        maxLines = COUNT_ONE,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = ZdravnicaAppTheme.dimens.size43)
+                    )
+                    Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size4))
+                    Text(
+                        text = stringResource(R.string.procedure_process_pulse),
+                        style = ZdravnicaAppTheme.typography.bodyMediumMedium,
+                        color = ZdravnicaAppTheme.colors.baseAppColor.gray300,
+                        textAlign = TextAlign.Center,
+                        maxLines = COUNT_ONE,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = ZdravnicaAppTheme.dimens.size43)
+                    )
+                }
             }
+            PulseAnimation(heartBeat)
         }
     }
 }
@@ -205,6 +212,7 @@ fun PreviewHealthMetricsDisplay() {
             temperatureValue = "36.5°C",
             calorieValue = "120 ккал",
             pulseValue = "180/60",
+            heartBeat = 60,
         )
     }
 }

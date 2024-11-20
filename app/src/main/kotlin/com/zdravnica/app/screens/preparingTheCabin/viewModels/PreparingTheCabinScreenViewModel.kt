@@ -9,7 +9,6 @@ import com.zdravnica.app.domain.CalculateTemperatureProgressUseCase
 import com.zdravnica.app.screens.preparingTheCabin.models.PreparingTheCabinScreenViewState
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_IREM
-import com.zdravnica.bluetooth.data.COMMAND_KMPR
 import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
@@ -75,9 +74,24 @@ class PreparingTheCabinScreenViewModel(
                 )
             }
 
+            if (!localDataStore.getCommandState(COMMAND_IREM)
+                && localDataStore.getIREMActive()
+            ) {
+                bluetoothController.sendCommand(
+                    COMMAND_IREM,
+                    onSuccess = {
+                        localDataStore.saveCommandState(COMMAND_IREM, true)
+                        localDataStore.saveFailSendingCommand(COMMAND_IREM, false)
+                    },
+                    onFailed = {
+                        localDataStore.saveFailSendingCommand(COMMAND_IREM, true)
+                    }
+                )
+            }
+
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 val sensorTemperature = sensorData?.temrTmpr1 ?: 0
-                val isDifferenceLarge = (sensorTemperature - temperature.value) >= 5
+                val isDifferenceLarge = (sensorTemperature - temperature.value) >= 6
 
                 postViewState(
                     state.copy(
@@ -87,6 +101,7 @@ class PreparingTheCabinScreenViewModel(
                 )
 
                 if (isDifferenceLarge && !hasTemperatureDifferenceWarningBeenShown) {
+                    turnOffWorkingProcesses()
                     hasTemperatureDifferenceWarningBeenShown = true
                     postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToFailedTemperatureCommandScreen)
                 }
@@ -144,6 +159,18 @@ class PreparingTheCabinScreenViewModel(
                     }
                 }
             }
+        }
+    }
+
+    private fun turnOffWorkingProcesses() = intent {
+        if (localDataStore.getCommandState(COMMAND_IREM)) {
+            bluetoothController.sendCommand(
+                COMMAND_IREM,
+                onSuccess = {
+                    localDataStore.saveCommandState(COMMAND_IREM, false)
+                    updateIconStates()
+                }
+            )
         }
     }
 

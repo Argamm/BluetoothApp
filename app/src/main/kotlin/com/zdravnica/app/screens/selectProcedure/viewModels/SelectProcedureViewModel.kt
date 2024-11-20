@@ -10,6 +10,7 @@ import com.zdravnica.app.screens.selectProcedure.models.SelectProcedureViewState
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.COMMAND_KMPR
+import com.zdravnica.bluetooth.data.COMMAND_START
 import com.zdravnica.bluetooth.data.COMMAND_STV1
 import com.zdravnica.bluetooth.data.COMMAND_STV2
 import com.zdravnica.bluetooth.data.COMMAND_STV3
@@ -100,24 +101,6 @@ class SelectProcedureViewModel(
         }
     }
 
-    private fun switchIk(newState: Boolean) {
-        if (isProcessing) return
-        isProcessing = true
-        viewModelScope.launch {
-            bluetoothController.sendCommand(COMMAND_IREM,
-                onSuccess = {
-                    localDataStore.saveCommandState(COMMAND_IREM, newState)
-                    loadCommandStates()
-                    isProcessing = false
-                },
-                onFailed = {
-                    loadCommandStates()
-                    isProcessing = false
-                }
-            )
-        }
-    }
-
     fun navigateToMenuScreen() {
         postSideEffect(SelectProcedureSideEffect.OnNavigateToMenuScreen)
     }
@@ -137,8 +120,8 @@ class SelectProcedureViewModel(
     }
 
     fun updateIkSwitchState(newState: Boolean) = intent {
+        localDataStore.setIREMActive(newState)
         postViewState(state.copy(ikSwitchState = newState))
-        switchIk(newState)
     }
 
     fun updateIsButtonVisible(newState: Boolean) = intent {
@@ -188,7 +171,7 @@ class SelectProcedureViewModel(
         )
 
         postViewState(
-            state.copy(iconStates = iconStates, ikSwitchState = iremState)
+            state.copy(iconStates = iconStates)
         )
     }
 

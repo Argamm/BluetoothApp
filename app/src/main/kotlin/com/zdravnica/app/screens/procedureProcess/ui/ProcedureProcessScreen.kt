@@ -104,8 +104,12 @@ fun ProcedureProcessScreen(
     }
 
     BackHandler {
-        procedureProcessViewModel.onChangeCancelDialogPageVisibility(true)
-        procedureProcessViewModel.navigateToCancelDialogPage()
+        if (timerFinished) {
+            navigateToMainScreen.invoke()
+        } else {
+            procedureProcessViewModel.onChangeCancelDialogPageVisibility(true)
+            procedureProcessViewModel.navigateToCancelDialogPage()
+        }
     }
 
     DisposableEffect(lifecycleOwner) {
@@ -113,7 +117,8 @@ fun ProcedureProcessScreen(
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
                     procedureProcessViewModel.onChangeCancelDialogPageVisibility(false)
-                    procedureProcessViewModel.observeSensorData()
+                    procedureProcessViewModel.observeSensorData(timerFinished)
+                    procedureProcessViewModel.timerFinished(false)
                 }
 
                 Lifecycle.Event.ON_STOP -> {
@@ -129,10 +134,6 @@ fun ProcedureProcessScreen(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
         }
-    }
-
-    LaunchedEffect(procedureProcessViewModel) {
-        procedureProcessViewModel.observeSensorData()
     }
 
     LaunchedEffect(Unit) {
@@ -248,8 +249,7 @@ fun ProcedureProcessScreen(
                                 secondText = stringResource(R.string.procedure_process_cooling),
                                 procedureEnded = true
                             )
-                        }
-                        else if (procedureProcessViewModel.timerFinished.value) {
+                        } else if (procedureProcessViewModel.timerFinished.value) {
                             ProcedureStateInfo(
                                 firstText = stringResource(R.string.procedure_process_procedure_end),
                                 procedureEnded = true
@@ -270,6 +270,7 @@ fun ProcedureProcessScreen(
                         temperatureValue = "${procedureProcessViewState.skinTemperature}°C",
                         calorieValue = "${procedureProcessViewState.calorieValue} кк.",
                         pulseValue = "${procedureProcessViewState.pulse}/60",
+                        heartBeat = procedureProcessViewState.pulse
                     )
 
                     Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size24))

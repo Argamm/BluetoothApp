@@ -187,10 +187,9 @@ class ConnectingPageViewModel(
 
     fun sendStopCommand() = intent {
         bluetoothController.sendCommand(COMMAND_ALLOFF)
+        bluetoothController.sendCommand(COMMAND_STOP)
         localDataStore.saveCommandState(COMMAND_FAN, false)
-        bluetoothController.sendCommand(COMMAND_STOP, onSuccess = {
-            localDataStore.saveCommandState(COMMAND_START, false)
-        })
+        postViewState(state.copy(isLoading = false))
     }
 
     fun turnOffAllWorkingProcesses() = intent {
@@ -203,7 +202,7 @@ class ConnectingPageViewModel(
                 })
             }
         }
-
+        localDataStore.setIREMActive(false)
         localDataStore.saveAllCommandsAreTurnedOff()
 
         for (command in commands) {
@@ -229,7 +228,8 @@ class ConnectingPageViewModel(
         }
     }
 
-    fun stopConnectionObserving(){
+    fun stopConnectionObserving() = intent{
+        postViewState(state.copy(isLoading = true))
         connectionJob?.cancel()
         connectionJob = null
         isStartCommandSent.value = false

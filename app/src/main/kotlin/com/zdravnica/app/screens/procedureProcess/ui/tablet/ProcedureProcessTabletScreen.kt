@@ -114,7 +114,8 @@ fun ProcedureProcessTabletScreen(
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
                     procedureProcessViewModel.onChangeCancelDialogPageVisibility(false)
-                    procedureProcessViewModel.observeSensorData()
+                    procedureProcessViewModel.observeSensorData(timerFinished)
+                    procedureProcessViewModel.timerFinished(false)
                 }
 
                 Lifecycle.Event.ON_STOP -> {
@@ -143,13 +144,13 @@ fun ProcedureProcessTabletScreen(
         procedureProcessViewModel.updateIconStates()
     }
 
-    LaunchedEffect(procedureProcessViewModel) {
-        procedureProcessViewModel.observeSensorData()
-    }
-
     BackHandler {
-        procedureProcessViewModel.onChangeCancelDialogPageVisibility(true)
-        navigateToCancelDialogPage.invoke(true, cancelDialog)
+        if (timerFinished) {
+            navigateToMainScreen.invoke()
+        } else {
+            procedureProcessViewModel.onChangeCancelDialogPageVisibility(true)
+            procedureProcessViewModel.navigateToCancelDialogPage()
+        }
     }
 
     Scaffold(
@@ -312,6 +313,7 @@ fun ProcedureProcessTabletScreen(
                                 temperatureValue = "${procedureProcessViewState.skinTemperature}°C",
                                 calorieValue = "${procedureProcessViewState.calorieValue} кк.",
                                 pulseValue = "${procedureProcessViewState.pulse}/60",
+                                heartBeat = procedureProcessViewState.pulse
                             )
                         }
                     }

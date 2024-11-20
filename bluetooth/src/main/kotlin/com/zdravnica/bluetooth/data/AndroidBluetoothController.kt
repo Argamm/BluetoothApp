@@ -354,7 +354,7 @@ internal class AndroidBluetoothController(
             var attempt = 0
             var delayTime = 500L
 
-            while (attempt < 5) {
+            while (attempt < 3) {
                 if (bluetoothGatt?.device?.bondState != BluetoothDevice.BOND_BONDED) {
                     bluetoothGatt?.connect()
                 }
@@ -411,6 +411,7 @@ internal class AndroidBluetoothController(
 
     private fun frmtSnsrData(data: ByteArray) {
         if (data.isNotEmpty()) {
+            Log.e("asdsadsad", "frmtSnsrData: ${data[0]}", )
             var temrTmpr1 = maxOf(data[0].toDouble().roundToInt(), 0)
             val temrIR1 = ((data[2].toInt() shl 8) + data[3].toInt()).toDouble() * 0.02 - 273.15
             val temrIR2 = ((data[4].toInt() shl 8) + data[5].toInt()).toDouble() * 0.02 - 273.15

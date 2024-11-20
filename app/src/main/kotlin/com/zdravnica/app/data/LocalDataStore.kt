@@ -17,4 +17,6 @@ interface LocalDataStore {
     fun getIsFailedSendingCommand(command: String): Boolean
     fun saveAllCommandsAreTurnedOff()
     fun getAllCommandsAreTurnedOff(): Boolean
+    fun setIREMActive(isActive: Boolean)
+    fun getIREMActive(): Boolean
 }

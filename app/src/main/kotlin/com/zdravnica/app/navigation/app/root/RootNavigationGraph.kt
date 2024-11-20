@@ -61,6 +61,7 @@ fun RootNavigationGraph(
         targetOffsetX = { fullWidth -> fullWidth },
         animationSpec = tween(SLIDE_ANIMATION_DURATION_300)
     )
+    val aaa = com.zdravnica.uikit.resources.R.string.select_product_custom_mix//todo remove
 
     NavHost(
         navController = navHostController,
@@ -74,13 +75,15 @@ fun RootNavigationGraph(
                         .fillMaxSize()
                         .background(ZdravnicaAppTheme.colors.primaryBackgroundColor),
                     onShowAllDevicesDialog = {
+//                        navHostController.navigate("${AppNavGraph.ProcedureProcessScreen.route}/${aaa}/${true}")
+//
                         navHostController.navigate(AppNavGraph.BluetoothDevicesDialog.route)
                     },
                     navigateOnSelectProcedureScreen = { showSnackBar ->
                         if (isTablet) {
-                            navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${showSnackBar}/${false}")
+                            navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${showSnackBar}")
                         } else {
-                            navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${showSnackBar}/${false}")
+                            navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${showSnackBar}")
                         }
                     },
                     onNavigateUp = {
@@ -101,7 +104,7 @@ fun RootNavigationGraph(
             }
 
             composable(
-                route = "${AppNavGraph.SelectProcedureScreen.route}/{showSnackBar}/{procedureCanceled}",
+                route = "${AppNavGraph.SelectProcedureScreen.route}/{showSnackBar}",
                 arguments = listOf(navArgument("showSnackBar") {
                     type = NavType.BoolType
                 })
@@ -181,19 +184,24 @@ fun RootNavigationGraph(
                         onYesClick = {
                             if (navigateToSelectProcedure == true) {
                                 if (chipTitle != 1) {
-                                    navHostController.navigate("${AppNavGraph.ProcedureProcessScreen.route}/${chipTitle}/${true}")
+                                    navHostController.navigate("${AppNavGraph.ProcedureProcessScreen.route}/${chipTitle}/${true}"){
+                                        popUpTo("${AppNavGraph.SelectProcedureScreen.route}/${false}") {
+                                            inclusive = true
+                                        }
+                                        launchSingleTop = true
+                                    }
                                 } else {
                                     connectivityViewModel.turnOffAllWorkingProcesses()
-                                    navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}/${true}") {
-                                        popUpTo("${AppNavGraph.SelectProcedureScreen.route}/${false}/${true}") {
+                                    navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}") {
+                                        popUpTo("${AppNavGraph.SelectProcedureScreen.route}/${false}") {
                                             inclusive = true
                                         }
                                         launchSingleTop = true
                                     }
                                 }
                             } else {
-                                connectivityViewModel.sendStopCommand()
                                 connectivityViewModel.stopConnectionObserving()
+                                connectivityViewModel.sendStopCommand()
 
                                 navHostController.navigate(AppNavGraph.Root.route) {
                                     popUpTo(AppNavGraph.Connection.route) {
@@ -244,7 +252,7 @@ fun RootNavigationGraph(
                 PreparingTheCabinScreen(
                     chipTitleId = chipTitle,
                     navigateToSelectProcedureScreen = {
-                        navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}/${false}")
+                        navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}")
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         if (isTablet) {
@@ -290,7 +298,12 @@ fun RootNavigationGraph(
                     chipTitle = chipTitle,
                     timerFinished = isCanceledProcedure ?: false,
                     navigateToMainScreen = {
-                        navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}/${false}")
+                        navHostController.navigate("${AppNavGraph.SelectProcedureScreen.route}/${false}"){
+                            popUpTo(AppNavGraph.Connection.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         navHostController.navigate(
@@ -327,7 +340,7 @@ fun RootNavigationGraph(
 
             //Tablets
             composable(
-                route = "${AppNavGraph.SelectProcedureTabletScreen.route}/{showSnackBar}/{procedureCanceled}",
+                route = "${AppNavGraph.SelectProcedureTabletScreen.route}/{showSnackBar}",
                 arguments = listOf(navArgument("showSnackBar") {
                     type = NavType.BoolType
                 })
@@ -391,7 +404,7 @@ fun RootNavigationGraph(
                     chipTitle = chipTitle,
                     timerFinished = isCanceledProcedure ?: false,
                     navigateToMainScreen = {
-                        navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}/${false}")
+                        navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}")
                     },
                     navigateToCancelDialogPage = { navigateToSelectProcedure, cancelDialog ->
                         navHostController.navigate(
@@ -440,8 +453,8 @@ fun RootNavigationGraph(
                                     navHostController.navigate("${AppNavGraph.ProcedureProcessTabletScreen.route}/${chipTitle}/${true}")
                                 } else {
                                     connectivityViewModel.turnOffAllWorkingProcesses()
-                                    navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}/${true}") {
-                                        popUpTo("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}/${true}") {
+                                    navHostController.navigate("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}") {
+                                        popUpTo("${AppNavGraph.SelectProcedureTabletScreen.route}/${false}") {
                                             inclusive = true
                                         }
                                         launchSingleTop = true

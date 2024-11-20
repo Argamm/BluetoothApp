@@ -67,10 +67,19 @@ class SharedPreferencesDataStore(
         return sharedPreferences.getBoolean(KEY_TURNED_OFF_COMMANDS, false)
     }
 
+    override fun setIREMActive(isActive: Boolean) {
+        sharedPreferences.edit().putBoolean(KEY_IREM_ACTIVE, isActive).apply()
+    }
+
+    override fun getIREMActive(): Boolean {
+        return sharedPreferences.getBoolean(KEY_IREM_ACTIVE, false)
+    }
+
     companion object {
         private const val KEY_TEMPERATURE = "key_temperature"
         private const val KEY_DURATION = "key_duration"
         private const val KEY_TURNED_OFF_COMMANDS = "key_turned_off_commands"
+        private const val KEY_IREM_ACTIVE = "key_irem_active"
         private const val MAX_BALM_ML = 6f
     }
 }
