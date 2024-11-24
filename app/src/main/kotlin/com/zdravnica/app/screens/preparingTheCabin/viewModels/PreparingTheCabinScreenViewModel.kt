@@ -28,9 +28,10 @@ class PreparingTheCabinScreenViewModel(
     private val bluetoothController: BluetoothController,
     private val calculateTemperatureProgressUseCase: CalculateTemperatureProgressUseCase
 ) : BaseViewModel<PreparingTheCabinScreenViewState, PreparingTheCabinScreenSideEffect>() {
-
     private var sensorDataJob: Job? = null
     private var hasTemperatureDifferenceWarningBeenShown = false
+    private var hasThermostatWarningBeenShown = false
+    private var hasTempSensorWarningBeenShown = false
 
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
@@ -65,11 +66,8 @@ class PreparingTheCabinScreenViewModel(
                     COMMAND_FAN,
                     onSuccess = {
                         localDataStore.saveCommandState(COMMAND_FAN, true)
-                        localDataStore.saveFailSendingCommand(COMMAND_FAN, false)
                     },
                     onFailed = {
-                        localDataStore.saveFailSendingCommand(COMMAND_FAN, true)
-                        postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToFailedFanCommandScreen)
                     }
                 )
             }
@@ -81,10 +79,8 @@ class PreparingTheCabinScreenViewModel(
                     COMMAND_IREM,
                     onSuccess = {
                         localDataStore.saveCommandState(COMMAND_IREM, true)
-                        localDataStore.saveFailSendingCommand(COMMAND_IREM, false)
                     },
                     onFailed = {
-                        localDataStore.saveFailSendingCommand(COMMAND_IREM, true)
                     }
                 )
             }
@@ -104,6 +100,8 @@ class PreparingTheCabinScreenViewModel(
                     turnOffWorkingProcesses()
                     hasTemperatureDifferenceWarningBeenShown = true
                     postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToFailedTemperatureCommandScreen)
+                    sensorDataJob?.cancel()
+                    sensorDataJob = null
                 }
 
                 if (temperature.value - sensorTemperature >= 1) {
@@ -111,12 +109,10 @@ class PreparingTheCabinScreenViewModel(
                         bluetoothController.sendCommand(
                             COMMAND_TEN,
                             onSuccess = {
-                                localDataStore.saveFailSendingCommand(COMMAND_TEN, false)
                                 localDataStore.saveCommandState(COMMAND_TEN, true)
                                 updateIconStates()
                             },
                             onFailed = {
-                                localDataStore.saveFailSendingCommand(COMMAND_TEN, true)
                                 postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToFailedTenCommandScreen)
                             }
                         )
@@ -137,6 +133,20 @@ class PreparingTheCabinScreenViewModel(
                 }
 
                 updateIconStates()
+
+                if (sensorData?.thermostat == false && !hasThermostatWarningBeenShown) {
+                    postSideEffect(PreparingTheCabinScreenSideEffect.OnThermostatActivation)
+                    hasThermostatWarningBeenShown = true
+                    sensorDataJob?.cancel()
+                    sensorDataJob = null
+                }
+
+                if (sensorData?.temrTmpr1 != 0 && !hasTempSensorWarningBeenShown)  {
+                    postSideEffect(PreparingTheCabinScreenSideEffect.OnTemperatureSensorWarning)
+                    hasTempSensorWarningBeenShown = true
+                    sensorDataJob?.cancel()
+                    sensorDataJob = null
+                }
 
                 calculateTemperatureProgressUseCase.execute(
                     bluetoothController.sensorDataFlow.map { it?.temrTmpr1 ?: 0 },

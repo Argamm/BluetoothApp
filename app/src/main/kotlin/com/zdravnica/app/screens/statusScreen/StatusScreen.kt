@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.statusScreen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -37,8 +38,13 @@ fun StatusScreen(
     onCloseClick: () -> Unit,
     onSupportClick: () -> Unit,
     onYesClick: () -> Unit,
+    onBackPressed: () -> Unit,
 ) {
     val data = stateDataMap[state]!!
+
+    BackHandler {
+        onBackPressed.invoke()
+    }
 
     Column(
         modifier = modifier
@@ -119,6 +125,7 @@ fun PreviewStatusScreen() {
             onCloseClick = {},
             onSupportClick = {},
             onYesClick = {},
+            onBackPressed = {},
         )
     }
 }

@@ -15,6 +15,8 @@ data class SelectProcedureViewState(
     val scrollToEnd: Boolean = false,
     val bigChipsList: List<BigChipsStateModel> = listOf(),
     val isShowingSnackBar: Boolean = true,
+    val showTemperatureExceededSnackBar: Boolean = false,
+    val isTemperatureDifferenceLarge: Boolean = false,
     val iconStates: List<IconState> = listOf(
         IconState.DISABLED,
         IconState.DISABLED,

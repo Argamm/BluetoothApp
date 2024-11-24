@@ -41,11 +41,13 @@ class ProcedureScreenViewModel(
         viewModelScope.launch {
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
                 val currentTemperature = sensorData?.temrTmpr1 ?: 0
-                val alertCondition = currentTemperature > _temperature.value + 5
+                val alertCondition = currentTemperature > _temperature.intValue + 5
 
                 postViewState(
                     state.copy(
-                        temperatureAlert = alertCondition
+                        temperatureAlert = alertCondition,
+                        thermostatAlert = sensorData?.thermostat == false,
+                        temperatureSensorAlert = sensorData?.temrTmpr1 == 0
                     )
                 )
             }

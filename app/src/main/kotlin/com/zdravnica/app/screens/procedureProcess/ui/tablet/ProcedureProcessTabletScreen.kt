@@ -64,8 +64,10 @@ fun ProcedureProcessTabletScreen(
     timerFinished: Boolean = false,
     navigateToMainScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
-    navigateToTheConnectionScreen: () -> Unit,
+    navigateToTheConnectionScreen: (StatusInfoState) -> Unit,
     sendEndingCommands: () -> Unit,
+    stopAllProcessesExceptFanUntilCool: () -> Unit,
+    runFanOnlyUntilThermostatStable: () -> Unit,
 ) {
     val ctx = LocalContext.current
     val procedureProcessViewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
@@ -73,10 +75,8 @@ fun ProcedureProcessTabletScreen(
     val wellnessProgram = stringResource(id = R.string.procedure_process_wellness_program) +
             "\n " + chipTitle?.let { stringResource(id = it) }
     var isTimerFinished by remember { mutableStateOf(timerFinished) }
-    val viewState by procedureProcessViewModel.container.stateFlow.collectAsStateWithLifecycle()
-    val iconStates = viewState.iconStates
     var showFailedScreen by remember { mutableStateOf(false) }
-    var statusInfoState by remember { mutableStateOf(StatusInfoState.THERMOSTAT_ACTIVATION) }
+    var statusInfoState by remember { mutableStateOf<StatusInfoState?>(null) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     procedureProcessViewModel.collectSideEffect { sideEffect ->
@@ -93,18 +93,25 @@ fun ProcedureProcessTabletScreen(
             }
 
             is ProcedureProcessSideEffect.OnNavigateToFailedTemperatureCommandScreen -> {
+                stopAllProcessesExceptFanUntilCool.invoke()
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.TEMPERATURE_EXCEEDED
             }
 
-            is ProcedureProcessSideEffect.OnNavigateToFailedFanCommandScreen -> {
-                showFailedScreen = true
+            is ProcedureProcessSideEffect.OnThermostatActivation -> {
+                runFanOnlyUntilThermostatStable.invoke()
                 statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
+                showFailedScreen = true
             }
 
             is ProcedureProcessSideEffect.OnBluetoothConnectionLost -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.CONNECTION_LOST
+            }
+
+            is ProcedureProcessSideEffect.OnTemperatureSensorWarning -> {
+                statusInfoState = StatusInfoState.SENSOR_ERROR
+                showFailedScreen = true
             }
         }
     }
@@ -165,7 +172,7 @@ fun ProcedureProcessTabletScreen(
         topBar = {
             ProcedureProcessTopAppBar(
                 temperature = procedureProcessViewState.sensorTemperature,
-                iconStates = iconStates,
+                iconStates = procedureProcessViewState.iconStates,
                 backgroundColor = Color.White,
                 isTemperatureDifferenceLarge = procedureProcessViewState.isTemperatureDifferenceLarge,
             )
@@ -367,17 +374,24 @@ fun ProcedureProcessTabletScreen(
     )
 
     if (showFailedScreen) {
-        StatusScreen(
-            state = statusInfoState,
-            onCloseClick = { showFailedScreen = false },
-            onSupportClick = {},
-            onYesClick = {
-                showFailedScreen = false
-                if (statusInfoState == StatusInfoState.CONNECTION_LOST) {
-                    navigateToTheConnectionScreen.invoke()
+        statusInfoState?.let { statusState ->
+            StatusScreen(
+                state = statusState,
+                onCloseClick = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
+                },
+                onSupportClick = {},
+                onYesClick = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
+                },
+                onBackPressed = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
                 }
-            },
-        )
+            )
+        }
     }
 }
 
@@ -391,6 +405,8 @@ private fun ProcedureProcessScreenPrevT() {
             navigateToCancelDialogPage = { _, _ -> },
             navigateToTheConnectionScreen = {},
             sendEndingCommands = {},
+            stopAllProcessesExceptFanUntilCool = {},
+            runFanOnlyUntilThermostatStable = {},
         )
     }
 }

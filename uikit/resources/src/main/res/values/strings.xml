@@ -8,6 +8,7 @@
     <string name="snack_bar_success">Connection established</string>
     <string name="snack_bar_warning">Connected to someone else\'s device</string>
     <string name="snack_bar_error">Connection error</string>
+    <string name="snack_bar_waiting_for_fun">Дождитесь охлаждения Здравницы</string>
     <!--    Connecting Page end-->
 
     <!--    SelectProduct Page start-->
@@ -82,6 +83,8 @@
     <string name="procedure_screen_tooltip_message">Not enough balm for\nthe selected program.</string>
     <string name="procedure_screen_title">Procedure</string>
     <string name="procedure_screen_temperature_alert">The set temperature is lower than the current temperature. Please wait for the device to cool down.</string>
+    <string name="procedure_screen_thermostat_alert">Recommendations regarding a malfunctioning fan.</string>
+    <string name="procedure_screen_temperature_sensor_alert">Recommendations regarding a malfunctioning heating element.</string>
     <!--    ProcedureScreen Page end -->
 
     <!--    PreparingTheCabinScreen Page start -->

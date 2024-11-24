@@ -1,5 +1,6 @@
 package com.zdravnica.app.screens.selectProcedure.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
@@ -29,14 +30,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureSideEffect
 import com.zdravnica.app.screens.selectProcedure.viewModels.SelectProcedureViewModel
 import com.zdravnica.app.screens.statusScreen.StatusScreen
-import com.zdravnica.bluetooth.data.COMMAND_FAN
-import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppExerciseTheme
 import com.zdravnica.resources.ui.theme.models.ZdravnicaAppTheme
 import com.zdravnica.uikit.ANIMATION_DURATION_3000
 import com.zdravnica.uikit.COUNT_FOUR
 import com.zdravnica.uikit.COUNT_THREE
-import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.buttons.models.IconButtonModel
 import com.zdravnica.uikit.components.buttons.models.IconButtonType
 import com.zdravnica.uikit.components.buttons.ui.IconButtonsComponent
@@ -55,9 +53,11 @@ fun SelectProcedureScreen(
     modifier: Modifier = Modifier,
     selectProcedureViewModel: SelectProcedureViewModel = koinViewModel(),
     isShowingSnackBar: Boolean = false,
+    statusInfoStateString: String = "",
     navigateToMenuScreen: () -> Unit,
     navigateToProcedureScreen: (Int) -> Unit,
-    navigateToTheConnectionScreen: () -> Unit,
+    handleStatusInfoState: (StatusInfoState) -> Unit,
+    navigateOnConnectionScreen: () -> Unit,
 ) {
     val viewState by selectProcedureViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
@@ -65,6 +65,7 @@ fun SelectProcedureScreen(
     val isButtonVisible by remember { derivedStateOf { listState.firstVisibleItemIndex <= COUNT_THREE } }
     val sampleChips = getChipDataList().map { it.chipData }
     val iconStates = viewState.iconStates
+    var statusInfoState by remember { mutableStateOf<StatusInfoState?>(null) }
     var showFailedScreen by remember { mutableStateOf(false) }
 
     selectProcedureViewModel.collectSideEffect { sideEffect ->
@@ -80,6 +81,7 @@ fun SelectProcedureScreen(
             }
 
             is SelectProcedureSideEffect.OnBluetoothConnectionLost -> {
+                statusInfoState = StatusInfoState.CONNECTION_LOST
                 showFailedScreen = true
             }
         }
@@ -87,6 +89,10 @@ fun SelectProcedureScreen(
 
     LaunchedEffect(Unit) {
         selectProcedureViewModel.loadCommandStates()
+    }
+
+    BackHandler {
+        navigateOnConnectionScreen.invoke()
     }
 
     LaunchedEffect(viewState.scrollToEnd) {
@@ -117,12 +123,31 @@ fun SelectProcedureScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        if (viewState.showTemperatureExceededSnackBar) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .zIndex(1f)
+            ) {
+                SnackBarComponent(
+                    snackBarType = SnackBarTypeEnum.SNACK_BAR_WAITING_FOR_FUN,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)
+                )
+            }
+        } else {
+            selectProcedureViewModel.cancelSnackBarClock()
+        }
+
         Scaffold(
             topBar = {
                 SelectProcedureTopAppBar(
                     temperature = viewState.temperature,
                     onRightIconClick = selectProcedureViewModel::navigateToMenuScreen,
-                    iconStates = iconStates
+                    iconStates = iconStates,
+                    isTemperatureDifferenceLarge = viewState.isTemperatureDifferenceLarge
                 )
             },
             modifier = modifier.fillMaxSize()
@@ -138,32 +163,45 @@ fun SelectProcedureScreen(
                     state = listState
                 ) {
                     item {
-                        val isFanCommandFailed =
-                            selectProcedureViewModel.isFailedSendingCommand(COMMAND_FAN)
-                        val isTenCommandFailed =
-                            selectProcedureViewModel.isFailedSendingCommand(COMMAND_TEN)
+                        when (statusInfoStateString) {
+                            StatusInfoState.THERMOSTAT_ACTIVATION.name -> {
+                                if (!selectProcedureViewModel.isThermostatCorrected.value) {
+                                    val statusInfoData =
+                                        stateDataMap[StatusInfoState.THERMOSTAT_ACTIVATION]
+                                    IndicatorsStateInfo(
+                                        indicatorInfo = stringResource(
+                                            id = statusInfoData?.stateInfo ?: 0
+                                        ),
+                                        indicatorInstruction = stringResource(
+                                            id = statusInfoData?.instruction ?: 0
+                                        )
+                                    )
+                                    Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size12))
+                                }
 
-                        val statusInfoState = when {
-                            iconStates[0] == IconState.DISABLED && isFanCommandFailed -> {
-                                StatusInfoState.THERMOSTAT_ACTIVATION
                             }
 
-                            iconStates[1] == IconState.DISABLED && isTenCommandFailed -> {
-                                StatusInfoState.SENSOR_ERROR
+                            StatusInfoState.TEMPERATURE_EXCEEDED.name -> {
+                                selectProcedureViewModel.startTemperatureExceededSnackBarClock()
                             }
 
-                            else -> null
-                        }
+                            StatusInfoState.SENSOR_ERROR.name -> {
+                                if (!selectProcedureViewModel.isTempSensorWarningCorrected.value) {
+                                    val statusInfoData =
+                                        stateDataMap[StatusInfoState.SENSOR_ERROR]
+                                    IndicatorsStateInfo(
+                                        indicatorInfo = stringResource(
+                                            id = statusInfoData?.stateInfo ?: 0
+                                        ),
+                                        indicatorInstruction = stringResource(
+                                            id = statusInfoData?.instruction ?: 0
+                                        )
+                                    )
+                                    Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size12))
+                                }
+                            }
 
-                        statusInfoState?.let { state ->
-                            val statusInfoData = stateDataMap[state]
-                            IndicatorsStateInfo(
-                                indicatorInfo = stringResource(id = statusInfoData?.stateInfo ?: 0),
-                                indicatorInstruction = stringResource(
-                                    id = statusInfoData?.instruction ?: 0
-                                )
-                            )
-                            Spacer(modifier = Modifier.height(ZdravnicaAppTheme.dimens.size12))
+                            else -> {}
                         }
                     }
                     item {
@@ -242,15 +280,24 @@ fun SelectProcedureScreen(
     }
 
     if (showFailedScreen) {
-        StatusScreen(
-            state = StatusInfoState.CONNECTION_LOST,
-            onCloseClick = { showFailedScreen = false },
-            onSupportClick = {},
-            onYesClick = {
-                showFailedScreen = false
-                navigateToTheConnectionScreen.invoke()
-            },
-        )
+        statusInfoState?.let { statusState ->
+            StatusScreen(
+                state = statusState,
+                onCloseClick = {
+                    showFailedScreen = false
+                    handleStatusInfoState.invoke(statusState)
+                },
+                onSupportClick = {},
+                onYesClick = {
+                    showFailedScreen = false
+                    handleStatusInfoState.invoke(statusState)
+                },
+                onBackPressed = {
+                    showFailedScreen = false
+                    handleStatusInfoState.invoke(statusState)
+                }
+            )
+        }
     }
 }
 
@@ -261,7 +308,8 @@ fun PreviewSelectProcedureScreen() {
         SelectProcedureScreen(
             navigateToMenuScreen = {},
             navigateToProcedureScreen = {},
-            navigateToTheConnectionScreen = {}
+            handleStatusInfoState = {},
+            navigateOnConnectionScreen = {},
         )
     }
 }

@@ -37,6 +37,8 @@ import com.zdravnica.uikit.resources.R
 fun BigButtonWithTooltip(
     modifier: Modifier = Modifier,
     temperatureAlert: Boolean,
+    thermostatAlert: Boolean,
+    temperatureSensorAlert: Boolean,
     bigButtonModel: BigButtonModel,
     showTooltip: Boolean = false,
     bigBtnStateColors: BigButtonStateColor = ZdravnicaAppTheme.colors.bigButtonStateColor
@@ -108,7 +110,9 @@ fun BigButtonWithTooltip(
                             )
                             .widthIn(max = ZdravnicaAppTheme.dimens.size152)
                             .heightIn(max = ZdravnicaAppTheme.dimens.size100),
-                        text = if (temperatureAlert) stringResource(R.string.procedure_screen_temperature_alert)
+                        text = if (temperatureAlert)  stringResource(R.string.procedure_screen_temperature_alert)
+                        else if (thermostatAlert) stringResource(R.string.procedure_screen_thermostat_alert)
+                        else if (temperatureSensorAlert) stringResource(R.string.procedure_screen_temperature_sensor_alert)
                         else stringResource(R.string.procedure_screen_tooltip_message),
                         style = ZdravnicaAppTheme.typography.bodyXSMedium,
                         color = Color.Black,

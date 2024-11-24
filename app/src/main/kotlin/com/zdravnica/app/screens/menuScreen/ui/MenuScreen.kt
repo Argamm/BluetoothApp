@@ -147,10 +147,10 @@ fun MenuScreen(
                 }
                 item {
                     MenuIndicators(
-                        fanErrorCase = menuScreenViewModel.fanErrorCase.value,
-                        tenErrorCase = menuScreenViewModel.tenErrorCase.value,
-                        kmprErrorCase = menuScreenViewModel.kmprErrorCase.value,
-                        ikErrorCase = menuScreenViewModel.ikErrorCase.value
+                        fanErrorCase = menuScreenViewState.fanErrorCase,
+                        tenErrorCase = menuScreenViewState.tenErrorCase,
+                        kmprErrorCase = menuScreenViewState.kmprErrorCase,
+                        ikErrorCase = menuScreenViewState.ikErrorCase
                     )
                 }
                 item {
@@ -232,12 +232,19 @@ fun MenuScreen(
     if (showFailedScreen) {
         StatusScreen(
             state = StatusInfoState.CONNECTION_LOST,
-            onCloseClick = { showFailedScreen = false },
+            onCloseClick = {
+                showFailedScreen = false
+                navigateToTheConnectionScreen.invoke()
+            },
             onSupportClick = {},
             onYesClick = {
                 showFailedScreen = false
                 navigateToTheConnectionScreen.invoke()
             },
+            onBackPressed = {
+                showFailedScreen = false
+                navigateToTheConnectionScreen.invoke()
+            }
         )
     }
 }

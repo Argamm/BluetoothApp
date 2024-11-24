@@ -413,8 +413,8 @@ internal class AndroidBluetoothController(
         if (data.isNotEmpty()) {
             Log.e("asdsadsad", "frmtSnsrData: ${data[0]}", )
             var temrTmpr1 = maxOf(data[0].toDouble().roundToInt(), 0)
-            val temrIR1 = ((data[2].toInt() shl 8) + data[3].toInt()).toDouble() * 0.02 - 273.15
-            val temrIR2 = ((data[4].toInt() shl 8) + data[5].toInt()).toDouble() * 0.02 - 273.15
+            val temrIR1 = (((data[2].toUByte().toInt() shl 8) + data[3].toUByte().toInt()).toDouble() * 0.02 - 273.15)
+            val temrIR2 = (((data[4].toUByte().toInt() shl 8) + data[5].toUByte().toInt()).toDouble() * 0.02 - 273.15)
             val snsrHC = maxOf(data[6].toInt(), 0)
             val thermostat = data[8].toInt() == 1
             val stateDevice = data[10].toInt()
@@ -459,15 +459,17 @@ internal class AndroidBluetoothController(
                 lastValidSkinTemperature = skinTemperature
             }
 
-            val sensorData = SensorData(
-                temrTmpr1 = temrTmpr1,
-                temrIR1 = temrIR1,
-                temrIR2 = temrIR2,
-                skinTemperature = skinTemperature,
-                snsrHC = snsrHC,
-                thermostat = thermostat,
-                stateDevice = stateDevice
-            )
+            val sensorData = lastValidSkinTemperature?.let {
+                SensorData(
+                    temrTmpr1 = temrTmpr1,
+                    temrIR1 = temrIR1,
+                    temrIR2 = temrIR2,
+                    skinTemperature = it,
+                    snsrHC = snsrHC,
+                    thermostat = thermostat,
+                    stateDevice = stateDevice
+                )
+            }
 
             scope.launch {
                 _sensorDataFlow.emit(sensorData)

@@ -33,8 +33,8 @@ import com.zdravnica.uikit.resources.R
 @Composable
 fun MenuIndicators(
     modifier: Modifier = Modifier,
-    tenErrorCase: Boolean = false,
     fanErrorCase: Boolean = false,
+    tenErrorCase: Boolean = false,
     kmprErrorCase: Boolean = false,
     ikErrorCase: Boolean = false,
 ) {
@@ -61,13 +61,13 @@ fun MenuIndicators(
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_fan),
                 indicatorText = stringResource(R.string.menu_screen_fan),
-                errorIconVisible = tenErrorCase,//here
+                errorIconVisible = fanErrorCase,
             )
 
             IndicatorRowLine(
                 indicatorIcon = ImageVector.vectorResource(id = R.drawable.ic_ten),
                 indicatorText = stringResource(R.string.menu_screen_ten),
-                errorIconVisible = fanErrorCase,
+                errorIconVisible = tenErrorCase,
             )
 
             IndicatorRowLine(

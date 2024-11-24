@@ -32,6 +32,7 @@ import com.zdravnica.uikit.resources.R
 fun SelectProcedureTopAppBar(
     modifier: Modifier = Modifier,
     temperature: Int,
+    isTemperatureDifferenceLarge: Boolean,
     onRightIconClick: () -> Unit,
     iconStates: List<IconState>? = null
 ) {
@@ -46,13 +47,20 @@ fun SelectProcedureTopAppBar(
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_temp),
                     contentDescription = TOP_APP_BAR_TEMPERATURE_DESCRIPTION,
-                    tint = Color.Black
+                    tint = if (isTemperatureDifferenceLarge)
+                        ZdravnicaAppTheme.colors.baseAppColor.error500
+                    else
+                        Color.Black
                 )
                 Text(
                     text = stringResource(
                         R.string.select_product_temperature_value,
                         temperature
-                    ), color = Color.Black
+                    ),
+                    color = if (isTemperatureDifferenceLarge)
+                        ZdravnicaAppTheme.colors.baseAppColor.error500
+                    else
+                        Color.Black
                 )
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -91,6 +99,7 @@ fun PreviewCustomTopAppBar() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         SelectProcedureTopAppBar(
             temperature = 54,
+            isTemperatureDifferenceLarge = false,
             onRightIconClick = {},
             iconStates = null
         )

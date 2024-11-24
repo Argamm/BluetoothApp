@@ -13,5 +13,8 @@ enum class SnackBarTypeEnum(
     ),
     SNACK_BAR_WARNING(
         iconRes = R.drawable.ic_error
+    ),
+    SNACK_BAR_WAITING_FOR_FUN(
+        iconRes = R.drawable.ic_time
     )
 }

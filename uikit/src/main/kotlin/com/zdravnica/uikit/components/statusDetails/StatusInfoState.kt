@@ -6,7 +6,8 @@ enum class StatusInfoState {
     SENSOR_ERROR,
     THERMOSTAT_ACTIVATION,
     TEMPERATURE_EXCEEDED,
-    CONNECTION_LOST
+    CONNECTION_LOST,
+    NULL
 }
 
 val stateDataMap = mapOf(

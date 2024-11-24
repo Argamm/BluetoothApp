@@ -56,7 +56,10 @@ fun PreparingTheCabinScreen(
     navigateToSelectProcedureScreen: () -> Unit,
     navigateToCancelDialogPage: (Boolean, String) -> Unit,
     navigateToProcedureProcessScreen: () -> Unit,
-    navigateToTheConnectionScreen: () -> Unit,
+    navigateToTheConnectionScreen: (StatusInfoState) -> Unit,
+    stopAllProcessesExceptFanUntilCool: () -> Unit,
+    runFanOnlyUntilThermostatStable: () -> Unit,
+    onTemperatureSensorWarning: () -> Unit,
 ) {
     val preparingTheCabinScreenViewState by preparingTheCabinScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
     val progress by preparingTheCabinScreenViewModel.progress.collectAsStateWithLifecycle()
@@ -66,7 +69,7 @@ fun PreparingTheCabinScreen(
     var showAnimationCircle by remember { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
     var showFailedScreen by remember { mutableStateOf(false) }
-    var statusInfoState by remember { mutableStateOf(StatusInfoState.THERMOSTAT_ACTIVATION) }
+    var statusInfoState by remember { mutableStateOf<StatusInfoState?>(null) }
 
     val targetBackgroundColor = when {
         progress <= WHITE_BACK_PROGRESS -> Color.White
@@ -97,12 +100,8 @@ fun PreparingTheCabinScreen(
                 statusInfoState = StatusInfoState.SENSOR_ERROR
             }
 
-            is PreparingTheCabinScreenSideEffect.OnNavigateToFailedFanCommandScreen -> {
-                showFailedScreen = true
-                statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
-            }
-
             is PreparingTheCabinScreenSideEffect.OnNavigateToFailedTemperatureCommandScreen -> {
+                stopAllProcessesExceptFanUntilCool.invoke()
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.TEMPERATURE_EXCEEDED
             }
@@ -110,6 +109,18 @@ fun PreparingTheCabinScreen(
             is PreparingTheCabinScreenSideEffect.OnBluetoothConnectionLost -> {
                 showFailedScreen = true
                 statusInfoState = StatusInfoState.CONNECTION_LOST
+            }
+
+            is PreparingTheCabinScreenSideEffect.OnThermostatActivation -> {
+                runFanOnlyUntilThermostatStable.invoke()
+                statusInfoState = StatusInfoState.THERMOSTAT_ACTIVATION
+                showFailedScreen = true
+            }
+
+            is PreparingTheCabinScreenSideEffect.OnTemperatureSensorWarning -> {
+                onTemperatureSensorWarning.invoke()
+                statusInfoState = StatusInfoState.SENSOR_ERROR
+                showFailedScreen = true
             }
         }
     }
@@ -233,17 +244,25 @@ fun PreparingTheCabinScreen(
     )
 
     if (showFailedScreen) {
-        StatusScreen(
-            state = statusInfoState,
-            onCloseClick = { showFailedScreen = false },
-            onSupportClick = {},
-            onYesClick = {
-                showFailedScreen = false
-                if (statusInfoState == StatusInfoState.CONNECTION_LOST) {
-                    navigateToTheConnectionScreen.invoke()
+        statusInfoState?.let { statusState ->
+            StatusScreen(
+                state = statusState,
+                onCloseClick = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
+                },
+                onSupportClick = {},
+                onYesClick = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
+                },
+                onBackPressed = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
                 }
-            },
-        )
+            )
+        }
+        preparingTheCabinScreenViewModel.stopObservingSensorData()
     }
 }
 
@@ -255,7 +274,10 @@ private fun PreparingTheCabinScreenPrev() {
             navigateToSelectProcedureScreen = {},
             navigateToCancelDialogPage = { _, _ -> },
             navigateToProcedureProcessScreen = {},
-            navigateToTheConnectionScreen = {}
+            navigateToTheConnectionScreen = {},
+            stopAllProcessesExceptFanUntilCool = {},
+            runFanOnlyUntilThermostatStable = {},
+            onTemperatureSensorWarning = {},
         )
     }
 }

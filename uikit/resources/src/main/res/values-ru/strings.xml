@@ -8,6 +8,7 @@
     <string name="snack_bar_success">Подключение установлено</string>
     <string name="snack_bar_warning">Подключено к чужому устройству</string>
     <string name="snack_bar_error">Ошибка подключения</string>
+    <string name="snack_bar_waiting_for_fun">Дождитесь охлаждения Здравницы</string>
     <!--    Connecting Page end-->
 
     <!--    SelectProduct Page start-->
@@ -78,6 +79,8 @@
     <string name="procedure_screen_tooltip_message">Недостаточно бальзама для\n выбранной программы.</string>
     <string name="procedure_screen_title">Процедура</string>
     <string name="procedure_screen_temperature_alert">Заданная температура ниже текущей. Дождитесь охлаждения Здравницы.</string>
+    <string name="procedure_screen_thermostat_alert">Рекомендации по поводу неработающего вентилятора.</string>
+    <string name="procedure_screen_temperature_sensor_alert">Рекомендации по поводу неработающего ТЭНа.</string>
     <!--    ProcedureScreen Page end-->
 
     <!--    PreparingTheCabinScreen Page start -->

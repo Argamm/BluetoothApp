@@ -36,7 +36,7 @@ fun ProcedureScreen(
     chipTitle: Int? = null,
     onNavigateUp: (() -> Unit)? = null,
     startProcedure: (Int) -> Unit,
-    navigateToTheConnectionScreen: () -> Unit,
+    navigateToTheConnectionScreen: (StatusInfoState) -> Unit,
 ) {
     val context = LocalContext.current
     val allChipTitles = getAllChipTitles()
@@ -55,7 +55,7 @@ fun ProcedureScreen(
     val stringMint = stringResource(R.string.menu_screen_mint)
     val balmNameList = listOf(stringBurdock, stringNut, stringMint)
     var showFailedScreen by remember { mutableStateOf(false) }
-    var statusInfoState by remember { mutableStateOf(StatusInfoState.THERMOSTAT_ACTIVATION) }
+    var statusInfoState by remember { mutableStateOf<StatusInfoState?>(null) }
 
     procedureScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -121,6 +121,8 @@ fun ProcedureScreen(
                             modifier,
                             balmInfo,
                             temperatureAlert = procedureScreenViewState.temperatureAlert,
+                            thermostatAlert = procedureScreenViewState.thermostatAlert,
+                            temperatureSensorAlert = procedureScreenViewState.temperatureSensorAlert,
                             isBalmCountZero = { balmName ->
                                 when (balmName) {
                                     stringBurdock -> procedureScreenViewState.firstBalmCount <= 2f
@@ -154,17 +156,24 @@ fun ProcedureScreen(
     )
 
     if (showFailedScreen) {
-        StatusScreen(
-            state = statusInfoState,
-            onCloseClick = { showFailedScreen = false },
-            onSupportClick = {},
-            onYesClick = {
-                showFailedScreen = false
-                if (statusInfoState == StatusInfoState.CONNECTION_LOST) {
-                    navigateToTheConnectionScreen.invoke()
+        statusInfoState?.let { statusState ->
+            StatusScreen(
+                state = statusState,
+                onCloseClick = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
+                },
+                onSupportClick = {},
+                onYesClick = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
+                },
+                onBackPressed = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
                 }
-            },
-        )
+            )
+        }
     }
 }
 
@@ -172,6 +181,9 @@ fun ProcedureScreen(
 @Composable
 fun PreviewMenuScreen() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
-        ProcedureScreen(startProcedure = {}, navigateToTheConnectionScreen = {})
+        ProcedureScreen(
+            startProcedure = {},
+            navigateToTheConnectionScreen = {},
+        )
     }
 }

@@ -43,6 +43,8 @@ fun CheckBalmCountAndOrder(
     modifier: Modifier = Modifier,
     balmInfo: List<ChipBalmInfoModel>,
     temperatureAlert: Boolean,
+    thermostatAlert: Boolean,
+    temperatureSensorAlert: Boolean,
     isBalmCountZero: (String) -> Boolean,
     startProcedure: () -> Unit,
     orderBalm: () -> Unit,
@@ -149,11 +151,13 @@ fun CheckBalmCountAndOrder(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            if (isAnyBalmCountZero || temperatureAlert) {
+            if (isAnyBalmCountZero || temperatureAlert || thermostatAlert || temperatureSensorAlert) {
                 BigButtonWithTooltip(
                     modifier = modifier
                         .wrapContentSize(),
                     temperatureAlert = temperatureAlert,
+                    thermostatAlert = thermostatAlert,
+                    temperatureSensorAlert = temperatureSensorAlert,
                     showTooltip = true,
                     bigButtonModel = BigButtonModel(
                         buttonText = stringResource(R.string.procedure_screen_start_procedure),
@@ -191,6 +195,8 @@ private fun CheckBalmCountAndOrderPrev() {
             CheckBalmCountAndOrder(
                 balmInfo = it,
                 temperatureAlert = false,
+                thermostatAlert= false,
+                temperatureSensorAlert= false,
                 isBalmCountZero = { false },
                 startProcedure = {},
                 orderBalm = {}

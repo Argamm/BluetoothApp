@@ -29,6 +29,7 @@ const val MIN_MINUTES = 600
 const val MAX_TEMPERATURE = 80
 const val MIN_TEMPERATURE = 40
 const val DELAY_DURATION_1500 = 1500L
+const val DELAY_DURATION_3000 = 3000L
 const val DELAY_DURATION_120000 = 120000L
 
 const val BIG_CHIPS_ICON_DESCRIPTION = "Big chips icon"

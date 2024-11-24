@@ -42,7 +42,7 @@ fun ProcedureTabletScreen(
     chipTitle: Int? = null,
     onNavigateUp: (() -> Unit)? = null,
     startProcedure: (Int) -> Unit,
-    navigateToTheConnectionScreen: () -> Unit,
+    navigateToTheConnectionScreen: (StatusInfoState) -> Unit,
 ) {
     val context = LocalContext.current
     val stringBurdock = stringResource(R.string.menu_screen_burdock)
@@ -60,7 +60,7 @@ fun ProcedureTabletScreen(
     }
     var balmInfo by remember { mutableStateOf(chipTitle?.let { getBalmInfoByTitle(it) }) }
     var showFailedScreen by remember { mutableStateOf(false) }
-    var statusInfoState by remember { mutableStateOf(StatusInfoState.THERMOSTAT_ACTIVATION) }
+    var statusInfoState by remember { mutableStateOf<StatusInfoState?>(null) }
     val procedureTabletScreenViewState by procedureScreenViewModel.container.stateFlow.collectAsStateWithLifecycle()
 
     procedureScreenViewModel.collectSideEffect { sideEffect ->
@@ -178,16 +178,23 @@ fun ProcedureTabletScreen(
     )
 
     if (showFailedScreen) {
-        StatusScreen(
-            state = statusInfoState,
-            onCloseClick = { showFailedScreen = false },
-            onSupportClick = {},
-            onYesClick = {
-                showFailedScreen = false
-                if (statusInfoState == StatusInfoState.CONNECTION_LOST) {
-                    navigateToTheConnectionScreen.invoke()
+        statusInfoState?.let { statusState ->
+            StatusScreen(
+                state = statusState,
+                onCloseClick = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
+                },
+                onSupportClick = {},
+                onYesClick = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
+                },
+                onBackPressed = {
+                    showFailedScreen = false
+                    navigateToTheConnectionScreen.invoke(statusState)
                 }
-            },
-        )
+            )
+        }
     }
 }

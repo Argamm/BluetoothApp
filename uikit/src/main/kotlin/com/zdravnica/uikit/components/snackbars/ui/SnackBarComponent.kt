@@ -48,6 +48,7 @@ fun SnackBarComponent(
                 SnackBarTypeEnum.SNACK_BAR_SUCCESS -> snackBarStateColor.successBackgroundColor
                 SnackBarTypeEnum.SNACK_BAR_WARNING -> snackBarStateColor.warningBackgroundColor
                 SnackBarTypeEnum.SNACK_BAR_ERROR -> colors.baseAppColor.error500
+                SnackBarTypeEnum.SNACK_BAR_WAITING_FOR_FUN -> colors.baseAppColor.warning500
             }
         )
     }
@@ -56,6 +57,7 @@ fun SnackBarComponent(
         SnackBarTypeEnum.SNACK_BAR_SUCCESS -> stringResource(R.string.snack_bar_success)
         SnackBarTypeEnum.SNACK_BAR_WARNING -> stringResource(R.string.snack_bar_warning)
         SnackBarTypeEnum.SNACK_BAR_ERROR -> stringResource(R.string.snack_bar_error)
+        SnackBarTypeEnum.SNACK_BAR_WAITING_FOR_FUN -> stringResource(R.string.snack_bar_waiting_for_fun)
     }
 
     Snackbar(
@@ -114,7 +116,7 @@ fun SnackBarComponent(
 private fun SnackBarComponentPreview() {
     ZdravnicaAppExerciseTheme(darkThem = false) {
         SnackBarComponent(
-            snackBarType = SnackBarTypeEnum.SNACK_BAR_ERROR,
+            snackBarType = SnackBarTypeEnum.SNACK_BAR_WAITING_FOR_FUN,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()

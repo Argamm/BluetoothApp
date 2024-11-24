@@ -1,5 +1,7 @@
 package com.zdravnica.app.screens.connecting_page.viewmodels
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.viewModelScope
 import com.zdravnica.app.core.viewmodel.BaseViewModel
@@ -53,6 +55,9 @@ class ConnectingPageViewModel(
     )
     private val _currentSnackBarModel = MutableStateFlow<SnackBarTypeEnum?>(null)
     val currentSnackBarModel: StateFlow<SnackBarTypeEnum?> = _currentSnackBarModel
+
+    private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
+    val temperature: State<Int> get() = _temperature
 
     private val isStartCommandSent = MutableStateFlow(false)
 
@@ -193,6 +198,9 @@ class ConnectingPageViewModel(
     }
 
     fun turnOffAllWorkingProcesses() = intent {
+        turnOffJob?.cancel()
+        turnOffJob = null
+
         turnOffJob = viewModelScope.launch {
             delay(DELAY_DURATION_120000)
 
@@ -205,6 +213,9 @@ class ConnectingPageViewModel(
         localDataStore.setIREMActive(false)
         localDataStore.saveAllCommandsAreTurnedOff()
 
+    }
+
+    fun turnOffAllExpectFun() = intent {
         for (command in commands) {
             while (localDataStore.getCommandState(command)) {
                 bluetoothController.sendCommand(command, onSuccess = {
@@ -228,7 +239,40 @@ class ConnectingPageViewModel(
         }
     }
 
-    fun stopConnectionObserving() = intent{
+    fun stopAllProcessesExceptFanUntilCool() = intent {
+        turnOffJob?.cancel()
+        turnOffJob = null
+
+        turnOffJob = viewModelScope.launch {
+            bluetoothController.sensorDataFlow.collectLatest { sensorData ->
+                val sensorTemperature = sensorData?.temrTmpr1 ?: 0
+                val isDifferenceLarge = (sensorTemperature - temperature.value) < 6
+
+                turnOffAllExpectFun()
+                if (isDifferenceLarge) {
+                    if (localDataStore.getCommandState(COMMAND_FAN)) {
+                        bluetoothController.sendCommand(COMMAND_FAN, onSuccess = {
+                            localDataStore.saveCommandState(COMMAND_FAN, false)
+                        })
+                    }
+                    localDataStore.setIREMActive(false)
+                    localDataStore.saveAllCommandsAreTurnedOff()
+                }
+            }
+        }
+    }
+
+    fun runFanOnlyUntilThermostatStable() = intent {
+        turnOffJob = viewModelScope.launch {
+            bluetoothController.sensorDataFlow.collectLatest { sensorData ->
+                if (sensorData?.thermostat == true) {
+                    turnOffAllWorkingProcesses()
+                }
+            }
+        }
+    }
+
+    fun stopConnectionObserving() = intent {
         postViewState(state.copy(isLoading = true))
         connectionJob?.cancel()
         connectionJob = null

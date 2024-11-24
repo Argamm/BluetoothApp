@@ -10,7 +10,6 @@ import com.zdravnica.app.screens.selectProcedure.models.SelectProcedureViewState
 import com.zdravnica.bluetooth.data.COMMAND_FAN
 import com.zdravnica.bluetooth.data.COMMAND_IREM
 import com.zdravnica.bluetooth.data.COMMAND_KMPR
-import com.zdravnica.bluetooth.data.COMMAND_START
 import com.zdravnica.bluetooth.data.COMMAND_STV1
 import com.zdravnica.bluetooth.data.COMMAND_STV2
 import com.zdravnica.bluetooth.data.COMMAND_STV3
@@ -19,10 +18,12 @@ import com.zdravnica.bluetooth.data.COMMAND_TEN
 import com.zdravnica.bluetooth.data.models.BluetoothConnectionStatus
 import com.zdravnica.bluetooth.domain.controller.BluetoothController
 import com.zdravnica.uikit.DELAY_DURATION_1500
+import com.zdravnica.uikit.DELAY_DURATION_3000
 import com.zdravnica.uikit.base_type.IconState
 import com.zdravnica.uikit.components.chips.models.BigChipType.Companion.getChipDataList
 import com.zdravnica.uikit.components.chips.models.BigChipsStateModel
 import com.zdravnica.uikit.components.clock.Clock
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -33,7 +34,7 @@ class SelectProcedureViewModel(
     private val bluetoothController: BluetoothController,
 ) : BaseViewModel<SelectProcedureViewState, SelectProcedureSideEffect>() {
     private var snackBarClock: Clock? = null
-    private var isProcessing = false
+    private var temperatureExceededSnackBarClock: Clock? = null
 
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
     val temperature: State<Int> get() = _temperature
@@ -41,8 +42,11 @@ class SelectProcedureViewModel(
     private val _duration = mutableIntStateOf(localDataStore.getDuration())
     val duration: State<Int> get() = _duration
 
-    private val _timerFinished = mutableStateOf(false)
-    val timerFinished: State<Boolean> get() = _timerFinished
+    private val _isThermostatCorrected = mutableStateOf(false)
+    val isThermostatCorrected: State<Boolean> get() = _isThermostatCorrected
+
+    private val _isTempSensorWarningCorrected = mutableStateOf(false)
+    val isTempSensorWarningCorrected: State<Boolean> get() = _isTempSensorWarningCorrected
 
     override val container =
         container<SelectProcedureViewState, SelectProcedureSideEffect>(
@@ -58,14 +62,10 @@ class SelectProcedureViewModel(
     private fun observeSensorData() = intent {
         viewModelScope.launch {
             bluetoothController.getCommandsState.collect { state ->
-                if (state[1] == '0') {
-                    _timerFinished.value = true
-                }
                 localDataStore.saveCommandState(COMMAND_TEN, state[0] == '1')
                 localDataStore.saveCommandState(COMMAND_FAN, state[1] == '1')
                 localDataStore.saveCommandState(COMMAND_KMPR, state[2] == '1')
                 localDataStore.saveCommandState(COMMAND_IREM, state[3] == '1')
-
                 localDataStore.saveCommandState(COMMAND_STV1, state[5] == '1')
                 localDataStore.saveCommandState(COMMAND_STV2, state[6] == '1')
                 localDataStore.saveCommandState(COMMAND_STV3, state[7] == '1')
@@ -91,11 +91,24 @@ class SelectProcedureViewModel(
 
         viewModelScope.launch {
             bluetoothController.sensorDataFlow.collectLatest { sensorData ->
+                val sensorTemperature = sensorData?.temrTmpr1 ?: 0
+                val isDifferenceLarge = (sensorTemperature - temperature.value) >= 6
+
                 postViewState(
                     state.copy(
-                        temperature = sensorData?.temrTmpr1 ?: 0
+                        temperature = sensorData?.temrTmpr1 ?: 0,
+                        isTemperatureDifferenceLarge = isDifferenceLarge,
                     )
                 )
+
+                if (sensorData?.thermostat == true) {
+                    _isThermostatCorrected.value = true
+                }
+
+                if (sensorData?.temrTmpr1 != 0) {
+                    _isTempSensorWarningCorrected.value = true
+                }
+
                 loadCommandStates()
             }
         }
@@ -146,6 +159,8 @@ class SelectProcedureViewModel(
     fun cancelSnackBarClock() {
         snackBarClock?.cancel()
         snackBarClock = null
+        temperatureExceededSnackBarClock?.cancel()
+        temperatureExceededSnackBarClock = null
     }
 
     fun setSnackBarInvisible() {
@@ -155,6 +170,17 @@ class SelectProcedureViewModel(
 
     private fun updateIsShowingSnackBar(isVisible: Boolean) = intent {
         postViewState(state.copy(isShowingSnackBar = isVisible))
+    }
+
+    private fun showTemperatureExceededSnackBar(isVisible: Boolean) = intent {
+        postViewState(state.copy(showTemperatureExceededSnackBar = isVisible))
+    }
+
+    fun startTemperatureExceededSnackBarClock()= intent {
+        showTemperatureExceededSnackBar(true)
+        delay(DELAY_DURATION_3000)
+        showTemperatureExceededSnackBar(false)
+        cancelSnackBarClock()
     }
 
     fun loadCommandStates() = intent {
@@ -173,9 +199,5 @@ class SelectProcedureViewModel(
         postViewState(
             state.copy(iconStates = iconStates)
         )
-    }
-
-    fun isFailedSendingCommand(command: String): Boolean {
-        return localDataStore.getIsFailedSendingCommand(command)
     }
 }

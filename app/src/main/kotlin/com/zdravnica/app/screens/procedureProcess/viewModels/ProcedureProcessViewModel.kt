@@ -43,6 +43,8 @@ class ProcedureProcessViewModel(
     private var balmSupplyJob: Job? = null
     private var sendingCommands: Job? = null
     private var hasTemperatureDifferenceWarningBeenShown = false
+    private var hasThermostatWarningBeenShown = false
+    private var hasTempSensorWarningBeenShown = false
     private var isTimerFinished: Boolean = false
 
     private val _temperature = mutableIntStateOf(localDataStore.getTemperature())
@@ -101,7 +103,7 @@ class ProcedureProcessViewModel(
                         isTimerFinished
                     )
                 val sensorTemperature = sensorData?.temrTmpr1 ?: 0
-                val isDifferenceLarge = (sensorTemperature - temperature.value) >= 5
+                val isDifferenceLarge = (sensorTemperature - temperature.value) >= 6
 
                 postViewState(
                     state.copy(
@@ -118,6 +120,22 @@ class ProcedureProcessViewModel(
                 if (isDifferenceLarge && !hasTemperatureDifferenceWarningBeenShown) {
                     hasTemperatureDifferenceWarningBeenShown = true
                     postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTemperatureCommandScreen)
+                    sensorDataJob?.cancel()
+                    sensorDataJob = null
+                }
+
+                if (sensorData?.thermostat == false && !hasThermostatWarningBeenShown) {
+                    postSideEffect(ProcedureProcessSideEffect.OnThermostatActivation)
+                    hasThermostatWarningBeenShown = true
+                    sensorDataJob?.cancel()
+                    sensorDataJob = null
+                }
+
+                if (sensorData?.temrTmpr1 == 0 && !hasTempSensorWarningBeenShown)  {
+                    postSideEffect(ProcedureProcessSideEffect.OnTemperatureSensorWarning)
+                    hasTempSensorWarningBeenShown = true
+                    sensorDataJob?.cancel()
+                    sensorDataJob = null
                 }
 
                 if (!isCanceledProcedure) {
@@ -126,12 +144,10 @@ class ProcedureProcessViewModel(
                             bluetoothController.sendCommand(
                                 COMMAND_TEN,
                                 onSuccess = {
-                                    localDataStore.saveFailSendingCommand(COMMAND_TEN, false)
                                     localDataStore.saveCommandState(COMMAND_TEN, true)
                                     updateIconStates()
                                 },
                                 onFailed = {
-                                    localDataStore.saveFailSendingCommand(COMMAND_TEN, true)
                                     postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTenCommandScreen)
                                 }
                             )
@@ -188,11 +204,9 @@ class ProcedureProcessViewModel(
         if (!_balmFeeding.value) return@intent
         while (!localDataStore.getCommandState(COMMAND_KMPR)) {
             bluetoothController.sendCommand(COMMAND_KMPR, onSuccess = {
-                localDataStore.saveFailSendingCommand(COMMAND_KMPR, false)
                 localDataStore.saveCommandState(COMMAND_KMPR, true)
                 updateIconStates()
             }, onFailed = {
-                localDataStore.saveFailSendingCommand(COMMAND_KMPR, true)
             })
         }
     }
