@@ -141,7 +141,7 @@ class PreparingTheCabinScreenViewModel(
                     sensorDataJob = null
                 }
 
-                if (sensorData?.temrTmpr1 != 0 && !hasTempSensorWarningBeenShown)  {
+                if (sensorData?.temrTmpr1 == 0 && !hasTempSensorWarningBeenShown)  {
                     postSideEffect(PreparingTheCabinScreenSideEffect.OnTemperatureSensorWarning)
                     hasTempSensorWarningBeenShown = true
                     sensorDataJob?.cancel()

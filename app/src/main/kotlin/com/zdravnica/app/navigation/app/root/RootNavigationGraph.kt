@@ -295,7 +295,7 @@ fun RootNavigationGraph(
                                 connectivityViewModel.sendStopCommand()
 
                                 navHostController.navigate(AppNavGraph.Root.route) {
-                                    popUpTo(AppNavGraph.Connection.route) {
+                                    popUpTo(AppNavGraph.Root.route) {
                                         inclusive = true
                                     }
                                     launchSingleTop = true

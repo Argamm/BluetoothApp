@@ -122,9 +122,10 @@ fun EcgChart(heartBeat: Int, cardWidth: Int) {
     val dynamicInterval = when (heartBeat) {
         in 1..20 -> 90L
         in 20..50 -> 70L
-        in 50..70 -> 60L
-        in 70..90 -> 40L
-        in 90..150 -> 30L
+        in 50..80 -> 60L
+        in 80..100 -> 40L
+        in 100..120 -> 30L
+        in 120..180 -> 20L
         else -> 40L
     }
 
