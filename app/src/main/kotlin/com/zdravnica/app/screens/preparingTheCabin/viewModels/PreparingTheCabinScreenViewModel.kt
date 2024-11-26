@@ -100,8 +100,7 @@ class PreparingTheCabinScreenViewModel(
                     turnOffWorkingProcesses()
                     hasTemperatureDifferenceWarningBeenShown = true
                     postSideEffect(PreparingTheCabinScreenSideEffect.OnNavigateToFailedTemperatureCommandScreen)
-                    sensorDataJob?.cancel()
-                    sensorDataJob = null
+                    stopObservingSensorData()
                 }
 
                 if (temperature.value - sensorTemperature >= 1) {
@@ -137,15 +136,13 @@ class PreparingTheCabinScreenViewModel(
                 if (sensorData?.thermostat == false && !hasThermostatWarningBeenShown) {
                     postSideEffect(PreparingTheCabinScreenSideEffect.OnThermostatActivation)
                     hasThermostatWarningBeenShown = true
-                    sensorDataJob?.cancel()
-                    sensorDataJob = null
+                    stopObservingSensorData()
                 }
 
                 if (sensorData?.temrTmpr1 == 0 && !hasTempSensorWarningBeenShown)  {
                     postSideEffect(PreparingTheCabinScreenSideEffect.OnTemperatureSensorWarning)
                     hasTempSensorWarningBeenShown = true
-                    sensorDataJob?.cancel()
-                    sensorDataJob = null
+                    stopObservingSensorData()
                 }
 
                 calculateTemperatureProgressUseCase.execute(

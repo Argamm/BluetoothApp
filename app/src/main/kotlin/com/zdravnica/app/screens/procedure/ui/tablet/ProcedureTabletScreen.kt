@@ -145,9 +145,9 @@ fun ProcedureTabletScreen(
                                     balmInfo,
                                     isBalmCountZero = { balmName ->
                                         when (balmName) {
-                                            stringBurdock -> procedureTabletScreenViewState.firstBalmCount == 2f
-                                            stringNut -> procedureTabletScreenViewState.secondBalmCount == 2f
-                                            stringMint -> procedureTabletScreenViewState.thirdBalmCount == 2f
+                                            stringBurdock -> procedureTabletScreenViewState.firstBalmCount <= 2f
+                                            stringNut -> procedureTabletScreenViewState.secondBalmCount <= 2f
+                                            stringMint -> procedureTabletScreenViewState.thirdBalmCount <= 2f
                                             else -> false
                                         }
                                     },

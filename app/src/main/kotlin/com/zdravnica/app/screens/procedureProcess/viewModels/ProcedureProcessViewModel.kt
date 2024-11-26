@@ -75,8 +75,15 @@ class ProcedureProcessViewModel(
 
         viewModelScope.launch {
             bluetoothController.getCommandsState.collect { state ->
-                if (state[1] == '0')
+                if (state[1] == '0') {
                     _timerFinished.value = true
+                }
+
+                if ((state[5] != '1') && (state[6] != '1') && (state[7] != '1') && (state[8] != '1')) {
+                    turnOffKMPR()
+                } else {
+                    turnOnKMPR()
+                }
             }
         }
 
@@ -118,24 +125,21 @@ class ProcedureProcessViewModel(
                 updateIconStates()
 
                 if (isDifferenceLarge && !hasTemperatureDifferenceWarningBeenShown) {
+                    stopObservingSensorData()
                     hasTemperatureDifferenceWarningBeenShown = true
                     postSideEffect(ProcedureProcessSideEffect.OnNavigateToFailedTemperatureCommandScreen)
-                    sensorDataJob?.cancel()
-                    sensorDataJob = null
                 }
 
                 if (sensorData?.thermostat == false && !hasThermostatWarningBeenShown) {
+                    stopObservingSensorData()
                     postSideEffect(ProcedureProcessSideEffect.OnThermostatActivation)
                     hasThermostatWarningBeenShown = true
-                    sensorDataJob?.cancel()
-                    sensorDataJob = null
                 }
 
-                if (sensorData?.temrTmpr1 == 0 && !hasTempSensorWarningBeenShown)  {
+                if (sensorData?.temrTmpr1 == 0 && !hasTempSensorWarningBeenShown) {
+                    stopObservingSensorData()
                     postSideEffect(ProcedureProcessSideEffect.OnTemperatureSensorWarning)
                     hasTempSensorWarningBeenShown = true
-                    sensorDataJob?.cancel()
-                    sensorDataJob = null
                 }
 
                 if (!isCanceledProcedure) {

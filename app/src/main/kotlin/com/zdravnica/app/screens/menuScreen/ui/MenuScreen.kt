@@ -159,7 +159,7 @@ fun MenuScreen(
                         secondBalmCount = menuScreenViewState.secondBalmCount.roundToInt(),
                         thirdBalmCount = menuScreenViewState.thirdBalmCount.roundToInt(),
                         onOrderClick = {
-                            // Handle order click
+                            localUriHandler.openUri(faqInfoUriPath)
                         },
                         onBalmFilledClick = {
                             menuScreenViewModel.balmFilled(

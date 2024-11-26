@@ -64,6 +64,7 @@ fun RootNavigationGraph(
     )
 
     fun handleStatusInfoState(statusInfoState: StatusInfoState) {
+        connectivityViewModel.turnOffAllExpectFun()
         when (statusInfoState) {
             StatusInfoState.THERMOSTAT_ACTIVATION -> {
                 if (isTablet) {

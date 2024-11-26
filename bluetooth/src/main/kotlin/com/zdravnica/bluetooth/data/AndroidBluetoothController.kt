@@ -285,7 +285,11 @@ internal class AndroidBluetoothController(
         isConnecting = false
         adapter?.startDiscovery()
 
-        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+        val filter = IntentFilter().apply {
+            addAction(BluetoothDevice.ACTION_FOUND)
+            addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
+            addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+        }
         context.registerReceiver(receiver, filter)
     }
 

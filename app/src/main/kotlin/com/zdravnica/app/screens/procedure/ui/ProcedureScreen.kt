@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -56,6 +57,8 @@ fun ProcedureScreen(
     val balmNameList = listOf(stringBurdock, stringNut, stringMint)
     var showFailedScreen by remember { mutableStateOf(false) }
     var statusInfoState by remember { mutableStateOf<StatusInfoState?>(null) }
+    val faqInfoUriPath = stringResource(id = R.string.menu_screen_zdravnica_uri_path)
+    val localUriHandler = LocalUriHandler.current
 
     procedureScreenViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -137,7 +140,7 @@ fun ProcedureScreen(
                                     startProcedure.invoke(chipTitle)
                                 }
                             }, orderBalm = {
-
+                                localUriHandler.openUri(faqInfoUriPath)
                             }, balmFilled = {
                                 balmInfo.forEach { balm ->
                                     procedureScreenViewModel.balmFilled(
